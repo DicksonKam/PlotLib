@@ -1,0 +1,98 @@
+version: '3.8'
+
+services:
+  # Production service - runs examples and generates plots
+  plotlib:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runtime
+    container_name: plotlib-production
+    volumes:
+      - ./output:/app/output
+    environment:
+      - PLOTLIB_OUTPUT_DIR=/app/output
+    command: >
+      /bin/bash -c "
+      echo 'PlotLib Production Container - Running All Examples...' &&
+      cd /app/examples &&
+      echo 'Running beginner examples...' &&
+      for example in 01_first_scatter_plot 02_colors_and_multiple_series 03_first_line_plot 04_first_histogram 05_simple_subplots; do
+        echo \"  Running $$example...\"
+        ./$$example
+      done &&
+      echo 'Running advanced examples...' &&
+      for example in advanced_01_custom_styling advanced_02_complex_dashboards advanced_03_performance_optimization; do
+        echo \"  Running $$example...\"
+        ./$$example
+      done &&
+      echo 'Running tests...' &&
+      cd /app/tests &&
+      ./basic_tests &&
+      echo 'All examples and tests completed! Check ./output for generated plots.'
+      "
+
+  # Development service - interactive shell for development
+  plotlib-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: builder
+    container_name: plotlib-development
+    volumes:
+      - .:/app
+      - ./output:/app/output
+    working_dir: /app
+    environment:
+      - PLOTLIB_OUTPUT_DIR=/app/output
+    command: /bin/bash
+    stdin_open: true
+    tty: true
+
+  # Demo service - runs specific examples for demonstrations
+  plotlib-demo:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runtime
+    container_name: plotlib-demo
+    volumes:
+      - ./output:/app/output
+    environment:
+      - PLOTLIB_OUTPUT_DIR=/app/output
+      - DEMO_TYPE=${DEMO_TYPE:-beginner}
+    command: >
+      /bin/bash -c "
+      echo 'PlotLib Demo Container - Running $${DEMO_TYPE} Examples...' &&
+      cd /app/examples &&
+      if [ \"$$DEMO_TYPE\" = \"beginner\" ]; then
+        for example in 01_first_scatter_plot 02_colors_and_multiple_series 03_first_line_plot; do
+          echo \"  Running $$example...\"
+          ./$$example
+        done
+      elif [ \"$$DEMO_TYPE\" = \"advanced\" ]; then
+        for example in advanced_01_custom_styling advanced_02_complex_dashboards; do
+          echo \"  Running $$example...\"
+          ./$$example
+        done
+      else
+        echo \"Running single example: $$DEMO_TYPE\"
+        ./$$DEMO_TYPE
+      fi &&
+      echo 'Demo completed! Check ./output for generated plots.'
+      "
+
+  # Test service - runs only tests
+  plotlib-test:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runtime
+    container_name: plotlib-test
+    command: >
+      /bin/bash -c "
+      echo 'PlotLib Test Container - Running Tests...' &&
+      cd /app/tests &&
+      ./basic_tests &&
+      echo 'Tests completed successfully!'
+      " 

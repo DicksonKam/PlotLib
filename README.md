@@ -3,13 +3,29 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![C++17](https://img.shields.io/badge/C++-17-blue.svg)](https://en.wikipedia.org/wiki/C%2B%2B17)
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)]()
+[![Docker](https://img.shields.io/badge/Docker-supported-blue.svg)](docs/DOCKER.md)
+[![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey.svg)](docs/DOCKER.md)
 [![Documentation](https://img.shields.io/badge/docs-complete-green.svg)](docs/)
 
 A simple, beginner-friendly C++ plotting library for creating beautiful scatter plots, line plots, and histograms with support for subplots and advanced customization.
 
 ## 🚀 Quick Start
 
-### Installation
+### Option 1: Docker (Recommended - Works on Any Platform)
+
+```bash
+# Clone the repository
+git clone <repository-url>
+cd plotlib
+
+# Run all examples with Docker (Windows, macOS, Linux)
+docker-compose up plotlib
+
+# Check generated plots
+ls output/
+```
+
+### Option 2: Native Build
 
 ```bash
 # Clone the repository
@@ -177,6 +193,7 @@ plotlib/
 
 ## 📚 Learning Resources
 
+- **[Docker Guide](docs/DOCKER.md)** - Cross-platform Docker usage (Windows, macOS, Linux)
 - **[Beginner Tutorial](docs/tutorial/beginner.md)** - Start here if you're new to plotting
 - **[API Reference](docs/api/README.md)** - Complete function documentation
 - **[Example Gallery](docs/gallery/README.md)** - Visual examples with code

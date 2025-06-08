@@ -1,0 +1,42 @@
+# Build directories
+build/
+build-*/
+cmake-build-*/
+
+# Development artifacts
+memory-bank/
+.git/
+.github/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Output files (will be created inside container)
+output/*.png
+output/*.svg
+
+# Documentation build artifacts
+docs/html/
+docs/latex/
+
+# Temporary files
+*.tmp
+*.temp
+*.log
+
+# Package files
+*.tar.gz
+*.zip 

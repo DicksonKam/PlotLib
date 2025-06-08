@@ -6,6 +6,10 @@ cmake-build-*/
 # Development artifacts (AI assistant session files)
 memory-bank
 
+# Docker
+.docker/
+docker-compose.override.yml
+
 # Compiled Object files
 *.o
 *.obj

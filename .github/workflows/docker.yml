@@ -1,0 +1,77 @@
+name: Docker Build and Test
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  docker-build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+    
+    - name: Build Docker image
+      run: |
+        docker build --target builder -t plotlib:builder .
+        docker build --target runtime -t plotlib:runtime .
+    
+    - name: Test Docker container
+      run: |
+        # Create output directory
+        mkdir -p output
+        
+        # Run tests in container
+        docker run --rm plotlib:runtime /bin/bash -c "cd /app/tests && ./basic_tests"
+        
+        # Run example to test plotting functionality
+        docker run --rm -v $(pwd)/output:/app/output plotlib:runtime /bin/bash -c "cd /app/examples && ./01_first_scatter_plot"
+        
+        # Verify output was generated
+        if [ ! -f output/01_first_scatter_plot.png ]; then
+          echo "Error: Expected output file was not generated"
+          exit 1
+        fi
+        
+        echo "Docker container test passed!"
+    
+    - name: Test Docker Compose
+      run: |
+        # Test production service
+        docker-compose up --exit-code-from plotlib-test plotlib-test
+        
+        # Test quick demo
+        DEMO_TYPE=01_first_scatter_plot docker-compose up --exit-code-from plotlib-demo plotlib-demo
+    
+    - name: Upload Docker test artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: docker-test-output
+        path: output/
+
+  docker-multi-platform:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+    
+    - name: Build multi-platform image
+      run: |
+        docker buildx build \
+          --platform linux/amd64,linux/arm64 \
+          --target runtime \
+          -t plotlib:multi-platform \
+          --load \
+          .
+    
+    - name: Test AMD64 image
+      run: |
+        docker run --rm --platform linux/amd64 plotlib:multi-platform /bin/bash -c "cd /app/tests && ./basic_tests" 

@@ -17,6 +17,7 @@
 #include <string>
 #include <memory>
 #include <set>
+#include <stdexcept>
 #include <cairo.h>
 #include <cairo-svg.h>
 

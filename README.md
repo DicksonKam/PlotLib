@@ -11,7 +11,9 @@ A C++ library for creating beautiful scatter plots with automatic axis scaling, 
 - ✅ **Multiple output formats** - Save as PNG or SVG
 - ✅ **Series-based data management** - Organize data into named series
 - ✅ **Cluster-based visualization** - Automatic coloring based on cluster labels with outlier detection
-- ✅ **Subplot support** - Create multiple plots in grid layouts (2x2, 1x2, 2x1, etc.)
+- ✅ **Comprehensive subplot support** - Create multiple plots in various grid layouts (1x6, 3x2, 6x1, 2x3, 4x2, etc.)
+- ✅ **Aspect ratio preservation** - Maintains proper proportions across different layout dimensions
+- ✅ **Dynamic title positioning** - Optimal centering of title + subplots groups
 - ✅ **Backward compatibility** - Works with existing point-by-point addition methods
 
 ## Dependencies
@@ -29,10 +31,26 @@ brew install cairo
 sudo apt-get install libcairo2-dev
 ```
 
-## Building
+## Quick Start
 
+### Using the Makefile (Recommended)
 ```bash
-g++ -std=c++17 -o your_program main.cpp scatter_plot.cpp `pkg-config --cflags --libs cairo cairo-svg`
+# Build the centralized demo
+make
+
+# Run the comprehensive demonstration
+make run
+
+# Clean compiled files
+make clean
+
+# Install dependencies (macOS)
+make install-deps
+```
+
+### Manual Building
+```bash
+g++ -std=c++17 -I. $(pkg-config --cflags --libs cairo) centralized_demo.cpp plotting_library/scatter_plot.cpp -o centralized_demo
 ```
 
 ## Quick Start
@@ -177,34 +195,40 @@ struct Point2D {
 };
 ```
 
-## Examples
+## Centralized Demo
 
-### Example 1: Basic Usage
-See `example_usage.cpp` for a complete example showing sine, cosine, and linear data.
+The `centralized_demo.cpp` provides a comprehensive demonstration of all library features:
 
-### Example 2: Statistical Data
-See `main.cpp` for an example with multiple statistical distributions.
+### Generated Demonstrations:
+1. **Single Plot** - Basic scatter plot with multiple series and legend
+2. **Cluster Visualization** - Automatic coloring with outlier detection
+3. **1x6 Ultra-wide Layout** - Six different data patterns in horizontal layout
+4. **3x2 Analysis Dashboard** - Comprehensive mixed analysis with 6 subplots
+5. **6x1 Ultra-tall Layout** - Vertical stack of mathematical functions
+6. **2x3 Mixed Patterns** - Edge cases and varied data patterns
+7. **4x2 Feature Test** - Comprehensive library feature testing
 
-### Example 3: Cluster Visualization
-See `cluster_example.cpp` for clustering results with automatic color assignment and outlier detection.
+### Features Demonstrated:
+- ✅ Single plots with multiple series
+- ✅ Cluster visualization with automatic coloring
+- ✅ Various subplot layouts: 1x6, 3x2, 6x1, 2x3, 4x2
+- ✅ Automatic axis scaling and tick generation
+- ✅ Legend support and proper positioning
+- ✅ Title and axis label support
+- ✅ Aspect ratio preservation
+- ✅ Proper centering of title + subplots groups
+- ✅ Various data patterns and edge cases
 
-### Example 4: Subplot Layouts
-See `subplot_example.cpp` for creating multiple plots in grid layouts with comprehensive dashboards.
-
-### Compiling Examples
+### Running the Demo:
 ```bash
-# Compile the main demonstration
-g++ -std=c++17 -o enhanced_scatter_plot main.cpp scatter_plot.cpp `pkg-config --cflags --libs cairo cairo-svg`
+# Build and run
+make run
 
-# Compile the simple example
-g++ -std=c++17 -o example example_usage.cpp scatter_plot.cpp `pkg-config --cflags --libs cairo cairo-svg`
-
-# Compile the cluster example
-g++ -std=c++17 -o cluster_demo cluster_example.cpp scatter_plot.cpp `pkg-config --cflags --libs cairo cairo-svg`
-
-# Compile the subplot example
-g++ -std=c++17 -o subplot_demo subplot_example.cpp scatter_plot.cpp `pkg-config --cflags --libs cairo cairo-svg`
+# Or manually
+./centralized_demo
 ```
+
+All outputs are saved to the `output/` directory with descriptive filenames.
 
 ## Advanced Features
 

@@ -2,19 +2,19 @@
 
 ## Ongoing Tasks
 
-- Analyze C++ scatter plot project dependencies
-- Provide build and run instructions
+- Test centralized demo with different subplot dimensions
+- Verify title + subplots positioning across layouts
 ## Known Issues
 
-- No build configuration (Makefile/CMakeLists.txt) found
-- Requires Cairo graphics library installation
+- Continue testing centralized subplots title + subplots position on overlay problem
 ## Next Steps
 
-- Install Cairo development libraries
-- Create build command
-- Compile and run the project
+- Run comprehensive tests on various subplot layouts
+- Verify proper centering and positioning
+- Test edge cases with extreme aspect ratios
 ## Current Session Notes
 
+- [10:31:45 AM] [Unknown User] Created centralized plotting library demonstration: Successfully created a comprehensive centralized demo script (centralized_demo.cpp) that demonstrates all plotting library functionality with various subplot dimensions including 1x6, 3x2, 6x1, 2x3, and 4x2 layouts. The demo showcases single plots, cluster visualization, and comprehensive subplot testing. Cleaned up the project by removing unnecessary C++ scripts (comprehensive_subplot_test.cpp, subplot_example.cpp, cluster_example.cpp, example_usage.cpp, main.cpp, test_subplot_scaling.cpp) and compiled binaries. Created a Makefile for easy compilation and updated the README.md to reflect the new centralized structure. The centralized demo tests the title + subplots positioning and overlay functionality across different layout dimensions.
 - [10:19:02 AM] [Unknown User] Implemented precise title height calculation and dynamic positioning: Resolved excessive white space issues by implementing dynamic positioning calculations: 1) Created get_title_height() method to measure actual title dimensions using Cairo text extents, 2) Moved positioning calculations from constructor to render_to_context() method for access to Cairo context, 3) Recalculate subplot positions during rendering with precise title height, 4) Eliminated fixed title height estimates that caused excessive spacing, 5) Ensured proper vertical centering of entire 'title + subplots' group with minimal white space. Now the subplot layouts are optimally centered regardless of title presence or length.
 - [10:15:47 AM] [Unknown User] Fixed vertical centering of title and subplot groups: Resolved vertical positioning issues where the entire 'title + subplots' group was not properly centered within the canvas: 1) Calculated total content height including title and subplot grid, 2) Implemented proper vertical centering offset for the entire group, 3) Applied consistent positioning logic to both title and subplots, 4) Eliminated excessive white space above or below the content in different layout configurations. Now the entire subplot figure is properly centered regardless of layout dimensions (1x6, 3x2, 6x1, etc.).
 - [10:07:23 AM] [Unknown User] Created comprehensive subplot stress tests: Developed extensive test suite covering edge cases and varied scenarios: 1) 1x4 layout with micro/macro scale data, exponential distributions, and incremental patterns, 2) 3x2 layout with multi-clustering, sparse/dense data, extreme ranges, logarithmic and circular patterns, 3) Ultra-wide (1x6) and ultra-tall (6x1) layouts testing extreme aspect ratios, 4) 2x3 mixed layout with negative values, zero-centered, positive-only, time series, clustering, and random walk data. Tests verify aspect ratio preservation, centering, positioning accuracy, and consistent appearance across all layout configurations.

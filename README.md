@@ -162,8 +162,7 @@ plotlib/
 ├── src/                      # Source files
 ├── examples/                 # Example programs
 │   ├── beginner/            # Beginner-friendly examples
-│   ├── intermediate/        # More advanced examples
-│   └── advanced/            # Complex use cases
+│   └── advanced/            # Professional techniques
 ├── docs/                    # Documentation
 │   ├── tutorial/            # Step-by-step tutorials
 │   ├── api/                 # API reference
@@ -180,10 +179,40 @@ plotlib/
 
 ## 🎯 Examples
 
-Check out the `examples/` directory for:
-- **Beginner examples**: Simple, well-commented code
-- **Intermediate examples**: Real-world use cases
-- **Advanced examples**: Complex visualizations and customizations
+### Running Examples
+
+After building with `./build.sh`, you can run examples:
+
+```bash
+cd build
+
+# Run all beginner examples (recommended first)
+make run_beginner_examples
+
+# Run all advanced examples
+make run_advanced_examples
+
+# Run everything
+make run_all_examples
+
+# Or run individual examples
+./examples/01_first_scatter_plot
+./examples/advanced_01_custom_styling
+```
+
+### Example Categories
+
+- **Beginner examples** (`examples/beginner/`): Simple, well-commented code
+  - 5 progressive examples covering all basic features
+  - Generates 14 example plots
+  
+- **Advanced examples** (`examples/advanced/`): Professional techniques
+  - Custom styling and RGB color control
+  - Complex dashboards (3x3, 4x2 layouts)
+  - Performance optimization for large datasets
+  - Generates 12+ advanced plots
+
+All generated plots are saved to the `output/` directory.
 
 ## 🛠️ Building Your Project
 

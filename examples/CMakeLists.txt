@@ -86,15 +86,15 @@ add_custom_target(run_all_examples
     COMMAND echo "All examples completed successfully!"
 )
 
-# Centralized demo example
-add_executable(centralized_demo centralized_demo.cpp)
-target_link_libraries(centralized_demo plotlib)
-
-# Line plot demo example
-add_executable(line_plot_demo line_plot_demo.cpp)
-target_link_libraries(line_plot_demo plotlib)
-
-# Set output directory
-set_target_properties(centralized_demo line_plot_demo PROPERTIES
-    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/examples
+# Set output directory for all examples
+set_target_properties(
+    01_first_scatter_plot
+    02_colors_and_multiple_series
+    03_first_line_plot
+    04_first_histogram
+    05_simple_subplots
+    advanced_01_custom_styling
+    advanced_02_complex_dashboards
+    advanced_03_performance_optimization
+    PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/examples
 ) 

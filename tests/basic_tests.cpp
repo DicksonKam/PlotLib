@@ -108,7 +108,13 @@ void test_point2d_operations() {
 }
 
 void test_plot_style() {
-    PlotStyle style = {3.0, 1.0, 0.5, 0.0, 0.8};
+    PlotStyle style;
+    style.point_size = 3.0;
+    style.line_width = 2.0;
+    style.r = 1.0;
+    style.g = 0.5;
+    style.b = 0.0;
+    style.alpha = 0.8;
     
     test_assert(style.point_size == 3.0, "PlotStyle point size");
     test_assert(style.r == 1.0, "PlotStyle red component");

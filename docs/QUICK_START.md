@@ -6,7 +6,7 @@ Get up and running with PlotLib in 5 minutes!
 
 ```bash
 # Clone and build
-git clone <repository-url>
+git clone https://github.com/DicksonKam/PlotLib
 cd plotlib
 ./build.sh
 

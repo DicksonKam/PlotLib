@@ -270,6 +270,8 @@ plotlib/
 - **[API Reference](docs/api/README.md)** - Complete function documentation
 - **[Example Gallery](docs/gallery/README.md)** - Visual examples with code
 - **[Advanced Guide](docs/tutorial/advanced.md)** - Complex plotting techniques
+- **[Changelog](CHANGELOG.md)** - Release history and version changes
+- **[Roadmap](ROADMAP.md)** - Future development plans and features
 
 ## 🎯 Examples
 

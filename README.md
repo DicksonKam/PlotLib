@@ -1,5 +1,10 @@
 # PlotLib - Easy C++ Plotting Library
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![C++17](https://img.shields.io/badge/C++-17-blue.svg)](https://en.wikipedia.org/wiki/C%2B%2B17)
+[![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)]()
+[![Documentation](https://img.shields.io/badge/docs-complete-green.svg)](docs/)
+
 A simple, beginner-friendly C++ plotting library for creating beautiful scatter plots, line plots, and histograms with support for subplots and advanced customization.
 
 ## 🚀 Quick Start

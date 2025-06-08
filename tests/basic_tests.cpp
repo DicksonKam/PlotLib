@@ -1,4 +1,6 @@
 #include "plotlib/scatter_plot.h"
+#include "plotlib/line_plot.h"
+#include "plotlib/histogram_plot.h"
 #include <iostream>
 #include <vector>
 #include <cassert>
@@ -20,49 +22,81 @@ void test_assert(bool condition, const std::string& test_name) {
 
 void test_basic_plot_creation() {
     try {
-        ScatterPlot plot(800, 600);
+        plotlib::ScatterPlot plot(800, 600);
         plot.set_labels("Test Plot", "X", "Y");
         
-        std::vector<Point2D> data = {{1.0, 2.0}, {2.0, 3.0}, {3.0, 1.0}};
-        PlotStyle style = {3.0, 1.0, 0.0, 0.0, 0.8};
-        plot.add_series("Test Series", data, style);
+        std::vector<plotlib::Point2D> data = {{1.0, 2.0}, {2.0, 3.0}, {3.0, 1.0}};
+        plot.add_data("Test Series", data, "blue");
         
         test_assert(true, "Basic plot creation and data addition");
     } catch (const std::exception& e) {
+        std::cout << "Error: " << e.what() << std::endl;
         test_assert(false, "Basic plot creation and data addition");
+    }
+}
+
+void test_line_plot_creation() {
+    try {
+        plotlib::LinePlot plot(600, 400);
+        plot.set_labels("Line Test", "X", "Y");
+        
+        std::vector<double> x_vals = {1.0, 2.0, 3.0, 4.0};
+        std::vector<double> y_vals = {1.0, 4.0, 9.0, 16.0};
+        plot.add_line("Square Function", x_vals, y_vals, "red");
+        
+        test_assert(true, "Line plot creation");
+    } catch (const std::exception& e) {
+        std::cout << "Error: " << e.what() << std::endl;
+        test_assert(false, "Line plot creation");
+    }
+}
+
+void test_histogram_creation() {
+    try {
+        plotlib::HistogramPlot plot(600, 400);
+        plot.set_labels("Histogram Test", "Value", "Frequency");
+        
+        std::vector<double> data = {1.0, 1.5, 2.0, 2.2, 2.5, 3.0, 3.1, 3.5, 4.0};
+        plot.add_histogram("Test Data", data, "green");
+        
+        test_assert(true, "Histogram creation");
+    } catch (const std::exception& e) {
+        std::cout << "Error: " << e.what() << std::endl;
+        test_assert(false, "Histogram creation");
     }
 }
 
 void test_subplot_creation() {
     try {
-        SubplotManager manager(2, 2, 800, 600, 0.1);
+        plotlib::SubplotManager manager(2, 2, 800, 600);
         manager.set_main_title("Test Subplots");
         
-        auto& subplot = manager.get_subplot(0, 0);
+        auto& subplot = manager.get_subplot<plotlib::ScatterPlot>(0, 0);
         subplot.set_labels("Test", "X", "Y");
         
-        std::vector<Point2D> data = {{0.0, 0.0}, {1.0, 1.0}};
-        PlotStyle style = {2.0, 0.0, 1.0, 0.0, 0.7};
-        subplot.add_series("Test", data, style);
+        std::vector<plotlib::Point2D> data = {{0.0, 0.0}, {1.0, 1.0}};
+        subplot.add_data("Test", data, "blue");
         
         test_assert(true, "Subplot creation and configuration");
     } catch (const std::exception& e) {
+        std::cout << "Error: " << e.what() << std::endl;
         test_assert(false, "Subplot creation and configuration");
     }
 }
 
 void test_cluster_visualization() {
     try {
-        ScatterPlot plot(600, 400);
+        plotlib::ScatterPlot plot(600, 400);
         plot.set_labels("Cluster Test", "X", "Y");
         
-        std::vector<Point2D> points = {{1.0, 1.0}, {1.1, 1.1}, {-1.0, -1.0}, {-1.1, -1.1}};
+        std::vector<plotlib::Point2D> points = {{1.0, 1.0}, {1.1, 1.1}, {-1.0, -1.0}, {-1.1, -1.1}};
         std::vector<int> labels = {0, 0, 1, 1};
         
-        plot.add_cluster_data("Test Clusters", points, labels, 3.0, 0.8);
+        plot.add_clusters(points, labels);
         
         test_assert(true, "Cluster visualization");
     } catch (const std::exception& e) {
+        std::cout << "Error: " << e.what() << std::endl;
         test_assert(false, "Cluster visualization");
     }
 }
@@ -72,12 +106,11 @@ void test_file_output() {
         // Create test output directory
         std::filesystem::create_directories("test_output");
         
-        ScatterPlot plot(400, 300);
+        plotlib::ScatterPlot plot(400, 300);
         plot.set_labels("Output Test", "X", "Y");
         
-        std::vector<Point2D> data = {{0.0, 0.0}, {1.0, 1.0}, {2.0, 0.5}};
-        PlotStyle style = {2.0, 0.5, 0.5, 1.0, 0.8};
-        plot.add_series("Test", data, style);
+        std::vector<plotlib::Point2D> data = {{0.0, 0.0}, {1.0, 1.0}, {2.0, 0.5}};
+        plot.add_data("Test", data, "red");
         
         plot.save_png("test_output/test_plot.png");
         
@@ -92,23 +125,24 @@ void test_file_output() {
         std::filesystem::remove("test_output");
         
     } catch (const std::exception& e) {
+        std::cout << "Error: " << e.what() << std::endl;
         test_assert(false, "PNG file output");
     }
 }
 
 void test_point2d_operations() {
-    Point2D p1(1.0, 2.0);
-    Point2D p2(3.0, 4.0);
+    plotlib::Point2D p1(1.0, 2.0);
+    plotlib::Point2D p2(3.0, 4.0);
     
     test_assert(p1.x == 1.0 && p1.y == 2.0, "Point2D construction");
     
     // Test copy constructor if available
-    Point2D p3 = p1;
+    plotlib::Point2D p3 = p1;
     test_assert(p3.x == p1.x && p3.y == p1.y, "Point2D copy");
 }
 
 void test_plot_style() {
-    PlotStyle style;
+    plotlib::PlotStyle style;
     style.point_size = 3.0;
     style.line_width = 2.0;
     style.r = 1.0;
@@ -131,6 +165,8 @@ int main() {
     test_point2d_operations();
     test_plot_style();
     test_basic_plot_creation();
+    test_line_plot_creation();
+    test_histogram_creation();
     test_subplot_creation();
     test_cluster_visualization();
     test_file_output();

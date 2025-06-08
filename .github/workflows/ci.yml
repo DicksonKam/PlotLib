@@ -11,10 +11,10 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-latest, macOS-latest]
         compiler: [gcc, clang]
         exclude:
-          - os: macos-latest
+          - os: macOS-latest
             compiler: gcc
 
     steps:
@@ -24,25 +24,22 @@ jobs:
       if: matrix.os == 'ubuntu-latest'
       run: |
         sudo apt-get update
-        sudo apt-get install -y libcairo2-dev pkg-config cmake
+        sudo apt-get install -y build-essential cmake pkg-config libcairo2-dev libcairo2-dev
 
     - name: Install dependencies (macOS)
-      if: matrix.os == 'macos-latest'
+      if: matrix.os == 'macOS-latest'
       run: |
-        brew install cairo pkg-config cmake
+        brew install cmake cairo pkg-config
 
-    - name: Set up compiler (GCC)
-      if: matrix.compiler == 'gcc' && matrix.os == 'ubuntu-latest'
+    - name: Set up compiler
       run: |
-        sudo apt-get install -y gcc-9 g++-9
-        echo "CC=gcc-9" >> $GITHUB_ENV
-        echo "CXX=g++-9" >> $GITHUB_ENV
-
-    - name: Set up compiler (Clang)
-      if: matrix.compiler == 'clang'
-      run: |
-        echo "CC=clang" >> $GITHUB_ENV
-        echo "CXX=clang++" >> $GITHUB_ENV
+        if [ "${{ matrix.compiler }}" = "gcc" ]; then
+          echo "CC=gcc" >> $GITHUB_ENV
+          echo "CXX=g++" >> $GITHUB_ENV
+        else
+          echo "CC=clang" >> $GITHUB_ENV
+          echo "CXX=clang++" >> $GITHUB_ENV
+        fi
 
     - name: Create build directory
       run: mkdir build
@@ -52,23 +49,40 @@ jobs:
         cd build
         cmake .. -DCMAKE_BUILD_TYPE=Release
 
-    - name: Build
+    - name: Build library
       run: |
         cd build
-        make -j2
+        make plotlib -j$(nproc)
+
+    - name: Build tests
+      run: |
+        cd build
+        make basic_tests
 
     - name: Run tests
       run: |
         cd build
-        make test
+        ./tests/basic_tests
 
-    - name: Run examples
+    - name: Build examples
       run: |
         cd build
-        ./examples/centralized_demo
+        make beginner_examples
+        make advanced_examples
+
+    - name: Create output directory
+      run: mkdir -p output
+
+    - name: Test example execution
+      run: |
+        cd build
+        ./examples/01_first_scatter_plot
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v3
       with:
-        name: plots-${{ matrix.os }}-${{ matrix.compiler }}
-        path: output/*.png 
+        name: build-artifacts-${{ matrix.os }}-${{ matrix.compiler }}
+        path: |
+          build/plotlib
+          build/examples/
+          output/ 

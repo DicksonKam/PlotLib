@@ -5,12 +5,23 @@
 
 # Basic test executable
 add_executable(basic_tests basic_tests.cpp)
-target_link_libraries(basic_tests plotlib)
 
-# Add test
-add_test(NAME BasicTests COMMAND basic_tests)
+# Link against the plotlib library
+target_link_libraries(basic_tests PRIVATE plotlib)
 
-# Set output directory
-set_target_properties(basic_tests PROPERTIES
-    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/tests
+# Set C++ standard for tests
+target_compile_features(basic_tests PRIVATE cxx_std_17)
+
+# Add compiler warnings for better code quality
+if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+    target_compile_options(basic_tests PRIVATE -Wall -Wextra -Wpedantic)
+endif()
+
+# Register the test with CTest
+add_test(NAME basic_tests COMMAND basic_tests)
+
+# Set test properties
+set_tests_properties(basic_tests PROPERTIES 
+    TIMEOUT 30
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
 ) 

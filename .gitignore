@@ -3,6 +3,9 @@ build/
 build-*/
 cmake-build-*/
 
+# Development artifacts (AI assistant session files)
+memory-bank/
+
 # Compiled Object files
 *.o
 *.obj

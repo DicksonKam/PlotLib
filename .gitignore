@@ -84,4 +84,3 @@ docs/latex/
 # Output files (keep examples but ignore test outputs)
 output/*.png
 output/*.svg
-!output/.gitkeep 

@@ -15,7 +15,9 @@ include_directories(include)
 
 # Library source files
 set(PLOTLIB_SOURCES
+    src/plot_manager.cpp
     src/scatter_plot.cpp
+    src/line_plot.cpp
 )
 
 # Create the library

@@ -1,12 +1,16 @@
 /**
  * @file histogram_plot.h
- * @brief Histogram plotting functionality
+ * @brief Histogram plotting implementation using PlotManager
+ * @author PlotLib Contributors
+ * @version 1.0.0
+ * @date 2025-06-08
  * 
  * This file contains the HistogramPlot class for creating histogram visualizations
  * with support for multiple series, custom binning, and subplot integration.
  */
 
-#pragma once
+#ifndef PLOTLIB_HISTOGRAM_PLOT_H
+#define PLOTLIB_HISTOGRAM_PLOT_H
 
 #include "plot_manager.h"
 #include <vector>
@@ -153,3 +157,5 @@ protected:
 };
 
 } // namespace plotlib 
+
+#endif // PLOTLIB_HISTOGRAM_PLOT_H

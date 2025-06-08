@@ -1,6 +1,6 @@
-# Enhanced Scatter Plot Library
+# PlotLib - Professional C++ Plotting Library
 
-A C++ library for creating beautiful scatter plots with automatic axis scaling, legends, and customizable styling using Cairo graphics.
+A modern, extensible C++ plotting library built with Cairo graphics, designed for scientific visualization, data analysis, and research applications.
 
 ## Features
 
@@ -33,30 +33,38 @@ sudo apt-get install libcairo2-dev
 
 ## Quick Start
 
-### Using the Makefile (Recommended)
+### Prerequisites
+
+- C++17 compatible compiler (GCC 7+, Clang 5+, MSVC 2017+)
+- CMake 3.12 or higher
+- Cairo graphics library
+- pkg-config
+
+### Installation
+
 ```bash
-# Build the centralized demo
+# Clone the repository
+git clone <repository-url>
+cd plotlib
+
+# Create build directory
+mkdir build && cd build
+
+# Configure and build
+cmake ..
 make
 
-# Run the comprehensive demonstration
-make run
+# Run examples
+./examples/centralized_demo
 
-# Clean compiled files
-make clean
-
-# Install dependencies (macOS)
-make install-deps
+# Run tests
+make test
 ```
 
-### Manual Building
-```bash
-g++ -std=c++17 -I. $(pkg-config --cflags --libs cairo) centralized_demo.cpp plotting_library/scatter_plot.cpp -o centralized_demo
-```
-
-## Quick Start
+### Basic Usage
 
 ```cpp
-#include "scatter_plot.h"
+#include "plotlib/scatter_plot.h"
 #include <vector>
 
 int main() {

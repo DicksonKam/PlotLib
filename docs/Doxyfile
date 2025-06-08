@@ -1,0 +1,41 @@
+# Doxyfile for PlotLib
+
+PROJECT_NAME           = "PlotLib"
+PROJECT_NUMBER         = "1.0.0"
+PROJECT_BRIEF          = "Professional C++ Plotting Library"
+
+OUTPUT_DIRECTORY       = docs
+CREATE_SUBDIRS         = NO
+
+INPUT                  = include src examples
+RECURSIVE              = YES
+FILE_PATTERNS          = *.h *.hpp *.cpp *.md
+
+EXTRACT_ALL            = YES
+EXTRACT_PRIVATE        = NO
+EXTRACT_STATIC         = YES
+
+GENERATE_HTML          = YES
+HTML_OUTPUT            = html
+HTML_FILE_EXTENSION    = .html
+
+GENERATE_LATEX         = NO
+
+HAVE_DOT               = NO
+UML_LOOK               = YES
+
+EXAMPLE_PATH           = examples
+EXAMPLE_PATTERNS       = *.cpp
+
+SOURCE_BROWSER         = YES
+INLINE_SOURCES         = NO
+
+VERBATIM_HEADERS       = YES
+
+ALPHABETICAL_INDEX     = YES
+
+SEARCHENGINE           = YES
+
+GENERATE_TREEVIEW      = YES
+
+USE_MDFILE_AS_MAINPAGE = README.md 

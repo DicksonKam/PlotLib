@@ -1,4 +1,4 @@
-#include "plotting_library/scatter_plot.h"
+#include "plotlib/scatter_plot.h"
 #include <vector>
 #include <random>
 #include <iostream>
@@ -675,6 +675,146 @@ int main() {
     }
     
     // =================================================================
+    // DEMO 8: 2x2 Layout - Classic Dashboard
+    // =================================================================
+    std::cout << "\n8. Creating 2x2 classic dashboard layout..." << std::endl;
+    {
+        SubplotManager layout_2x2(2, 2, 1200, 1000, 0.08);
+        layout_2x2.set_main_title("2x2 Layout: Classic Data Analysis Dashboard");
+        
+        // Top-left: Statistical distributions comparison
+        {
+            auto& plot = layout_2x2.get_subplot(0, 0);
+            plot.set_labels("Statistical Distributions", "X Values", "Y Values");
+            
+            // Normal distribution
+            std::vector<Point2D> normal_data;
+            for (int i = 0; i < 120; ++i) {
+                double x = normal_dist(gen);
+                double y = normal_dist(gen);
+                normal_data.emplace_back(x, y);
+            }
+            
+            // Uniform distribution
+            std::vector<Point2D> uniform_data;
+            for (int i = 0; i < 100; ++i) {
+                double x = uniform_dist(gen);
+                double y = uniform_dist(gen) * 0.7;
+                uniform_data.emplace_back(x, y);
+            }
+            
+            PlotStyle normal_style = {2.5, 0.2, 0.4, 0.8, 0.7};
+            PlotStyle uniform_style = {2.5, 0.8, 0.2, 0.2, 0.7};
+            
+            plot.add_series("Normal", normal_data, normal_style);
+            plot.add_series("Uniform", uniform_data, uniform_style);
+        }
+        
+        // Top-right: Clustering analysis
+        {
+            auto& plot = layout_2x2.get_subplot(0, 1);
+            plot.set_labels("Clustering Analysis", "Feature 1", "Feature 2");
+            
+            std::vector<Point2D> cluster_points;
+            std::vector<int> cluster_labels;
+            
+            // Cluster 0: Around (1.5, 1.5)
+            for (int i = 0; i < 40; ++i) {
+                double x = 1.5 + normal_dist(gen) * 0.4;
+                double y = 1.5 + normal_dist(gen) * 0.4;
+                cluster_points.emplace_back(x, y);
+                cluster_labels.push_back(0);
+            }
+            
+            // Cluster 1: Around (-1.5, 1.0)
+            for (int i = 0; i < 35; ++i) {
+                double x = -1.5 + normal_dist(gen) * 0.3;
+                double y = 1.0 + normal_dist(gen) * 0.3;
+                cluster_points.emplace_back(x, y);
+                cluster_labels.push_back(1);
+            }
+            
+            // Cluster 2: Around (0.5, -1.5)
+            for (int i = 0; i < 30; ++i) {
+                double x = 0.5 + normal_dist(gen) * 0.35;
+                double y = -1.5 + normal_dist(gen) * 0.35;
+                cluster_points.emplace_back(x, y);
+                cluster_labels.push_back(2);
+            }
+            
+            // Outliers
+            for (int i = 0; i < 15; ++i) {
+                double x = uniform_dist(gen);
+                double y = uniform_dist(gen);
+                if (abs(x - 1.5) > 1.0 && abs(x + 1.5) > 1.0 && abs(x - 0.5) > 1.0) {
+                    cluster_points.emplace_back(x, y);
+                    cluster_labels.push_back(-1);
+                }
+            }
+            
+            plot.add_cluster_data("K-Means", cluster_points, cluster_labels, 3.0, 0.8);
+        }
+        
+        // Bottom-left: Mathematical functions
+        {
+            auto& plot = layout_2x2.get_subplot(1, 0);
+            plot.set_labels("Mathematical Functions", "X", "Y");
+            
+            std::vector<Point2D> sine_data, cosine_data, polynomial_data;
+            
+            for (int i = 0; i <= 60; ++i) {
+                double x = i * 0.2;
+                sine_data.emplace_back(x, sin(x));
+                cosine_data.emplace_back(x, cos(x) * 0.8);
+                polynomial_data.emplace_back(x, 0.1 * x * x - 0.5 * x + 1.0);
+            }
+            
+            PlotStyle sine_style = {2.0, 1.0, 0.0, 0.0, 0.8};
+            PlotStyle cosine_style = {2.0, 0.0, 0.8, 0.0, 0.8};
+            PlotStyle poly_style = {2.0, 0.6, 0.2, 0.8, 0.8};
+            
+            plot.add_series("sin(x)", sine_data, sine_style);
+            plot.add_series("cos(x)", cosine_data, cosine_style);
+            plot.add_series("polynomial", polynomial_data, poly_style);
+        }
+        
+        // Bottom-right: Time series analysis
+        {
+            auto& plot = layout_2x2.get_subplot(1, 1);
+            plot.set_labels("Time Series Analysis", "Time", "Value");
+            
+            std::vector<Point2D> trend_data, seasonal_data, noisy_data;
+            
+            for (int i = 0; i < 80; ++i) {
+                double t = i * 0.15;
+                
+                // Trend component
+                double trend = 2.0 + 0.3 * t;
+                trend_data.emplace_back(t, trend);
+                
+                // Seasonal component
+                double seasonal = trend + 1.5 * sin(t * 2) + 0.8 * cos(t * 3);
+                seasonal_data.emplace_back(t, seasonal);
+                
+                // Noisy data
+                double noisy = seasonal + normal_dist(gen) * 0.4;
+                noisy_data.emplace_back(t, noisy);
+            }
+            
+            PlotStyle trend_style = {2.5, 0.0, 0.0, 1.0, 0.9};
+            PlotStyle seasonal_style = {2.0, 0.0, 0.6, 0.0, 0.8};
+            PlotStyle noisy_style = {1.5, 0.6, 0.6, 0.6, 0.6};
+            
+            plot.add_series("Trend", trend_data, trend_style);
+            plot.add_series("Seasonal", seasonal_data, seasonal_style);
+            plot.add_series("Noisy", noisy_data, noisy_style);
+        }
+        
+        layout_2x2.save_png("output/08_layout_2x2.png");
+        std::cout << "✅ 2x2 layout saved to output/08_layout_2x2.png" << std::endl;
+    }
+    
+    // =================================================================
     // Summary
     // =================================================================
     std::cout << "\n=== Centralized Demo Complete ===" << std::endl;
@@ -686,11 +826,12 @@ int main() {
     std::cout << "5. 6x1 ultra-tall vertical stack" << std::endl;
     std::cout << "6. 2x3 mixed patterns and edge cases" << std::endl;
     std::cout << "7. 4x2 comprehensive feature test" << std::endl;
+    std::cout << "8. 2x2 classic data analysis dashboard" << std::endl;
     std::cout << "\nAll outputs saved to output/ directory" << std::endl;
     std::cout << "\nLibrary features demonstrated:" << std::endl;
     std::cout << "✅ Single plots with multiple series" << std::endl;
     std::cout << "✅ Cluster visualization with automatic coloring" << std::endl;
-    std::cout << "✅ Subplot layouts: 1x6, 3x2, 6x1, 2x3, 4x2" << std::endl;
+    std::cout << "✅ Subplot layouts: 1x6, 3x2, 6x1, 2x3, 4x2, 2x2" << std::endl;
     std::cout << "✅ Automatic axis scaling and tick generation" << std::endl;
     std::cout << "✅ Legend support and proper positioning" << std::endl;
     std::cout << "✅ Title and axis label support" << std::endl;

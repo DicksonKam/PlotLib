@@ -1,0 +1,74 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        compiler: [gcc, clang]
+        exclude:
+          - os: macos-latest
+            compiler: gcc
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Install dependencies (Ubuntu)
+      if: matrix.os == 'ubuntu-latest'
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libcairo2-dev pkg-config cmake
+
+    - name: Install dependencies (macOS)
+      if: matrix.os == 'macos-latest'
+      run: |
+        brew install cairo pkg-config cmake
+
+    - name: Set up compiler (GCC)
+      if: matrix.compiler == 'gcc' && matrix.os == 'ubuntu-latest'
+      run: |
+        sudo apt-get install -y gcc-9 g++-9
+        echo "CC=gcc-9" >> $GITHUB_ENV
+        echo "CXX=g++-9" >> $GITHUB_ENV
+
+    - name: Set up compiler (Clang)
+      if: matrix.compiler == 'clang'
+      run: |
+        echo "CC=clang" >> $GITHUB_ENV
+        echo "CXX=clang++" >> $GITHUB_ENV
+
+    - name: Create build directory
+      run: mkdir build
+
+    - name: Configure CMake
+      run: |
+        cd build
+        cmake .. -DCMAKE_BUILD_TYPE=Release
+
+    - name: Build
+      run: |
+        cd build
+        make -j2
+
+    - name: Run tests
+      run: |
+        cd build
+        make test
+
+    - name: Run examples
+      run: |
+        cd build
+        ./examples/centralized_demo
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: plots-${{ matrix.os }}-${{ matrix.compiler }}
+        path: output/*.png 

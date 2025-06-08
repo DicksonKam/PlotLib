@@ -107,6 +107,28 @@ public:
      * @deprecated Use add_series instead
      */
     void add_points(const std::vector<Point2D>& pts, const PlotStyle& style = PlotStyle());
+    
+    /**
+     * @brief Add a simple data series with automatic styling (beginner-friendly)
+     * @param name Series name for legend
+     * @param data Vector of 2D points
+     */
+    void add_data(const std::string& name, const std::vector<Point2D>& data);
+    
+    /**
+     * @brief Add a simple data series with custom color (beginner-friendly)
+     * @param name Series name for legend
+     * @param data Vector of 2D points
+     * @param color_name Color name ("red", "blue", "green", "orange", "purple", "cyan", "magenta", "yellow")
+     */
+    void add_data(const std::string& name, const std::vector<Point2D>& data, const std::string& color_name);
+    
+    /**
+     * @brief Add cluster data with automatic styling (beginner-friendly)
+     * @param data Vector of 2D points
+     * @param labels Cluster labels for each point
+     */
+    void add_clusters(const std::vector<Point2D>& data, const std::vector<int>& labels);
 };
 
 } // namespace plotlib

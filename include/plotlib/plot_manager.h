@@ -45,6 +45,7 @@ struct Point2D {
  */
 struct PlotStyle {
     double point_size = 3.0;           ///< Point radius in pixels
+    double line_width = 2.0;           ///< Line width in pixels
     double r = 0.0, g = 0.0, b = 1.0;  ///< RGB color values (0.0 to 1.0), blue by default
     double alpha = 1.0;                ///< Transparency (0.0 = transparent, 1.0 = opaque)
     std::string label = "";            ///< Label for legend (optional)
@@ -341,6 +342,15 @@ public:
      * @brief Clear all hidden legend items (show all)
      */
     virtual void show_all_legend_items();
+    
+    /**
+     * @brief Convert color name to PlotStyle (utility for beginner-friendly API)
+     * @param color_name Color name string
+     * @param point_size Point size for scatter plots
+     * @param line_width Line width for line plots
+     * @return PlotStyle with the specified color
+     */
+    static PlotStyle color_to_style(const std::string& color_name, double point_size = 3.0, double line_width = 2.0);
     
     /**
      * @brief Get the number of data series

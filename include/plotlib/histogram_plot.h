@@ -116,6 +116,24 @@ public:
      */
     std::pair<double, double> get_statistics(const std::string& series_name) const;
 
+    /**
+     * @brief Add histogram data with automatic styling (beginner-friendly)
+     * @param name Series name for legend
+     * @param data Raw data values
+     * @param bins Optional number of bins (0 for automatic)
+     */
+    void add_histogram(const std::string& name, const std::vector<double>& data, int bins = 0);
+    
+    /**
+     * @brief Add histogram data with custom color (beginner-friendly)
+     * @param name Series name for legend
+     * @param data Raw data values
+     * @param color_name Color name ("red", "blue", "green", "orange", "purple", "cyan", "magenta", "yellow")
+     * @param bins Optional number of bins (0 for automatic)
+     */
+    void add_histogram(const std::string& name, const std::vector<double>& data, 
+                      const std::string& color_name, int bins = 0);
+
 protected:
     /**
      * @brief Draw histogram bars

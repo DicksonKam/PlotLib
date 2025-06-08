@@ -263,4 +263,17 @@ void HistogramPlot::clear() {
     y_label = "Frequency";
 }
 
+// Beginner-friendly convenience methods
+void HistogramPlot::add_histogram(const std::string& name, const std::vector<double>& data, int bins) {
+    // Use automatic color based on series count
+    std::vector<std::string> auto_colors = {"blue", "red", "green", "orange", "purple", "cyan", "magenta", "yellow"};
+    std::string color = auto_colors[histogram_series.size() % auto_colors.size()];
+    add_data(name, data, color_to_style(color, 3.0, 2.0), bins);
+}
+
+void HistogramPlot::add_histogram(const std::string& name, const std::vector<double>& data, 
+                                 const std::string& color_name, int bins) {
+    add_data(name, data, color_to_style(color_name, 3.0, 2.0), bins);
+}
+
 } // namespace plotlib 

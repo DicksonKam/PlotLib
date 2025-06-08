@@ -6,6 +6,7 @@
 #include <iomanip>
 #include <set>
 #include <stdexcept>
+#include <cctype>
 
 namespace plotlib {
 
@@ -579,6 +580,43 @@ void PlotManager::show_legend_item(const std::string& item_name) {
 
 void PlotManager::show_all_legend_items() {
     hidden_legend_items.clear();
+}
+
+PlotStyle PlotManager::color_to_style(const std::string& color_name, double point_size, double line_width) {
+    PlotStyle style;
+    style.point_size = point_size;
+    style.line_width = line_width;
+    style.alpha = 0.8;
+    
+    std::string color_lower = color_name;
+    std::transform(color_lower.begin(), color_lower.end(), color_lower.begin(), ::tolower);
+    
+    if (color_lower == "red") {
+        style.r = 1.0; style.g = 0.0; style.b = 0.0;
+    } else if (color_lower == "blue") {
+        style.r = 0.0; style.g = 0.0; style.b = 1.0;
+    } else if (color_lower == "green") {
+        style.r = 0.0; style.g = 0.7; style.b = 0.0;
+    } else if (color_lower == "orange") {
+        style.r = 1.0; style.g = 0.5; style.b = 0.0;
+    } else if (color_lower == "purple") {
+        style.r = 0.6; style.g = 0.2; style.b = 0.8;
+    } else if (color_lower == "cyan") {
+        style.r = 0.0; style.g = 0.8; style.b = 0.8;
+    } else if (color_lower == "magenta") {
+        style.r = 0.8; style.g = 0.0; style.b = 0.8;
+    } else if (color_lower == "yellow") {
+        style.r = 0.8; style.g = 0.8; style.b = 0.0;
+    } else if (color_lower == "black") {
+        style.r = 0.0; style.g = 0.0; style.b = 0.0;
+    } else if (color_lower == "gray" || color_lower == "grey") {
+        style.r = 0.5; style.g = 0.5; style.b = 0.5;
+    } else {
+        // Default to blue for unknown colors
+        style.r = 0.0; style.g = 0.0; style.b = 1.0;
+    }
+    
+    return style;
 }
 
 // SubplotManager implementation

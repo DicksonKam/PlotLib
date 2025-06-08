@@ -1,44 +1,8 @@
-# PlotLib - Professional C++ Plotting Library
+# PlotLib - Easy C++ Plotting Library
 
-A modern, extensible C++ plotting library built with Cairo graphics, designed for scientific visualization, data analysis, and research applications.
+A simple, beginner-friendly C++ plotting library for creating beautiful scatter plots, line plots, and histograms with support for subplots and advanced customization.
 
-## Features
-
-- ✅ **Automatic axis scaling and tick generation** - Smart tick placement based on data range
-- ✅ **Customizable axis labels and plot titles** - Full control over plot labeling
-- ✅ **Legend support for multiple data series** - Automatic legend generation in top-right corner
-- ✅ **Grid lines aligned with axis ticks** - Professional-looking grid system
-- ✅ **Multiple output formats** - Save as PNG or SVG
-- ✅ **Series-based data management** - Organize data into named series
-- ✅ **Cluster-based visualization** - Automatic coloring based on cluster labels with outlier detection
-- ✅ **Comprehensive subplot support** - Create multiple plots in various grid layouts (1x6, 3x2, 6x1, 2x3, 4x2, etc.)
-- ✅ **Aspect ratio preservation** - Maintains proper proportions across different layout dimensions
-- ✅ **Dynamic title positioning** - Optimal centering of title + subplots groups
-- ✅ **Backward compatibility** - Works with existing point-by-point addition methods
-
-## Dependencies
-
-- **Cairo Graphics Library** - For rendering
-- **C++17 compiler** - For filesystem support
-
-### Installation on macOS
-```bash
-brew install cairo
-```
-
-### Installation on Ubuntu/Debian
-```bash
-sudo apt-get install libcairo2-dev
-```
-
-## Quick Start
-
-### Prerequisites
-
-- C++17 compatible compiler (GCC 7+, Clang 5+, MSVC 2017+)
-- CMake 3.12 or higher
-- Cairo graphics library
-- pkg-config
+## 🚀 Quick Start
 
 ### Installation
 
@@ -47,265 +11,207 @@ sudo apt-get install libcairo2-dev
 git clone <repository-url>
 cd plotlib
 
-# Create build directory
-mkdir build && cd build
+# Build the library
+./build.sh
 
-# Configure and build
-cmake ..
-make
-
-# Run examples
-./examples/centralized_demo
-
-# Run tests
-make test
+# The library will be built in the build/ directory
 ```
 
-### Basic Usage
+### Your First Plot
 
 ```cpp
 #include "plotlib/scatter_plot.h"
 #include <vector>
 
 int main() {
+    // Create some data
+    std::vector<plotlib::Point2D> data = {{1, 2}, {2, 4}, {3, 6}, {4, 8}};
+    
     // Create a scatter plot
-    ScatterPlot plot(800, 600);
-    
-    // Set title and axis labels
-    plot.set_title("My Data Visualization");
-    plot.set_xlabel("X Values");
-    plot.set_ylabel("Y Values");
-    
-    // Create data
-    std::vector<Point2D> data1 = {{1, 2}, {2, 4}, {3, 6}};
-    std::vector<Point2D> data2 = {{1, 1}, {2, 3}, {3, 5}};
-    
-    // Define styles
-    PlotStyle red_style;
-    red_style.r = 1.0; red_style.g = 0.0; red_style.b = 0.0;
-    red_style.point_size = 4.0;
-    
-    PlotStyle blue_style;
-    blue_style.r = 0.0; blue_style.g = 0.0; blue_style.b = 1.0;
-    blue_style.point_size = 3.0;
-    
-    // Add data series
-    plot.add_series("Series 1", data1, red_style);
-    plot.add_series("Series 2", data2, blue_style);
+    plotlib::ScatterPlot plot(800, 600);
+    plot.set_labels("My First Plot", "X Values", "Y Values");
+    plot.add_data("My Data", data);
     
     // Save the plot
-    plot.save_png("my_plot.png");
-    plot.save_svg("my_plot.svg");
+    plot.save_png("my_first_plot.png");
     
     return 0;
 }
 ```
 
-## API Reference
+## 📊 Plot Types
 
-### ScatterPlot Class
-
-#### Constructor
-```cpp
-ScatterPlot(int width = 800, int height = 600)
-```
-
-#### Setting Labels and Title
-```cpp
-void set_title(const std::string& plot_title);
-void set_xlabel(const std::string& x_axis_label);
-void set_ylabel(const std::string& y_axis_label);
-void set_labels(const std::string& plot_title, const std::string& x_axis_label, const std::string& y_axis_label);
-```
-
-#### Adding Data
-
-**Series-based approach (recommended):**
-```cpp
-void add_series(const std::string& name, const std::vector<Point2D>& points, const PlotStyle& style);
-void add_series_point(const std::string& series_name, double x, double y);
-```
-
-**Legacy point-by-point approach:**
-```cpp
-void add_point(double x, double y, const PlotStyle& style = PlotStyle());
-void add_points(const std::vector<Point2D>& pts, const PlotStyle& style = PlotStyle());
-```
-
-**Cluster-based approach (for clustering results):**
-```cpp
-void add_cluster_data(const std::string& name, const std::vector<Point2D>& points, const std::vector<int>& cluster_labels, double point_size = 3.0, double alpha = 0.8);
-void add_cluster_point(const std::string& series_name, double x, double y, int cluster_label);
-```
-
-#### Customization
-```cpp
-void set_bounds(double min_x, double max_x, double min_y, double max_y);  // Manual axis bounds
-```
-
-#### Saving
-```cpp
-bool save_png(const std::string& filename);
-bool save_svg(const std::string& filename);
-```
-
-#### Utility
-```cpp
-void clear();  // Clear all data and reset labels
-```
-
-### SubplotManager Class
-
-#### Constructor
-```cpp
-SubplotManager(int rows, int cols, int width = 1200, int height = 900, double spacing = 0.05)
-```
-
-#### Subplot Access
-```cpp
-ScatterPlot& get_subplot(int row, int col);  // Get subplot at position (row, col)
-```
-
-#### Configuration
-```cpp
-void set_main_title(const std::string& title);  // Set main title for entire figure
-```
-
-#### Saving
-```cpp
-bool save_png(const std::string& filename);
-bool save_svg(const std::string& filename);
-```
-
-#### Layout Information
-```cpp
-int get_rows() const;
-int get_cols() const;
-```
-
-### PlotStyle Structure
+### 1. Scatter Plots
+Perfect for showing relationships between two variables or displaying clusters.
 
 ```cpp
-struct PlotStyle {
-    double point_size = 3.0;           // Point radius in pixels
-    double r = 0.0, g = 0.0, b = 1.0;  // RGB color (0.0 to 1.0)
-    double alpha = 1.0;                // Transparency (0.0 to 1.0)
-    std::string label = "";            // For legend (optional)
-};
+plotlib::ScatterPlot plot(800, 600);
+plot.add_data("Series 1", data1, "blue");
+plot.add_data("Series 2", data2, "red");
+plot.save_png("scatter.png");
 ```
 
-### Point2D Structure
+### 2. Line Plots
+Ideal for time series data or continuous functions.
 
 ```cpp
-struct Point2D {
-    double x, y;
-    Point2D(double x = 0, double y = 0);
-};
+plotlib::LinePlot plot(800, 600);
+plot.add_line("Function", x_values, y_values, "green");
+plot.save_png("line.png");
 ```
 
-## Centralized Demo
+### 3. Histograms
+Great for showing data distributions.
 
-The `centralized_demo.cpp` provides a comprehensive demonstration of all library features:
+```cpp
+plotlib::HistogramPlot plot(800, 600);
+plot.add_histogram("Distribution", data, "purple", 20); // 20 bins
+plot.save_png("histogram.png");
+```
 
-### Generated Demonstrations:
-1. **Single Plot** - Basic scatter plot with multiple series and legend
-2. **Cluster Visualization** - Automatic coloring with outlier detection
-3. **1x6 Ultra-wide Layout** - Six different data patterns in horizontal layout
-4. **3x2 Analysis Dashboard** - Comprehensive mixed analysis with 6 subplots
-5. **6x1 Ultra-tall Layout** - Vertical stack of mathematical functions
-6. **2x3 Mixed Patterns** - Edge cases and varied data patterns
-7. **4x2 Feature Test** - Comprehensive library feature testing
+## 🎨 Easy Customization
 
-### Features Demonstrated:
-- ✅ Single plots with multiple series
-- ✅ Cluster visualization with automatic coloring
-- ✅ Various subplot layouts: 1x6, 3x2, 6x1, 2x3, 4x2
-- ✅ Automatic axis scaling and tick generation
-- ✅ Legend support and proper positioning
-- ✅ Title and axis label support
-- ✅ Aspect ratio preservation
-- ✅ Proper centering of title + subplots groups
-- ✅ Various data patterns and edge cases
+### Colors
+Use simple color names:
+- `"red"`, `"blue"`, `"green"`, `"orange"`
+- `"purple"`, `"cyan"`, `"magenta"`, `"yellow"`
+- `"black"`, `"gray"`
 
-### Running the Demo:
+### Automatic Colors
+Don't specify colors and the library will choose them automatically:
+
+```cpp
+plot.add_data("Series 1", data1);  // Automatically blue
+plot.add_data("Series 2", data2);  // Automatically red
+plot.add_data("Series 3", data3);  // Automatically green
+```
+
+### Histogram Bins
+Control the number of bins in histograms:
+
+```cpp
+plot.add_histogram("Data", values);        // Automatic bin count
+plot.add_histogram("Data", values, 15);    // 15 bins
+plot.add_histogram("Data", values, "red", 25); // 25 red bins
+```
+
+## 📈 Subplots
+
+Create multiple plots in one figure:
+
+```cpp
+plotlib::SubplotManager manager(2, 2, 1200, 900); // 2x2 grid
+manager.set_main_title("My Dashboard");
+
+// Top-left: Scatter plot
+auto& scatter = manager.get_subplot<plotlib::ScatterPlot>(0, 0);
+scatter.set_labels("Scatter", "X", "Y");
+scatter.add_data("Data", scatter_data, "blue");
+
+// Top-right: Line plot
+auto& line = manager.get_subplot<plotlib::LinePlot>(0, 1);
+line.set_labels("Line", "X", "Y");
+line.add_line("Function", line_data, "red");
+
+// Bottom-left: Histogram
+auto& hist = manager.get_subplot<plotlib::HistogramPlot>(1, 0);
+hist.set_labels("Distribution", "Value", "Frequency");
+hist.add_histogram("Data", hist_data, "green");
+
+manager.save_png("dashboard.png");
+```
+
+## 🔧 Advanced Features
+
+### Legend Control
+```cpp
+plot.hide_legend_item("Series 2");     // Hide specific series
+plot.set_legend_enabled(false);        // Hide entire legend
+plot.show_all_legend_items();          // Show all items
+```
+
+### Histogram Options
+```cpp
+hist.set_normalize(true);               // Probability density
+hist.set_cumulative(true);              // Cumulative distribution
+hist.set_default_bin_count(30);         // Default bins for auto-binning
+```
+
+### Line Plot Options
+```cpp
+line.set_show_markers(true);            // Show markers on lines
+line.set_default_line_width(3.0);       // Thicker lines
+```
+
+### Cluster Analysis
+```cpp
+std::vector<plotlib::Point2D> points = {{1,1}, {2,2}, {5,5}, {6,6}};
+std::vector<int> labels = {0, 0, 1, 1};  // Cluster labels
+plot.add_clusters(points, labels);       // Automatic cluster coloring
+```
+
+## 📁 Project Structure
+
+```
+plotlib/
+├── include/plotlib/          # Header files
+│   ├── scatter_plot.h
+│   ├── line_plot.h
+│   ├── histogram_plot.h
+│   └── plot_manager.h
+├── src/                      # Source files
+├── examples/                 # Example programs
+│   ├── beginner/            # Beginner-friendly examples
+│   ├── intermediate/        # More advanced examples
+│   └── advanced/            # Complex use cases
+├── docs/                    # Documentation
+│   ├── tutorial/            # Step-by-step tutorials
+│   ├── api/                 # API reference
+│   └── gallery/             # Plot gallery
+└── tests/                   # Unit tests
+```
+
+## 📚 Learning Resources
+
+- **[Beginner Tutorial](docs/tutorial/beginner.md)** - Start here if you're new to plotting
+- **[API Reference](docs/api/README.md)** - Complete function documentation
+- **[Example Gallery](docs/gallery/README.md)** - Visual examples with code
+- **[Advanced Guide](docs/tutorial/advanced.md)** - Complex plotting techniques
+
+## 🎯 Examples
+
+Check out the `examples/` directory for:
+- **Beginner examples**: Simple, well-commented code
+- **Intermediate examples**: Real-world use cases
+- **Advanced examples**: Complex visualizations and customizations
+
+## 🛠️ Building Your Project
+
+### CMake Integration
+```cmake
+find_package(PlotLib REQUIRED)
+target_link_libraries(your_target PlotLib::plotlib)
+```
+
+### Manual Compilation
 ```bash
-# Build and run
-make run
-
-# Or manually
-./centralized_demo
+g++ -std=c++17 -I./include your_code.cpp -L./build -lplotlib `pkg-config --cflags --libs cairo cairo-svg` -o your_program
 ```
 
-All outputs are saved to the `output/` directory with descriptive filenames.
+## 🤝 Contributing
 
-## Advanced Features
+We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
-### Automatic Axis Scaling
-The library automatically determines appropriate axis bounds and tick marks based on your data range. Tick marks are placed at "nice" intervals (1, 2, 5, 10, etc.) for better readability.
+## 📄 License
 
-### Legend Positioning
-Legends are automatically positioned in the top-right corner and only appear when you have multiple named series.
+This project is licensed under the MIT License - see [LICENSE](LICENSE) for details.
 
-### Grid Lines
-Grid lines are automatically aligned with axis tick marks for a professional appearance.
+## 🆘 Getting Help
 
-### Color Customization
-Colors are specified in RGB format with values from 0.0 to 1.0:
-- Red: `{1.0, 0.0, 0.0}`
-- Green: `{0.0, 1.0, 0.0}`
-- Blue: `{0.0, 0.0, 1.0}`
-- Purple: `{0.6, 0.2, 0.8}`
-- Orange: `{1.0, 0.5, 0.0}`
+- Check the [documentation](docs/)
+- Look at [examples](examples/)
+- Open an issue on GitHub
 
-### Cluster Visualization
-The library provides specialized support for visualizing clustering results:
+---
 
-- **Automatic Color Assignment**: Clusters (labels 0, 1, 2, ...) get distinct colors automatically
-- **Outlier Handling**: Points with label -1 are marked as red crosses and drawn in the background
-- **Proper Layering**: Outliers are drawn first (background), then cluster points (foreground)
-- **Smart Legend**: Automatically shows "Outliers" and "Cluster 0", "Cluster 1", etc.
-
-#### Cluster Example
-```cpp
-std::vector<Point2D> points = {{1, 2}, {1.1, 2.1}, {5, 5}, {-1, -1}};
-std::vector<int> labels = {0, 0, 1, -1};  // Two clusters + one outlier
-plot.add_cluster_data("DBSCAN Results", points, labels);
-```
-
-### Subplot Support
-Create multiple plots arranged in grid layouts for comprehensive data analysis:
-
-- **Grid Layouts**: Support for any MxN grid (2x2, 1x2, 2x1, 3x2, etc.)
-- **Independent Plots**: Each subplot is a complete plot with all features
-- **Automatic Scaling**: Plots automatically scale to fit the grid
-- **Main Title**: Optional main title for the entire figure
-- **Configurable Spacing**: Adjust spacing between subplots
-
-#### Subplot Example
-```cpp
-// Create a 2x2 subplot layout
-SubplotManager subplots(2, 2, 1400, 1000);
-subplots.set_main_title("Data Analysis Dashboard");
-
-// Configure each subplot independently
-auto& plot1 = subplots.get_subplot(0, 0);  // Top-left
-plot1.set_labels("Distribution Analysis", "X", "Y");
-plot1.add_series("Normal", normal_data, blue_style);
-
-auto& plot2 = subplots.get_subplot(0, 1);  // Top-right
-plot2.set_labels("Clustering Results", "Feature 1", "Feature 2");
-plot2.add_cluster_data("DBSCAN", points, labels);
-
-// Save the entire subplot figure
-subplots.save_png("dashboard.png");
-```
-
-## Output Files
-
-The library generates high-quality output in two formats:
-- **PNG**: Raster format, good for web and presentations
-- **SVG**: Vector format, scalable and good for publications
-
-## License
-
-This library is provided as-is for educational and research purposes. 
+**Happy Plotting! 📊✨** 

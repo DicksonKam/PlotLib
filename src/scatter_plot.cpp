@@ -87,6 +87,22 @@ void ScatterPlot::add_points(const std::vector<Point2D>& pts, const PlotStyle& s
     bounds_set = false;
 }
 
+// Beginner-friendly convenience methods
+void ScatterPlot::add_data(const std::string& name, const std::vector<Point2D>& data) {
+    // Use automatic color based on series count
+    std::vector<std::string> auto_colors = {"blue", "red", "green", "orange", "purple", "cyan", "magenta", "yellow"};
+    std::string color = auto_colors[data_series.size() % auto_colors.size()];
+    add_series(name, data, color_to_style(color, 3.0, 2.0));
+}
+
+void ScatterPlot::add_data(const std::string& name, const std::vector<Point2D>& data, const std::string& color_name) {
+    add_series(name, data, color_to_style(color_name, 3.0, 2.0));
+}
+
+void ScatterPlot::add_clusters(const std::vector<Point2D>& data, const std::vector<int>& labels) {
+    add_cluster_data("Clusters", data, labels);
+}
+
 // Implementation of the non-template get_subplot method for backward compatibility
 ScatterPlot& SubplotManager::get_subplot(int row, int col) {
     return get_subplot<ScatterPlot>(row, col);

@@ -151,6 +151,31 @@ public:
      * @return The current default marker type
      */
     MarkerType get_default_marker_type() const { return default_marker_type; }
+    
+    /**
+     * @brief Add a simple line series with automatic styling (beginner-friendly)
+     * @param name Series name for legend
+     * @param data Vector of 2D points
+     */
+    void add_line(const std::string& name, const std::vector<Point2D>& data);
+    
+    /**
+     * @brief Add a simple line series with custom color (beginner-friendly)
+     * @param name Series name for legend
+     * @param data Vector of 2D points
+     * @param color_name Color name ("red", "blue", "green", "orange", "purple", "cyan", "magenta", "yellow")
+     */
+    void add_line(const std::string& name, const std::vector<Point2D>& data, const std::string& color_name);
+    
+    /**
+     * @brief Add line from X and Y vectors (beginner-friendly)
+     * @param name Series name for legend
+     * @param x_values Vector of X coordinates
+     * @param y_values Vector of Y coordinates
+     * @param color_name Optional color name
+     */
+    void add_line(const std::string& name, const std::vector<double>& x_values, 
+                  const std::vector<double>& y_values, const std::string& color_name = "auto");
 };
 
 } // namespace plotlib

@@ -180,7 +180,4 @@ public:
 
 } // namespace plotlib
 
-// For backward compatibility, bring LinePlot into global namespace
-using plotlib::LinePlot;
-
 #endif // PLOTLIB_LINE_PLOT_H 

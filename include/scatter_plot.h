@@ -133,15 +133,4 @@ public:
 
 } // namespace plotlib
 
-// For backward compatibility, bring all types into global namespace
-using plotlib::Point2D;
-using plotlib::PlotStyle;
-using plotlib::MarkerType;
-using plotlib::DataSeries;
-using plotlib::ClusterPoint;
-using plotlib::ClusterSeries;
-using plotlib::SubplotLayout;
-using plotlib::ScatterPlot;
-using plotlib::SubplotManager;
-
 #endif // PLOTLIB_SCATTER_PLOT_H

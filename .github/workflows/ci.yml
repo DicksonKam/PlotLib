@@ -24,7 +24,7 @@ jobs:
       if: matrix.os == 'ubuntu-latest'
       run: |
         sudo apt-get update
-        sudo apt-get install -y build-essential cmake pkg-config libcairo2-dev libcairo2-dev
+        sudo apt-get install -y build-essential cmake pkg-config libcairo2-dev
 
     - name: Install dependencies (macOS)
       if: matrix.os == 'macOS-latest'
@@ -47,12 +47,15 @@ jobs:
     - name: Configure CMake
       run: |
         cd build
+        pkg-config --exists cairo && echo "Cairo found" || echo "Cairo not found"
+        pkg-config --cflags cairo
+        pkg-config --libs cairo
         cmake .. -DCMAKE_BUILD_TYPE=Release
 
     - name: Build library
       run: |
         cd build
-        make plotlib -j$(nproc)
+        make plotlib -j$(nproc 2>/dev/null || echo 2)
 
     - name: Build tests
       run: |

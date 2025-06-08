@@ -391,13 +391,19 @@ void PlotManager::draw_marker(cairo_t* cr, double x, double y, MarkerType type, 
 }
 
 void PlotManager::draw_legend(cairo_t* cr) {
+    if (!show_legend) return;
+    
     // Collect all series for legend
     std::vector<std::pair<std::string, PlotStyle>> legend_items;
+    std::vector<MarkerType> legend_markers;
     
-    // Add regular series
-    for (const auto& series : data_series) {
-        if (!series.name.empty()) {
-            legend_items.emplace_back(series.name, series.style);
+    // Add regular series (skip if only one default series)
+    if (data_series.size() > 1 || (data_series.size() == 1 && data_series[0].name != "Default")) {
+        for (const auto& series : data_series) {
+            if (!series.name.empty() && hidden_legend_items.find(series.name) == hidden_legend_items.end()) {
+                legend_items.emplace_back(series.name, series.style);
+                legend_markers.push_back(MarkerType::CIRCLE);
+            }
         }
     }
     
@@ -410,17 +416,22 @@ void PlotManager::draw_legend(cairo_t* cr) {
                 if (cluster_labels_seen.find(cluster_pt.cluster_label) == cluster_labels_seen.end()) {
                     cluster_labels_seen.insert(cluster_pt.cluster_label);
                     
-                    PlotStyle cluster_style;
-                    auto color = get_cluster_color(cluster_pt.cluster_label);
-                    cluster_style.r = color[0];
-                    cluster_style.g = color[1];
-                    cluster_style.b = color[2];
-                    cluster_style.point_size = series.point_size;
-                    cluster_style.alpha = series.alpha;
-                    
                     std::string label = (cluster_pt.cluster_label == -1) ? "Outliers" : 
                                        ("Cluster " + std::to_string(cluster_pt.cluster_label));
-                    legend_items.emplace_back(label, cluster_style);
+                    
+                    // Check if this legend item should be hidden
+                    if (hidden_legend_items.find(label) == hidden_legend_items.end()) {
+                        PlotStyle cluster_style;
+                        auto color = get_cluster_color(cluster_pt.cluster_label);
+                        cluster_style.r = color[0];
+                        cluster_style.g = color[1];
+                        cluster_style.b = color[2];
+                        cluster_style.point_size = series.point_size;
+                        cluster_style.alpha = series.alpha;
+                        
+                        legend_items.emplace_back(label, cluster_style);
+                        legend_markers.push_back(cluster_pt.cluster_label == -1 ? MarkerType::CROSS : MarkerType::CIRCLE);
+                    }
                 }
             }
         }
@@ -428,26 +439,38 @@ void PlotManager::draw_legend(cairo_t* cr) {
     
     if (legend_items.empty()) return;
     
-    // Calculate legend position and size
+    cairo_set_source_rgb(cr, 0, 0, 0);
     cairo_select_font_face(cr, "Arial", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
     cairo_set_font_size(cr, 10);
     
     double legend_x = width - margin_right + 10;
     double legend_y = margin_top + 20;
-    double line_height = 16;
+    double line_height = 20;
+    
+    // Draw legend background
+    double legend_width = 120;
+    double legend_height = legend_items.size() * line_height + 10;
+    cairo_set_source_rgba(cr, 1, 1, 1, 0.9);
+    cairo_rectangle(cr, legend_x - 5, legend_y - 15, legend_width, legend_height);
+    cairo_fill(cr);
+    
+    cairo_set_source_rgba(cr, 0, 0, 0, 0.3);
+    cairo_rectangle(cr, legend_x - 5, legend_y - 15, legend_width, legend_height);
+    cairo_stroke(cr);
     
     // Draw legend items
     for (size_t i = 0; i < legend_items.size(); ++i) {
-        double y = legend_y + i * line_height;
+        double y_pos = legend_y + i * line_height;
         
         // Draw marker
-        draw_marker(cr, legend_x + 6, y, MarkerType::CIRCLE, legend_items[i].second.point_size,
+        draw_marker(cr, legend_x + 8, y_pos, legend_markers[i], 
+                   legend_items[i].second.point_size + 1,
                    legend_items[i].second.r, legend_items[i].second.g, legend_items[i].second.b,
                    legend_items[i].second.alpha);
         
         // Draw text
         cairo_set_source_rgb(cr, 0, 0, 0);
-        cairo_move_to(cr, legend_x + 15, y + 4);
+        cairo_move_to(cr, legend_x + 20, y_pos + 4);
         cairo_show_text(cr, legend_items[i].first.c_str());
     }
 }
@@ -537,6 +560,25 @@ void PlotManager::clear() {
     x_label = "";
     y_label = "";
     bounds_set = false;
+    hidden_legend_items.clear();
+    show_legend = true;
+}
+
+// Legend management methods
+void PlotManager::set_legend_enabled(bool enabled) {
+    show_legend = enabled;
+}
+
+void PlotManager::hide_legend_item(const std::string& item_name) {
+    hidden_legend_items.insert(item_name);
+}
+
+void PlotManager::show_legend_item(const std::string& item_name) {
+    hidden_legend_items.erase(item_name);
+}
+
+void PlotManager::show_all_legend_items() {
+    hidden_legend_items.clear();
 }
 
 // SubplotManager implementation

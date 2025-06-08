@@ -18,6 +18,7 @@ set(PLOTLIB_SOURCES
     src/plot_manager.cpp
     src/scatter_plot.cpp
     src/line_plot.cpp
+    src/histogram_plot.cpp
 )
 
 # Create the library

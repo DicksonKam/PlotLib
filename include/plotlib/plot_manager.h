@@ -16,6 +16,7 @@
 #include <vector>
 #include <string>
 #include <memory>
+#include <set>
 #include <cairo.h>
 #include <cairo-svg.h>
 
@@ -160,6 +161,10 @@ protected:
     
     // Cluster color management
     std::vector<std::vector<double>> cluster_colors; ///< RGB colors for cluster visualization
+    
+    // Legend management
+    std::set<std::string> hidden_legend_items; ///< Set of legend items to hide
+    bool show_legend = true;                  ///< Whether to show legend at all
     
     // Subplot support
     bool is_subplot = false;                  ///< Whether this plot is part of a subplot grid
@@ -311,6 +316,31 @@ public:
      * @brief Clear all data and reset labels
      */
     virtual void clear();
+    
+    // Legend management methods
+    
+    /**
+     * @brief Enable or disable the legend display
+     * @param enabled Whether to show the legend
+     */
+    virtual void set_legend_enabled(bool enabled);
+    
+    /**
+     * @brief Hide a specific legend item
+     * @param item_name Name of the legend item to hide
+     */
+    virtual void hide_legend_item(const std::string& item_name);
+    
+    /**
+     * @brief Show a specific legend item (remove from hidden list)
+     * @param item_name Name of the legend item to show
+     */
+    virtual void show_legend_item(const std::string& item_name);
+    
+    /**
+     * @brief Clear all hidden legend items (show all)
+     */
+    virtual void show_all_legend_items();
     
     /**
      * @brief Get the number of data series

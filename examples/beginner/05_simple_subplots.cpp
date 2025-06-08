@@ -8,10 +8,10 @@
  * - Create dashboards and reports
  */
 
-#include "plotlib/scatter_plot.h"
-#include "plotlib/line_plot.h"
-#include "plotlib/histogram_plot.h"
-#include "plotlib/plot_manager.h"
+#include "scatter_plot.h"
+#include "line_plot.h"
+#include "histogram_plot.h"
+#include "plot_manager.h"
 #include <vector>
 #include <iostream>
 #include <cmath>

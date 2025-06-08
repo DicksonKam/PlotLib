@@ -93,7 +93,7 @@ cd plotlib
 ### Your First Plot
 
 ```cpp
-#include "plotlib/scatter_plot.h"
+#include "scatter_plot.h"
 #include <vector>
 
 int main() {
@@ -247,7 +247,7 @@ plot.add_clusters(points, labels);       // Automatic cluster coloring
 
 ```
 plotlib/
-├── include/plotlib/          # Header files
+├── include/                  # Header files
 │   ├── scatter_plot.h
 │   ├── line_plot.h
 │   ├── histogram_plot.h

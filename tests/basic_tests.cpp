@@ -1,6 +1,6 @@
-#include "plotlib/scatter_plot.h"
-#include "plotlib/line_plot.h"
-#include "plotlib/histogram_plot.h"
+#include "scatter_plot.h"
+#include "line_plot.h"
+#include "histogram_plot.h"
 #include <iostream>
 #include <vector>
 #include <cassert>

@@ -8,7 +8,7 @@
  * - Understand automatic vs manual coloring
  */
 
-#include "plotlib/scatter_plot.h"
+#include "scatter_plot.h"
 #include <vector>
 #include <iostream>
 

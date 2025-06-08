@@ -1,4 +1,4 @@
-#include "plotlib/line_plot.h"
+#include "line_plot.h"
 #include <algorithm>
 #include <cmath>
 #include <iostream>

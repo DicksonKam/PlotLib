@@ -217,7 +217,7 @@ manager.set_main_title("Student Performance Analysis");
 
 ### Quick Scatter Plot
 ```cpp
-#include "plotlib/scatter_plot.h"
+#include "scatter_plot.h"
 plotlib::ScatterPlot plot(800, 600);
 plot.set_labels("Title", "X", "Y");
 plot.add_data("Data", points, "blue");
@@ -226,7 +226,7 @@ plot.save_png("output.png");
 
 ### Quick Line Plot
 ```cpp
-#include "plotlib/line_plot.h"
+#include "line_plot.h"
 plotlib::LinePlot plot(800, 600);
 plot.set_labels("Title", "X", "Y");
 plot.add_line("Data", x_vals, y_vals, "red");
@@ -235,7 +235,7 @@ plot.save_png("output.png");
 
 ### Quick Histogram
 ```cpp
-#include "plotlib/histogram_plot.h"
+#include "histogram_plot.h"
 plotlib::HistogramPlot plot(800, 600);
 plot.set_labels("Title", "Value", "Frequency");
 plot.add_histogram("Data", values, "green", 20);
@@ -244,7 +244,7 @@ plot.save_png("output.png");
 
 ### Quick Dashboard
 ```cpp
-#include "plotlib/plot_manager.h"
+#include "plot_manager.h"
 plotlib::SubplotManager manager(2, 2, 1200, 900);
 auto& plot1 = manager.get_subplot<plotlib::ScatterPlot>(0, 0);
 auto& plot2 = manager.get_subplot<plotlib::LinePlot>(0, 1);

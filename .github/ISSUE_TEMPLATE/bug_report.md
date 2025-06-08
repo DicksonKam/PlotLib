@@ -34,7 +34,7 @@ If applicable, add screenshots to help explain your problem.
 ## 📁 Code Example
 ```cpp
 // Minimal code example that reproduces the issue
-#include "plotlib/scatter_plot.h"
+#include "scatter_plot.h"
 
 int main() {
     // Your code here

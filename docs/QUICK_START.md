@@ -18,7 +18,7 @@ cd plotlib
 Create a file called `my_plot.cpp`:
 
 ```cpp
-#include "plotlib/scatter_plot.h"
+#include "scatter_plot.h"
 #include <vector>
 
 int main() {

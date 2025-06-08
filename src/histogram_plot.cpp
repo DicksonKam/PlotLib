@@ -1,4 +1,4 @@
-#include "plotlib/histogram_plot.h"
+#include "histogram_plot.h"
 #include <algorithm>
 #include <cmath>
 #include <numeric>

@@ -1,4 +1,4 @@
-#include "plotlib/plot_manager.h"
+#include "plot_manager.h"
 #include <algorithm>
 #include <cmath>
 #include <iostream>

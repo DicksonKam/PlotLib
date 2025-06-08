@@ -8,7 +8,7 @@
  * - Comparing different groups of data
  */
 
-#include "plotlib/histogram_plot.h"
+#include "histogram_plot.h"
 #include <vector>
 #include <iostream>
 #include <random>

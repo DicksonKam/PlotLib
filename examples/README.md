@@ -198,7 +198,7 @@ Try modifying the examples:
 Use this template to create your own examples:
 
 ```cpp
-#include "plotlib/scatter_plot.h"  // or line_plot.h, histogram_plot.h
+#include "scatter_plot.h"  // or line_plot.h, histogram_plot.h
 #include <vector>
 #include <iostream>
 

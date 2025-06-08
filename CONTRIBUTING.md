@@ -89,7 +89,7 @@ make -j$(nproc)
 
 When adding new plot types, follow this checklist:
 
-1. **Create header file** in `include/plotlib/`
+1. **Create header file** in `include/`
    - Inherit from `PlotManager`
    - Document all public methods
    - Follow existing naming patterns

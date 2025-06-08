@@ -6,7 +6,7 @@
  * Perfect for beginners who want to get started quickly!
  */
 
-#include "plotlib/scatter_plot.h"
+#include "scatter_plot.h"
 #include <vector>
 #include <iostream>
 

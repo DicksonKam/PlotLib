@@ -1,4 +1,4 @@
-#include "plotlib/scatter_plot.h"
+#include "scatter_plot.h"
 #include <algorithm>
 #include <cmath>
 #include <iostream>

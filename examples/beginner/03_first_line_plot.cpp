@@ -8,7 +8,7 @@
  * - Showing trends and patterns
  */
 
-#include "plotlib/line_plot.h"
+#include "line_plot.h"
 #include <vector>
 #include <iostream>
 #include <cmath>

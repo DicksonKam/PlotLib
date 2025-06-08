@@ -12,7 +12,7 @@
 #ifndef PLOTLIB_SCATTER_PLOT_H
 #define PLOTLIB_SCATTER_PLOT_H
 
-#include "plotlib/plot_manager.h"
+#include "plot_manager.h"
 
 namespace plotlib {
 

@@ -23,7 +23,7 @@ By the end of this tutorial, you'll be able to:
 Let's create a simple scatter plot. A scatter plot shows individual data points and is great for seeing relationships between two variables.
 
 ```cpp
-#include "plotlib/scatter_plot.h"
+#include "scatter_plot.h"
 #include <vector>
 
 int main() {
@@ -82,7 +82,7 @@ plot.add_data("Series 4", data4, "purple");
 Line plots are perfect for showing how something changes over time or for plotting mathematical functions:
 
 ```cpp
-#include "plotlib/line_plot.h"
+#include "line_plot.h"
 
 // Easy way: Use separate X and Y vectors
 std::vector<double> time = {0, 1, 2, 3, 4, 5};
@@ -104,7 +104,7 @@ plot.save_png("temperature.png");
 Histograms show you how your data is distributed - where most values fall and how spread out they are:
 
 ```cpp
-#include "plotlib/histogram_plot.h"
+#include "histogram_plot.h"
 
 // Example: Test scores
 std::vector<double> scores = {
@@ -134,7 +134,7 @@ plot.save_png("test_scores.png");
 Sometimes you want to show several related plots together. That's where subplots come in:
 
 ```cpp
-#include "plotlib/plot_manager.h"  // For SubplotManager
+#include "plot_manager.h"  // For SubplotManager
 
 // Create a 2x2 grid (2 rows, 2 columns)
 plotlib::SubplotManager manager(2, 2, 1200, 900);

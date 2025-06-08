@@ -178,7 +178,6 @@ public:
     
 private:
     void render_to_context(cairo_t* cr);
-    void draw_main_title(cairo_t* cr);
     double get_title_height(cairo_t* cr) const;
 };
 

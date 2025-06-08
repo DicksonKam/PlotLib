@@ -653,56 +653,13 @@ void ScatterPlot::clear() {
 SubplotManager::SubplotManager(int rows, int cols, int width, int height, double spacing) 
     : layout(rows, cols, spacing), total_width(width), total_height(height) {
     
-    // Calculate available space for plots (excluding spacing and title)
-    double total_spacing_width = spacing * width * (cols + 1);
-    double total_spacing_height = spacing * height * (rows + 1);
-    
-    // Reserve space for main title - will be calculated more precisely later
-    double title_height = 30.0;  // Conservative estimate
-    double available_width = width - total_spacing_width;
-    double available_height = height - total_spacing_height - title_height;
-    
-    // Calculate individual subplot dimensions
-    double subplot_width = available_width / cols;
-    double subplot_height = available_height / rows;
-    
-    // Initialize subplot grid
+    // Initialize subplot grid - positioning will be calculated dynamically during rendering
     subplots.resize(rows);
     for (int i = 0; i < rows; ++i) {
         subplots[i].resize(cols);
         for (int j = 0; j < cols; ++j) {
-            // Create subplot with standard size (will be scaled during rendering)
+            // Create subplot with standard size (will be scaled and positioned during rendering)
             subplots[i][j] = std::make_unique<ScatterPlot>(800, 600);
-            
-            // Calculate position for this subplot
-            double x_offset = spacing * width + j * (subplot_width + spacing * width);
-            double y_offset = spacing * height + i * (subplot_height + spacing * height);
-            
-            // Calculate the total height of the subplot grid
-            double total_subplot_height = rows * subplot_height + (rows - 1) * spacing * height;
-            double total_content_height = total_subplot_height + title_height;
-            
-            // Center the entire content (title + subplots) vertically
-            double vertical_center_offset = (height - total_content_height) / 2.0;
-            y_offset += vertical_center_offset + title_height;
-            
-            // Calculate scale factors to fit the subplot into the allocated space while preserving aspect ratio
-            double width_scale = subplot_width / 800.0;   // Scale from standard 800 width
-            double height_scale = subplot_height / 600.0; // Scale from standard 600 height
-            
-            // Use the smaller scale factor to preserve aspect ratio
-            double uniform_scale = std::min(width_scale, height_scale);
-            
-            // Center the subplot within its allocated space
-            double actual_width = 800.0 * uniform_scale;
-            double actual_height = 600.0 * uniform_scale;
-            double center_x_offset = (subplot_width - actual_width) / 2.0;
-            double center_y_offset = (subplot_height - actual_height) / 2.0;
-            
-            x_offset += center_x_offset;
-            y_offset += center_y_offset;
-            
-            subplots[i][j]->set_subplot_transform(x_offset, y_offset, uniform_scale, uniform_scale);
         }
     }
 }
@@ -732,59 +689,66 @@ double SubplotManager::get_title_height(cairo_t* cr) const {
     return extents.height + 10;  // Text height + minimal padding
 }
 
-void SubplotManager::draw_main_title(cairo_t* cr) {
-    if (main_title.empty()) return;
-    
-    cairo_set_source_rgb(cr, 0, 0, 0);
-    cairo_select_font_face(cr, "Arial", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD);
-    cairo_set_font_size(cr, 20);
-    
-    cairo_text_extents_t extents;
-    cairo_text_extents(cr, main_title.c_str(), &extents);
-    double x_pos = (total_width - extents.width) / 2;
-    
-    // Calculate the same centering offset as used for subplots
-    double actual_title_height = get_title_height(cr);
-    double total_spacing_height = layout.spacing * total_height * (layout.rows + 1);
-    double available_height = total_height - total_spacing_height - actual_title_height;
-    double subplot_height = available_height / layout.rows;
-    double total_subplot_height = layout.rows * subplot_height + (layout.rows - 1) * layout.spacing * total_height;
-    double total_content_height = total_subplot_height + actual_title_height;
-    double vertical_center_offset = (total_height - total_content_height) / 2.0;
-    
-    // Position title at the top of the centered content
-    double title_y = vertical_center_offset + extents.height + 5;  // Minimal padding from top
-    cairo_move_to(cr, x_pos, title_y);
-    cairo_show_text(cr, main_title.c_str());
-}
+
 
 void SubplotManager::render_to_context(cairo_t* cr) {
     // White background
     cairo_set_source_rgb(cr, 1, 1, 1);
     cairo_paint(cr);
     
-    // Recalculate positions with actual title height
+    // Get actual title height (0 if no title)
     double actual_title_height = get_title_height(cr);
-    double total_spacing_width = layout.spacing * total_width * (layout.cols + 1);
-    double total_spacing_height = layout.spacing * total_height * (layout.rows + 1);
-    double available_width = total_width - total_spacing_width;
-    double available_height = total_height - total_spacing_height - actual_title_height;
     
+    // Calculate spacing in pixels
+    double horizontal_spacing = layout.spacing * total_width;
+    double vertical_spacing = layout.spacing * total_height;
+    
+    // Calculate total spacing used
+    double total_horizontal_spacing = horizontal_spacing * (layout.cols + 1);
+    double total_vertical_spacing = vertical_spacing * (layout.rows + 1);
+    
+    // Calculate available space for subplots
+    double available_width = total_width - total_horizontal_spacing;
+    double available_height = total_height - total_vertical_spacing;
+    
+    // Calculate individual subplot dimensions
     double subplot_width = available_width / layout.cols;
     double subplot_height = available_height / layout.rows;
     
-    // Calculate total content dimensions for centering
-    double total_subplot_height = layout.rows * subplot_height + (layout.rows - 1) * layout.spacing * total_height;
-    double total_content_height = total_subplot_height + actual_title_height;
+    // Calculate the actual dimensions of the subplot grid
+    double grid_width = layout.cols * subplot_width + (layout.cols - 1) * horizontal_spacing;
+    double grid_height = layout.rows * subplot_height + (layout.rows - 1) * vertical_spacing;
+    
+    // Calculate total content height (title + grid)
+    double total_content_height = actual_title_height + grid_height;
+    if (actual_title_height > 0) {
+        total_content_height += vertical_spacing * 0.5; // Small gap between title and grid
+    }
+    
+    // Calculate centering offsets for the entire "title + subplots" group
+    double horizontal_center_offset = (total_width - grid_width) / 2.0;
     double vertical_center_offset = (total_height - total_content_height) / 2.0;
+    
+    // Calculate title position (centered horizontally, at top of content group)
+    double title_y = vertical_center_offset;
+    if (actual_title_height > 0) {
+        title_y += actual_title_height;
+    }
+    
+    // Calculate starting position for subplot grid
+    double grid_start_x = horizontal_center_offset;
+    double grid_start_y = vertical_center_offset;
+    if (actual_title_height > 0) {
+        grid_start_y += actual_title_height + vertical_spacing * 0.5;
+    }
     
     // Update subplot positions
     for (int i = 0; i < layout.rows; ++i) {
         for (int j = 0; j < layout.cols; ++j) {
             if (subplots[i][j]) {
-                double x_offset = layout.spacing * total_width + j * (subplot_width + layout.spacing * total_width);
-                double y_offset = layout.spacing * total_height + i * (subplot_height + layout.spacing * total_height);
-                y_offset += vertical_center_offset + actual_title_height;
+                // Calculate position within the grid
+                double x_offset = grid_start_x + j * (subplot_width + horizontal_spacing);
+                double y_offset = grid_start_y + i * (subplot_height + vertical_spacing);
                 
                 // Calculate scale factors with aspect ratio preservation
                 double width_scale = subplot_width / 800.0;
@@ -805,8 +769,19 @@ void SubplotManager::render_to_context(cairo_t* cr) {
         }
     }
     
-    // Draw main title
-    draw_main_title(cr);
+    // Draw main title with calculated position
+    if (!main_title.empty()) {
+        cairo_set_source_rgb(cr, 0, 0, 0);
+        cairo_select_font_face(cr, "Arial", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD);
+        cairo_set_font_size(cr, 20);
+        
+        cairo_text_extents_t extents;
+        cairo_text_extents(cr, main_title.c_str(), &extents);
+        double title_x = (total_width - extents.width) / 2.0;
+        
+        cairo_move_to(cr, title_x, title_y);
+        cairo_show_text(cr, main_title.c_str());
+    }
     
     // Render each subplot
     for (int i = 0; i < layout.rows; ++i) {

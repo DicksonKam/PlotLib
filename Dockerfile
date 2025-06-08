@@ -1,65 +1,53 @@
-# PlotLib Docker Image
-# Multi-stage build for cross-platform compatibility
-FROM alpine:latest as builder
+# PlotLib Cross-Platform Docker Image
+FROM alpine:latest
 
-# Install build dependencies
+# Install dependencies
 RUN apk add --no-cache \
     build-base \
     cmake \
     pkgconfig \
     cairo-dev \
-    git
-
-# Set working directory
-WORKDIR /app
-
-# Copy source code
-COPY . .
-
-# Build the library and examples
-RUN mkdir -p build && cd build && \
-    cmake .. -DCMAKE_BUILD_TYPE=Release && \
-    make plotlib && \
-    make beginner_examples && \
-    make advanced_examples && \
-    make basic_tests
-
-# Create output directory
-RUN mkdir -p /app/output
-
-# Runtime stage - minimal image with just what's needed to run
-FROM alpine:latest as runtime
-
-# Install runtime dependencies
-RUN apk add --no-cache \
     cairo \
-    libstdc++
+    libstdc++ \
+    git
 
 # Create non-root user
 RUN adduser -D -u 1000 plotlib
 
-# Create directories
+# Create working directory
 WORKDIR /app
-RUN mkdir -p /app/output && \
-    chown -R plotlib:plotlib /app
 
-# Copy built binaries and libraries from builder stage
-COPY --from=builder /app/build/plotlib /app/lib/
-COPY --from=builder /app/build/examples/ /app/examples/
-COPY --from=builder /app/build/tests/ /app/tests/
+# Copy source code
+COPY CMakeLists.txt .
+COPY cmake/ cmake/
+COPY include/ include/
+COPY src/ src/
+COPY examples/ examples/
+COPY tests/ tests/
 
-# Switch to non-root user
+# Set proper ownership
+RUN chown -R plotlib:plotlib /app
+
+# Switch to non-root user for build
 USER plotlib
+
+# Build PlotLib
+RUN mkdir -p build && \
+    cd build && \
+    cmake .. -DCMAKE_BUILD_TYPE=Release && \
+    make
+
+# Create output directory
+RUN mkdir -p output
 
 # Set environment variables
 ENV PLOTLIB_OUTPUT_DIR=/app/output
-ENV LD_LIBRARY_PATH=/app/lib
 
 # Volume for output
 VOLUME ["/app/output"]
 
 # Default command
-CMD ["/bin/sh", "-c", "echo 'PlotLib Docker Container Ready!' && echo 'Available examples:' && ls /app/examples/ && echo 'Run: docker run -v ./output:/app/output plotlib-image /app/examples/01_first_scatter_plot'"]
+CMD ["/bin/sh", "-c", "echo '🐳 PlotLib Cross-Platform Container Ready!' && echo 'Built successfully on Alpine Linux' && echo '✅ Available examples:' && ls -la /app/build/examples/ | grep -E '^-.*\\.' && echo '' && echo '📖 Usage:' && echo '  docker run -v ./output:/app/output plotlib /app/build/examples/01_first_scatter_plot' && echo '  docker run -v ./output:/app/output plotlib /app/build/examples/05_simple_subplots'"]
 
 # Labels for documentation
 LABEL org.opencontainers.image.title="PlotLib"

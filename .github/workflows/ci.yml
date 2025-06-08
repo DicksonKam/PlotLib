@@ -18,7 +18,7 @@ jobs:
             compiler: gcc
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: Install dependencies (Ubuntu)
       if: matrix.os == 'ubuntu-latest'
@@ -79,7 +79,7 @@ jobs:
         ./examples/01_first_scatter_plot
 
     - name: Upload artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: build-artifacts-${{ matrix.os }}-${{ matrix.compiler }}
         path: |

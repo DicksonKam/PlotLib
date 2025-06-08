@@ -67,13 +67,16 @@ A simple, beginner-friendly C++ plotting library for creating beautiful scatter 
 git clone https://github.com/DicksonKam/PlotLib
 cd plotlib
 
+# Build the Docker image
+docker build -t plotlib .
+
 # Run a quick example
 docker run --rm -v ./output:/app/output plotlib /app/build/examples/01_first_scatter_plot
 
 # Run advanced examples
 docker run --rm -v ./output:/app/output plotlib /app/build/examples/05_simple_subplots
 
-# Or use docker-compose for convenience
+# Or use docker-compose for conveniently building and running examples all at once
 docker-compose up plotlib
 ```
 

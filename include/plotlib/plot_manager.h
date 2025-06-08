@@ -389,20 +389,9 @@ public:
         }
         
         if (!subplots[row][col]) {
-            // Create a new subplot of the specified type
-            subplots[row][col] = std::make_unique<PlotType>();
-            
-            // Calculate subplot dimensions and position
-            double subplot_width = (total_width - (cols + 1) * spacing * total_width) / cols;
-            double subplot_height = (total_height - (rows + 1) * spacing * total_height) / rows;
-            
-            double x_offset = (col + 1) * spacing * total_width + col * subplot_width;
-            double y_offset = (row + 1) * spacing * total_height + row * subplot_height;
-            
-            double width_scale = subplot_width / total_width;
-            double height_scale = subplot_height / total_height;
-            
-            subplots[row][col]->set_subplot_transform(x_offset, y_offset, width_scale, height_scale);
+            // Create a new subplot of the specified type with standard size
+            // Positioning will be calculated dynamically during rendering
+            subplots[row][col] = std::make_unique<PlotType>(800, 600);
         }
         
         return static_cast<PlotType&>(*subplots[row][col]);
@@ -421,18 +410,7 @@ public:
         }
         
         subplots[row][col] = std::move(plot_instance);
-        
-        // Configure subplot transform
-        double subplot_width = (total_width - (cols + 1) * spacing * total_width) / cols;
-        double subplot_height = (total_height - (rows + 1) * spacing * total_height) / rows;
-        
-        double x_offset = (col + 1) * spacing * total_width + col * subplot_width;
-        double y_offset = (row + 1) * spacing * total_height + row * subplot_height;
-        
-        double width_scale = subplot_width / total_width;
-        double height_scale = subplot_height / total_height;
-        
-        subplots[row][col]->set_subplot_transform(x_offset, y_offset, width_scale, height_scale);
+        // Positioning will be calculated dynamically during rendering
     }
     
     /**

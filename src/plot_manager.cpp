@@ -184,20 +184,8 @@ void PlotManager::transform_point(double data_x, double data_y, double& screen_x
     double plot_width = width - margin_left - margin_right;
     double plot_height = height - margin_top - margin_bottom;
     
-    // Apply subplot transformations if this is a subplot
-    if (is_subplot) {
-        plot_width *= subplot_width_scale;
-        plot_height *= subplot_height_scale;
-    }
-    
     screen_x = margin_left + (data_x - min_x) / (max_x - min_x) * plot_width;
     screen_y = height - margin_bottom - (data_y - min_y) / (max_y - min_y) * plot_height;
-    
-    // Apply subplot offset if this is a subplot
-    if (is_subplot) {
-        screen_x += subplot_x_offset;
-        screen_y += subplot_y_offset;
-    }
 }
 
 std::string PlotManager::format_number(double value, int precision) {
@@ -243,30 +231,16 @@ std::vector<double> PlotManager::generate_nice_ticks(double min_val, double max_
 
 void PlotManager::draw_axes(cairo_t* cr) {
     cairo_set_source_rgb(cr, 0, 0, 0);
-    cairo_set_line_width(cr, 1.0);
+    cairo_set_line_width(cr, 1.5);
     
-    double plot_width = width - margin_left - margin_right;
-    double plot_height = height - margin_top - margin_bottom;
-    
-    // Apply subplot transformations
-    if (is_subplot) {
-        plot_width *= subplot_width_scale;
-        plot_height *= subplot_height_scale;
-    }
-    
-    double left = margin_left + (is_subplot ? subplot_x_offset : 0);
-    double bottom = height - margin_bottom + (is_subplot ? subplot_y_offset : 0);
-    double right = left + plot_width;
-    double top = bottom - plot_height;
-    
-    // Draw X axis
-    cairo_move_to(cr, left, bottom);
-    cairo_line_to(cr, right, bottom);
+    // X-axis
+    cairo_move_to(cr, margin_left, height - margin_bottom);
+    cairo_line_to(cr, width - margin_right, height - margin_bottom);
     cairo_stroke(cr);
     
-    // Draw Y axis
-    cairo_move_to(cr, left, bottom);
-    cairo_line_to(cr, left, top);
+    // Y-axis
+    cairo_move_to(cr, margin_left, margin_top);
+    cairo_line_to(cr, margin_left, height - margin_bottom);
     cairo_stroke(cr);
 }
 
@@ -276,112 +250,81 @@ void PlotManager::draw_axis_ticks(cairo_t* cr) {
     cairo_select_font_face(cr, "Arial", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
     cairo_set_font_size(cr, 10);
     
-    double plot_width = width - margin_left - margin_right;
-    double plot_height = height - margin_top - margin_bottom;
-    
-    if (is_subplot) {
-        plot_width *= subplot_width_scale;
-        plot_height *= subplot_height_scale;
-    }
-    
-    double left = margin_left + (is_subplot ? subplot_x_offset : 0);
-    double bottom = height - margin_bottom + (is_subplot ? subplot_y_offset : 0);
-    
     // X-axis ticks
-    auto x_ticks = generate_nice_ticks(min_x, max_x);
+    auto x_ticks = generate_nice_ticks(min_x, max_x, 6);
     for (double tick : x_ticks) {
-        double x = left + (tick - min_x) / (max_x - min_x) * plot_width;
+        double screen_x, screen_y;
+        transform_point(tick, min_y, screen_x, screen_y);
         
         // Draw tick mark
-        cairo_move_to(cr, x, bottom);
-        cairo_line_to(cr, x, bottom + 5);
+        cairo_move_to(cr, screen_x, height - margin_bottom);
+        cairo_line_to(cr, screen_x, height - margin_bottom + 5);
         cairo_stroke(cr);
         
         // Draw tick label
         std::string label = format_number(tick);
         cairo_text_extents_t extents;
         cairo_text_extents(cr, label.c_str(), &extents);
-        cairo_move_to(cr, x - extents.width / 2, bottom + 18);
+        cairo_move_to(cr, screen_x - extents.width/2, height - margin_bottom + 20);
         cairo_show_text(cr, label.c_str());
     }
     
     // Y-axis ticks
-    auto y_ticks = generate_nice_ticks(min_y, max_y);
+    auto y_ticks = generate_nice_ticks(min_y, max_y, 6);
     for (double tick : y_ticks) {
-        double y = bottom - (tick - min_y) / (max_y - min_y) * plot_height;
+        double screen_x, screen_y;
+        transform_point(min_x, tick, screen_x, screen_y);
         
         // Draw tick mark
-        cairo_move_to(cr, left, y);
-        cairo_line_to(cr, left - 5, y);
+        cairo_move_to(cr, margin_left, screen_y);
+        cairo_line_to(cr, margin_left - 5, screen_y);
         cairo_stroke(cr);
         
         // Draw tick label
         std::string label = format_number(tick);
         cairo_text_extents_t extents;
         cairo_text_extents(cr, label.c_str(), &extents);
-        cairo_move_to(cr, left - extents.width - 10, y + extents.height / 2);
+        cairo_move_to(cr, margin_left - extents.width - 10, screen_y + extents.height/2);
         cairo_show_text(cr, label.c_str());
     }
 }
 
 void PlotManager::draw_grid(cairo_t* cr) {
-    cairo_set_source_rgb(cr, 0.9, 0.9, 0.9);
+    cairo_set_source_rgba(cr, 0.9, 0.9, 0.9, 0.8);
     cairo_set_line_width(cr, 0.5);
     
-    double plot_width = width - margin_left - margin_right;
-    double plot_height = height - margin_top - margin_bottom;
-    
-    if (is_subplot) {
-        plot_width *= subplot_width_scale;
-        plot_height *= subplot_height_scale;
-    }
-    
-    double left = margin_left + (is_subplot ? subplot_x_offset : 0);
-    double bottom = height - margin_bottom + (is_subplot ? subplot_y_offset : 0);
-    double top = bottom - plot_height;
-    
-    // Vertical grid lines (X-axis ticks)
-    auto x_ticks = generate_nice_ticks(min_x, max_x);
+    // Vertical grid lines (based on x-axis ticks)
+    auto x_ticks = generate_nice_ticks(min_x, max_x, 6);
     for (double tick : x_ticks) {
-        double x = left + (tick - min_x) / (max_x - min_x) * plot_width;
-        cairo_move_to(cr, x, bottom);
-        cairo_line_to(cr, x, top);
+        double screen_x, screen_y;
+        transform_point(tick, min_y, screen_x, screen_y);
+        cairo_move_to(cr, screen_x, margin_top);
+        cairo_line_to(cr, screen_x, height - margin_bottom);
         cairo_stroke(cr);
     }
     
-    // Horizontal grid lines (Y-axis ticks)
-    auto y_ticks = generate_nice_ticks(min_y, max_y);
+    // Horizontal grid lines (based on y-axis ticks)
+    auto y_ticks = generate_nice_ticks(min_y, max_y, 6);
     for (double tick : y_ticks) {
-        double y = bottom - (tick - min_y) / (max_y - min_y) * plot_height;
-        cairo_move_to(cr, left, y);
-        cairo_line_to(cr, left + plot_width, y);
+        double screen_x, screen_y;
+        transform_point(min_x, tick, screen_x, screen_y);
+        cairo_move_to(cr, margin_left, screen_y);
+        cairo_line_to(cr, width - margin_right, screen_y);
         cairo_stroke(cr);
     }
 }
 
 void PlotManager::draw_axis_labels(cairo_t* cr) {
     cairo_set_source_rgb(cr, 0, 0, 0);
-    cairo_select_font_face(cr, "Arial", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
+    cairo_select_font_face(cr, "Arial", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD);
     cairo_set_font_size(cr, 12);
-    
-    double plot_width = width - margin_left - margin_right;
-    double plot_height = height - margin_top - margin_bottom;
-    
-    if (is_subplot) {
-        plot_width *= subplot_width_scale;
-        plot_height *= subplot_height_scale;
-    }
-    
-    double left = margin_left + (is_subplot ? subplot_x_offset : 0);
-    double bottom = height - margin_bottom + (is_subplot ? subplot_y_offset : 0);
     
     // X-axis label
     if (!x_label.empty()) {
         cairo_text_extents_t extents;
         cairo_text_extents(cr, x_label.c_str(), &extents);
-        double x = left + plot_width / 2 - extents.width / 2;
-        double y = bottom + 40;
-        cairo_move_to(cr, x, y);
+        double x_pos = margin_left + (width - margin_left - margin_right) / 2 - extents.width / 2;
+        cairo_move_to(cr, x_pos, height - 15);
         cairo_show_text(cr, x_label.c_str());
     }
     
@@ -389,13 +332,11 @@ void PlotManager::draw_axis_labels(cairo_t* cr) {
     if (!y_label.empty()) {
         cairo_text_extents_t extents;
         cairo_text_extents(cr, y_label.c_str(), &extents);
-        double x = left - 50;
-        double y = bottom - plot_height / 2 + extents.width / 2;
+        double y_pos = margin_top + (height - margin_top - margin_bottom) / 2 + extents.width / 2;
         
         cairo_save(cr);
-        cairo_translate(cr, x, y);
+        cairo_move_to(cr, 15, y_pos);
         cairo_rotate(cr, -M_PI / 2);
-        cairo_move_to(cr, 0, 0);
         cairo_show_text(cr, y_label.c_str());
         cairo_restore(cr);
     }
@@ -406,21 +347,12 @@ void PlotManager::draw_title(cairo_t* cr) {
     
     cairo_set_source_rgb(cr, 0, 0, 0);
     cairo_select_font_face(cr, "Arial", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD);
-    cairo_set_font_size(cr, 14);
+    cairo_set_font_size(cr, 16);
     
     cairo_text_extents_t extents;
     cairo_text_extents(cr, title.c_str(), &extents);
-    
-    double plot_width = width - margin_left - margin_right;
-    if (is_subplot) {
-        plot_width *= subplot_width_scale;
-    }
-    
-    double left = margin_left + (is_subplot ? subplot_x_offset : 0);
-    double x = left + plot_width / 2 - extents.width / 2;
-    double y = margin_top / 2 + extents.height / 2 + (is_subplot ? subplot_y_offset : 0);
-    
-    cairo_move_to(cr, x, y);
+    double x_pos = (width - extents.width) / 2;
+    cairo_move_to(cr, x_pos, 25);
     cairo_show_text(cr, title.c_str());
 }
 
@@ -435,7 +367,7 @@ void PlotManager::draw_marker(cairo_t* cr, double x, double y, MarkerType type, 
             break;
             
         case MarkerType::CROSS:
-            cairo_set_line_width(cr, 2.0);
+            cairo_set_line_width(cr, size * 0.4);
             cairo_move_to(cr, x - size, y - size);
             cairo_line_to(cr, x + size, y + size);
             cairo_move_to(cr, x - size, y + size);
@@ -450,8 +382,8 @@ void PlotManager::draw_marker(cairo_t* cr, double x, double y, MarkerType type, 
             
         case MarkerType::TRIANGLE:
             cairo_move_to(cr, x, y - size);
-            cairo_line_to(cr, x - size, y + size);
-            cairo_line_to(cr, x + size, y + size);
+            cairo_line_to(cr, x - size * 0.866, y + size * 0.5);
+            cairo_line_to(cr, x + size * 0.866, y + size * 0.5);
             cairo_close_path(cr);
             cairo_fill(cr);
             break;
@@ -500,8 +432,8 @@ void PlotManager::draw_legend(cairo_t* cr) {
     cairo_select_font_face(cr, "Arial", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
     cairo_set_font_size(cr, 10);
     
-    double legend_x = width - margin_right + 10 + (is_subplot ? subplot_x_offset : 0);
-    double legend_y = margin_top + 20 + (is_subplot ? subplot_y_offset : 0);
+    double legend_x = width - margin_right + 10;
+    double legend_y = margin_top + 20;
     double line_height = 16;
     
     // Draw legend items
@@ -533,14 +465,35 @@ void PlotManager::render_to_context(cairo_t* cr) {
         calculate_bounds();
     }
     
-    // Draw all components
-    draw_grid(cr);
-    draw_axes(cr);
-    draw_axis_ticks(cr);
-    draw_axis_labels(cr);
-    draw_title(cr);
-    draw_data(cr);  // This will be implemented by derived classes
-    draw_legend(cr);
+    if (is_subplot) {
+        // Save the current transformation matrix
+        cairo_save(cr);
+        
+        // Apply subplot transformation: translate first, then scale
+        cairo_translate(cr, subplot_x_offset, subplot_y_offset);
+        cairo_scale(cr, subplot_width_scale, subplot_height_scale);
+        
+        // Draw all plot elements within the transformed coordinate system
+        draw_grid(cr);
+        draw_axes(cr);
+        draw_axis_ticks(cr);
+        draw_axis_labels(cr);
+        draw_title(cr);
+        draw_data(cr);  // This will be implemented by derived classes
+        draw_legend(cr);
+        
+        // Restore the transformation matrix
+        cairo_restore(cr);
+    } else {
+        // Regular single plot rendering
+        draw_grid(cr);
+        draw_axes(cr);
+        draw_axis_ticks(cr);
+        draw_axis_labels(cr);
+        draw_title(cr);
+        draw_data(cr);  // This will be implemented by derived classes
+        draw_legend(cr);
+    }
 }
 
 bool PlotManager::save_png(const std::string& filename) {
@@ -607,37 +560,114 @@ void SubplotManager::set_main_title(const std::string& title) {
 double SubplotManager::get_title_height(cairo_t* cr) {
     if (main_title.empty()) return 0.0;
     
+    cairo_save(cr);
     cairo_select_font_face(cr, "Arial", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD);
-    cairo_set_font_size(cr, 16);
+    cairo_set_font_size(cr, 20);
     
     cairo_text_extents_t extents;
     cairo_text_extents(cr, main_title.c_str(), &extents);
+    cairo_restore(cr);
     
-    return extents.height + 20; // Add some padding
+    return extents.height + 10;  // Text height + minimal padding
 }
 
 void SubplotManager::render_to_context(cairo_t* cr) {
-    // Draw main title if present
+    // White background
+    cairo_set_source_rgb(cr, 1, 1, 1);
+    cairo_paint(cr);
+    
+    // Get actual title height (0 if no title)
+    double actual_title_height = get_title_height(cr);
+    
+    // Calculate spacing in pixels
+    double horizontal_spacing = spacing * total_width;
+    double vertical_spacing = spacing * total_height;
+    
+    // Calculate total spacing used
+    double total_horizontal_spacing = horizontal_spacing * (cols + 1);
+    double total_vertical_spacing = vertical_spacing * (rows + 1);
+    
+    // Calculate available space for subplots
+    double available_width = total_width - total_horizontal_spacing;
+    double available_height = total_height - total_vertical_spacing;
+    
+    // Calculate individual subplot dimensions
+    double subplot_width = available_width / cols;
+    double subplot_height = available_height / rows;
+    
+    // Calculate the actual dimensions of the subplot grid
+    double grid_width = cols * subplot_width + (cols - 1) * horizontal_spacing;
+    double grid_height = rows * subplot_height + (rows - 1) * vertical_spacing;
+    
+    // Calculate total content height (title + grid)
+    double total_content_height = actual_title_height + grid_height;
+    if (actual_title_height > 0) {
+        total_content_height += vertical_spacing * 0.5; // Small gap between title and grid
+    }
+    
+    // Calculate centering offsets for the entire "title + subplots" group
+    double horizontal_center_offset = (total_width - grid_width) / 2.0;
+    double vertical_center_offset = (total_height - total_content_height) / 2.0;
+    
+    // Calculate title position (centered horizontally, at top of content group)
+    double title_y = vertical_center_offset;
+    if (actual_title_height > 0) {
+        title_y += actual_title_height;
+    }
+    
+    // Calculate starting position for subplot grid
+    double grid_start_x = horizontal_center_offset;
+    double grid_start_y = vertical_center_offset;
+    if (actual_title_height > 0) {
+        grid_start_y += actual_title_height + vertical_spacing * 0.5;
+    }
+    
+    // Update subplot positions
+    for (int i = 0; i < rows; ++i) {
+        for (int j = 0; j < cols; ++j) {
+            if (subplots[i][j]) {
+                // Calculate position within the grid
+                double x_offset = grid_start_x + j * (subplot_width + horizontal_spacing);
+                double y_offset = grid_start_y + i * (subplot_height + vertical_spacing);
+                
+                // Calculate scale factors with aspect ratio preservation
+                double width_scale = subplot_width / 800.0;
+                double height_scale = subplot_height / 600.0;
+                double uniform_scale = std::min(width_scale, height_scale);
+                
+                // Center the subplot within its allocated space
+                double actual_width = 800.0 * uniform_scale;
+                double actual_height = 600.0 * uniform_scale;
+                double center_x_offset = (subplot_width - actual_width) / 2.0;
+                double center_y_offset = (subplot_height - actual_height) / 2.0;
+                
+                x_offset += center_x_offset;
+                y_offset += center_y_offset;
+                
+                subplots[i][j]->set_subplot_transform(x_offset, y_offset, uniform_scale, uniform_scale);
+            }
+        }
+    }
+    
+    // Draw main title with calculated position
     if (!main_title.empty()) {
         cairo_set_source_rgb(cr, 0, 0, 0);
         cairo_select_font_face(cr, "Arial", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD);
-        cairo_set_font_size(cr, 16);
+        cairo_set_font_size(cr, 20);
         
         cairo_text_extents_t extents;
         cairo_text_extents(cr, main_title.c_str(), &extents);
+        double title_x = (total_width - extents.width) / 2.0;
         
-        double x = total_width / 2 - extents.width / 2;
-        double y = 30;
-        
-        cairo_move_to(cr, x, y);
+        cairo_move_to(cr, title_x, title_y);
         cairo_show_text(cr, main_title.c_str());
     }
     
-    // Render all subplots
-    for (int row = 0; row < rows; ++row) {
-        for (int col = 0; col < cols; ++col) {
-            if (subplots[row][col]) {
-                subplots[row][col]->render_to_context(cr);
+    // Render each subplot
+    for (int i = 0; i < rows; ++i) {
+        for (int j = 0; j < cols; ++j) {
+            if (subplots[i][j]) {
+                subplots[i][j]->render_to_context(cr);
             }
         }
     }
@@ -646,10 +676,6 @@ void SubplotManager::render_to_context(cairo_t* cr) {
 bool SubplotManager::save_png(const std::string& filename) {
     cairo_surface_t* surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, total_width, total_height);
     cairo_t* cr = cairo_create(surface);
-    
-    // White background
-    cairo_set_source_rgb(cr, 1, 1, 1);
-    cairo_paint(cr);
     
     render_to_context(cr);
     
@@ -664,10 +690,6 @@ bool SubplotManager::save_png(const std::string& filename) {
 bool SubplotManager::save_svg(const std::string& filename) {
     cairo_surface_t* surface = cairo_svg_surface_create(filename.c_str(), total_width, total_height);
     cairo_t* cr = cairo_create(surface);
-    
-    // White background
-    cairo_set_source_rgb(cr, 1, 1, 1);
-    cairo_paint(cr);
     
     render_to_context(cr);
     

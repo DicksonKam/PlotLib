@@ -294,6 +294,7 @@ make run_all_examples
 # Or run individual examples
 ./examples/01_first_scatter_plot
 ./examples/advanced_01_custom_styling
+./examples/advanced_04_reference_lines
 ```
 
 ### Example Categories
@@ -306,7 +307,8 @@ make run_all_examples
   - Custom styling and RGB color control
   - Complex dashboards (3x3, 4x2 layouts)
   - Performance optimization for large datasets
-  - Generates 12+ advanced plots
+  - Reference lines and plot annotations
+  - Generates 19+ advanced plots
 
 All generated plots are saved to the `output/` directory.
 

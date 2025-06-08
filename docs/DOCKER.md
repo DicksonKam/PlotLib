@@ -230,7 +230,8 @@ output/
 ├── 04_test_scores.png
 ├── 05_first_dashboard.png
 ├── advanced_01_rgb_precision.png
-└── ... (12+ more plots)
+├── advanced_04_reference_lines_scatter.png
+└── ... (16+ more plots)
 ```
 
 ## 🚀 Production Deployment

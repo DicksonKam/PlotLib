@@ -59,7 +59,7 @@ ENV PLOTLIB_OUTPUT_DIR=/app/output
 VOLUME ["/app/output"]
 
 # Default command
-CMD ["/bin/sh", "-c", "echo '🐳 PlotLib Optimized Container Ready!' && echo 'Built successfully on Alpine Linux' && echo '✅ Available examples:' && ls -la /app/build/examples/ | grep -E '^-.*\\.' && echo '' && echo '📖 Usage:' && echo '  docker run -v ./output:/app/output plotlib /app/build/examples/01_first_scatter_plot' && echo '  docker run -v ./output:/app/output plotlib /app/build/examples/05_simple_subplots'"]
+CMD ["/bin/sh", "-c", "echo '🐳 PlotLib Optimized Container Ready!' && echo 'Built successfully on Alpine Linux' && echo '✅ Available examples:' && ls -la /app/build/examples/ | grep -E '^-.*\\.' && echo '' && echo '📖 Usage Examples:' && echo '  # Beginner Examples (5 total):' && echo '  docker run -v ./output:/app/output plotlib /app/build/examples/01_first_scatter_plot' && echo '  docker run -v ./output:/app/output plotlib /app/build/examples/05_simple_subplots' && echo '' && echo '  # Advanced Examples (4 total):' && echo '  docker run -v ./output:/app/output plotlib /app/build/examples/advanced_01_custom_styling' && echo '  docker run -v ./output:/app/output plotlib /app/build/examples/advanced_04_reference_lines' && echo '' && echo '  # Run all examples:' && echo '  docker run -v ./output:/app/output plotlib /bin/sh -c \"cd /app && make -C build run_all_examples\"'"]
 
 # Labels for documentation
 LABEL org.opencontainers.image.title="PlotLib"

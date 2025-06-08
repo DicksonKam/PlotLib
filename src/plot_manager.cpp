@@ -315,6 +315,49 @@ void PlotManager::draw_grid(cairo_t* cr) {
     }
 }
 
+void PlotManager::draw_reference_lines(cairo_t* cr) {
+    if (reference_lines.empty()) return;
+    
+    for (const auto& ref_line : reference_lines) {
+        // Set line style and color
+        cairo_set_source_rgba(cr, ref_line.style.r, ref_line.style.g, ref_line.style.b, ref_line.style.alpha);
+        cairo_set_line_width(cr, ref_line.style.line_width);
+        
+        // Set dotted line style
+        double dashes[] = {4.0, 4.0};
+        cairo_set_dash(cr, dashes, 2, 0);
+        
+        if (ref_line.is_vertical) {
+            // Draw vertical reference line
+            double screen_x, screen_y_top, screen_y_bottom;
+            transform_point(ref_line.value, min_y, screen_x, screen_y_bottom);
+            transform_point(ref_line.value, max_y, screen_x, screen_y_top);
+            
+            // Only draw if the line is within the plot area
+            if (screen_x >= margin_left && screen_x <= width - margin_right) {
+                cairo_move_to(cr, screen_x, margin_top);
+                cairo_line_to(cr, screen_x, height - margin_bottom);
+                cairo_stroke(cr);
+            }
+        } else {
+            // Draw horizontal reference line
+            double screen_x_left, screen_x_right, screen_y;
+            transform_point(min_x, ref_line.value, screen_x_left, screen_y);
+            transform_point(max_x, ref_line.value, screen_x_right, screen_y);
+            
+            // Only draw if the line is within the plot area
+            if (screen_y >= margin_top && screen_y <= height - margin_bottom) {
+                cairo_move_to(cr, margin_left, screen_y);
+                cairo_line_to(cr, width - margin_right, screen_y);
+                cairo_stroke(cr);
+            }
+        }
+        
+        // Reset dash pattern for next element
+        cairo_set_dash(cr, nullptr, 0, 0);
+    }
+}
+
 void PlotManager::draw_axis_labels(cairo_t* cr) {
     cairo_set_source_rgb(cr, 0, 0, 0);
     cairo_select_font_face(cr, "Arial", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD);
@@ -438,6 +481,14 @@ void PlotManager::draw_legend(cairo_t* cr) {
         }
     }
     
+    // Add reference lines
+    for (const auto& ref_line : reference_lines) {
+        if (!ref_line.label.empty() && hidden_legend_items.find(ref_line.label) == hidden_legend_items.end()) {
+            legend_items.emplace_back(ref_line.label, ref_line.style);
+            legend_markers.push_back(MarkerType::CIRCLE); // Will be overridden for line drawing
+        }
+    }
+    
     if (legend_items.empty()) return;
     
     cairo_set_source_rgb(cr, 0, 0, 0);
@@ -460,14 +511,51 @@ void PlotManager::draw_legend(cairo_t* cr) {
     cairo_stroke(cr);
     
     // Draw legend items
+    size_t ref_line_offset = data_series.size();
+    if (data_series.size() <= 1 && (data_series.empty() || data_series[0].name == "Default")) {
+        ref_line_offset = 0;
+    }
+    
+    // Calculate cluster series count for legend
+    std::set<int> cluster_labels_for_legend;
+    for (const auto& series : cluster_series) {
+        if (!series.name.empty()) {
+            for (const auto& cluster_pt : series.points) {
+                cluster_labels_for_legend.insert(cluster_pt.cluster_label);
+            }
+        }
+    }
+    ref_line_offset += cluster_labels_for_legend.size();
+    
     for (size_t i = 0; i < legend_items.size(); ++i) {
         double y_pos = legend_y + i * line_height;
         
-        // Draw marker
-        draw_marker(cr, legend_x + 8, y_pos, legend_markers[i], 
-                   legend_items[i].second.point_size + 1,
-                   legend_items[i].second.r, legend_items[i].second.g, legend_items[i].second.b,
-                   legend_items[i].second.alpha);
+        // Check if this is a reference line (appears after data series and cluster series)
+        bool is_reference_line = i >= ref_line_offset;
+        
+        if (is_reference_line) {
+            // Draw dotted line for reference lines
+            cairo_set_source_rgba(cr, legend_items[i].second.r, legend_items[i].second.g, 
+                                 legend_items[i].second.b, legend_items[i].second.alpha);
+            cairo_set_line_width(cr, legend_items[i].second.line_width);
+            
+            // Set dotted line style
+            double dashes[] = {4.0, 4.0};
+            cairo_set_dash(cr, dashes, 2, 0);
+            
+            cairo_move_to(cr, legend_x + 2, y_pos);
+            cairo_line_to(cr, legend_x + 14, y_pos);
+            cairo_stroke(cr);
+            
+            // Reset dash pattern
+            cairo_set_dash(cr, nullptr, 0, 0);
+        } else {
+            // Draw marker for regular data series and clusters
+            draw_marker(cr, legend_x + 8, y_pos, legend_markers[i], 
+                       legend_items[i].second.point_size + 1,
+                       legend_items[i].second.r, legend_items[i].second.g, legend_items[i].second.b,
+                       legend_items[i].second.alpha);
+        }
         
         // Draw text
         cairo_set_source_rgb(cr, 0, 0, 0);
@@ -504,6 +592,7 @@ void PlotManager::render_to_context(cairo_t* cr) {
         draw_axis_labels(cr);
         draw_title(cr);
         draw_data(cr);  // This will be implemented by derived classes
+        draw_reference_lines(cr);  // Draw reference lines over data
         draw_legend(cr);
         
         // Restore the transformation matrix
@@ -516,6 +605,7 @@ void PlotManager::render_to_context(cairo_t* cr) {
         draw_axis_labels(cr);
         draw_title(cr);
         draw_data(cr);  // This will be implemented by derived classes
+        draw_reference_lines(cr);  // Draw reference lines over data
         draw_legend(cr);
     }
 }
@@ -557,6 +647,7 @@ bool PlotManager::save_svg(const std::string& filename) {
 void PlotManager::clear() {
     data_series.clear();
     cluster_series.clear();
+    reference_lines.clear();
     title = "";
     x_label = "";
     y_label = "";
@@ -580,6 +671,24 @@ void PlotManager::show_legend_item(const std::string& item_name) {
 
 void PlotManager::show_all_legend_items() {
     hidden_legend_items.clear();
+}
+
+// Reference line management methods
+void PlotManager::add_vertical_line(double x_value, const std::string& label, const PlotStyle& style) {
+    add_reference_line(true, x_value, label, style);
+}
+
+void PlotManager::add_horizontal_line(double y_value, const std::string& label, const PlotStyle& style) {
+    add_reference_line(false, y_value, label, style);
+}
+
+void PlotManager::add_reference_line(bool is_vertical, double value, const std::string& label, const PlotStyle& style) {
+    ReferenceLine ref_line(is_vertical, value, label, style);
+    reference_lines.push_back(ref_line);
+}
+
+void PlotManager::clear_reference_lines() {
+    reference_lines.clear();
 }
 
 PlotStyle PlotManager::color_to_style(const std::string& color_name, double point_size, double line_width) {

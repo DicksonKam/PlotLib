@@ -36,6 +36,7 @@ add_example(05_simple_subplots beginner/05_simple_subplots.cpp)
 add_example(advanced_01_custom_styling advanced/01_custom_styling_and_advanced_features.cpp)
 add_example(advanced_02_complex_dashboards advanced/02_complex_dashboards_and_layouts.cpp)
 add_example(advanced_03_performance_optimization advanced/03_performance_optimization_and_large_datasets.cpp)
+add_example(advanced_04_reference_lines advanced/04_reference_lines_and_annotations.cpp)
 
 # Create a target to build all beginner examples
 add_custom_target(beginner_examples
@@ -53,10 +54,12 @@ add_custom_target(advanced_examples
         advanced_01_custom_styling
         advanced_02_complex_dashboards
         advanced_03_performance_optimization
+        advanced_04_reference_lines
 )
 
 # Create a target to run all beginner examples
 add_custom_target(run_beginner_examples
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_SOURCE_DIR}/output
     COMMAND echo "Running beginner examples..."
     COMMAND ${CMAKE_CURRENT_BINARY_DIR}/01_first_scatter_plot
     COMMAND ${CMAKE_CURRENT_BINARY_DIR}/02_colors_and_multiple_series
@@ -70,10 +73,12 @@ add_custom_target(run_beginner_examples
 
 # Create a target to run all advanced examples
 add_custom_target(run_advanced_examples
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_SOURCE_DIR}/output
     COMMAND echo "Running advanced examples..."
     COMMAND ${CMAKE_CURRENT_BINARY_DIR}/advanced_01_custom_styling
     COMMAND ${CMAKE_CURRENT_BINARY_DIR}/advanced_02_complex_dashboards
     COMMAND ${CMAKE_CURRENT_BINARY_DIR}/advanced_03_performance_optimization
+    COMMAND ${CMAKE_CURRENT_BINARY_DIR}/advanced_04_reference_lines
     COMMAND echo "All advanced examples completed!"
     DEPENDS advanced_examples
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
@@ -84,6 +89,7 @@ add_custom_target(run_all_examples
     COMMAND echo "Running all examples..."
     DEPENDS run_beginner_examples run_advanced_examples
     COMMAND echo "All examples completed successfully!"
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
 )
 
 # Set output directory for all examples
@@ -96,5 +102,6 @@ set_target_properties(
     advanced_01_custom_styling
     advanced_02_complex_dashboards
     advanced_03_performance_optimization
+    advanced_04_reference_lines
     PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/examples
 ) 

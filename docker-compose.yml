@@ -19,7 +19,7 @@ services:
         /app/build/examples/$$example
       done &&
       echo 'Running advanced examples...' &&
-      for example in advanced_01_custom_styling advanced_02_complex_dashboards advanced_03_performance_optimization; do
+      for example in advanced_01_custom_styling advanced_02_complex_dashboards advanced_03_performance_optimization advanced_04_reference_lines; do
         echo \"  Running $$example...\"
         /app/build/examples/$$example
       done &&
@@ -65,7 +65,7 @@ services:
           /app/build/examples/$$example
         done
       elif [ \"$$DEMO_TYPE\" = \"advanced\" ]; then
-        for example in advanced_01_custom_styling advanced_02_complex_dashboards; do
+        for example in advanced_01_custom_styling advanced_02_complex_dashboards advanced_03_performance_optimization advanced_04_reference_lines; do
           echo \"  Running $$example...\"
           /app/build/examples/$$example
         done

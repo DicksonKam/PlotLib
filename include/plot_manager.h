@@ -18,6 +18,8 @@
 #include <memory>
 #include <set>
 #include <stdexcept>
+#include <sstream>
+#include <iomanip>
 #include <cairo.h>
 #include <cairo-svg.h>
 
@@ -117,6 +119,45 @@ struct ClusterSeries {
 };
 
 /**
+ * @brief Represents a reference line (vertical or horizontal) with styling
+ */
+struct ReferenceLine {
+    bool is_vertical;           ///< True for vertical line, false for horizontal
+    double value;               ///< X value for vertical line, Y value for horizontal line
+    PlotStyle style;            ///< Visual styling for the reference line
+    std::string label;          ///< Label for legend
+    
+    /**
+     * @brief Constructor for ReferenceLine
+     * @param vertical True for vertical line, false for horizontal
+     * @param val The X or Y value where the line should be drawn
+     * @param line_label Label for the legend (default: auto-generated)
+     * @param line_style Visual styling (default: dotted black line)
+     */
+    ReferenceLine(bool vertical, double val, const std::string& line_label = "", 
+                  const PlotStyle& line_style = PlotStyle()) 
+        : is_vertical(vertical), value(val), style(line_style), label(line_label) {
+        // Set default dotted line style if not specified
+        if (style.line_width == 2.0 && style.r == 0.0 && style.g == 0.0 && style.b == 1.0) {
+            style.r = 0.0; style.g = 0.0; style.b = 0.0;  // Black color
+            style.line_width = 1.5;
+            style.alpha = 0.8;
+        }
+        
+        // Auto-generate label if not provided
+        if (label.empty()) {
+            std::ostringstream oss;
+            oss << std::fixed << std::setprecision(2) << val;
+            std::string val_str = oss.str();
+            // Remove trailing zeros
+            val_str.erase(val_str.find_last_not_of('0') + 1, std::string::npos);
+            val_str.erase(val_str.find_last_not_of('.') + 1, std::string::npos);
+            label = is_vertical ? ("X = " + val_str) : ("Y = " + val_str);
+        }
+    }
+};
+
+/**
  * @brief Central plot management class that handles all common plotting functionality
  * 
  * The PlotManager class serves as the foundation for all plot types in PlotLib.
@@ -151,6 +192,7 @@ protected:
     // Data storage
     std::vector<DataSeries> data_series;      ///< Collection of regular data series
     std::vector<ClusterSeries> cluster_series; ///< Collection of cluster-based series
+    std::vector<ReferenceLine> reference_lines; ///< Collection of reference lines
     
     // Data bounds and transformation
     double min_x, max_x, min_y, max_y;        ///< Data range for axis scaling
@@ -184,6 +226,7 @@ protected:
     virtual void draw_axis_labels(cairo_t* cr);
     virtual void draw_axis_ticks(cairo_t* cr);
     virtual void draw_grid(cairo_t* cr);
+    virtual void draw_reference_lines(cairo_t* cr);
     virtual void draw_legend(cairo_t* cr);
     virtual void draw_title(cairo_t* cr);
     virtual void draw_marker(cairo_t* cr, double x, double y, MarkerType type, double size, 
@@ -343,6 +386,47 @@ public:
      * @brief Clear all hidden legend items (show all)
      */
     virtual void show_all_legend_items();
+    
+    // Reference line management methods
+    
+    /**
+     * @brief Add a vertical reference line
+     * @param x_value X coordinate where the vertical line should be drawn
+     * @param label Label for the legend (default: auto-generated)
+     * @param style Visual styling (default: dotted black line)
+     */
+    virtual void add_vertical_line(double x_value, const std::string& label = "", 
+                                  const PlotStyle& style = PlotStyle());
+    
+    /**
+     * @brief Add a horizontal reference line
+     * @param y_value Y coordinate where the horizontal line should be drawn
+     * @param label Label for the legend (default: auto-generated)
+     * @param style Visual styling (default: dotted black line)
+     */
+    virtual void add_horizontal_line(double y_value, const std::string& label = "", 
+                                    const PlotStyle& style = PlotStyle());
+    
+    /**
+     * @brief Add a reference line (vertical or horizontal)
+     * @param is_vertical True for vertical line, false for horizontal
+     * @param value X value for vertical line, Y value for horizontal line
+     * @param label Label for the legend (default: auto-generated)
+     * @param style Visual styling (default: dotted black line)
+     */
+    virtual void add_reference_line(bool is_vertical, double value, const std::string& label = "", 
+                                   const PlotStyle& style = PlotStyle());
+    
+    /**
+     * @brief Clear all reference lines
+     */
+    virtual void clear_reference_lines();
+    
+    /**
+     * @brief Get the number of reference lines
+     * @return Number of reference lines
+     */
+    size_t get_reference_line_count() const { return reference_lines.size(); }
     
     /**
      * @brief Convert color name to PlotStyle (utility for beginner-friendly API)

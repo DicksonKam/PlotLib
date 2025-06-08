@@ -43,8 +43,9 @@ For experienced developers who want professional-quality visualizations, perform
 | `01_custom_styling_and_advanced_features.cpp` | Advanced styling and customization | Precise RGB control, legend management, cluster analysis |
 | `02_complex_dashboards_and_layouts.cpp` | Professional dashboard design | Executive dashboards, scientific layouts, design principles |
 | `03_performance_optimization_and_large_datasets.cpp` | Performance and scalability | Large datasets, memory optimization, benchmarking |
+| `04_reference_lines_and_annotations.cpp` | Reference lines and plot annotations | Dotted reference lines, custom styling, legend integration |
 
-**Generated plots:** 12+ advanced plots demonstrating professional techniques
+**Generated plots:** 19+ advanced plots demonstrating professional techniques
 
 ## 🎨 What Each Example Demonstrates
 
@@ -130,7 +131,7 @@ All examples save their plots to the `output/` directory. After running all exam
 - **Color demonstrations**: automatic and manual coloring
 - **Real-world examples**: test scores, temperature, loading times
 
-**Advanced Examples (12+ plots):**
+**Advanced Examples (19+ plots):**
 - **Professional styling**: Custom RGB colors, precise control
 - **Complex dashboards**: Executive (3x3), scientific (4x2) layouts
 - **Performance optimization**: Large datasets, memory management

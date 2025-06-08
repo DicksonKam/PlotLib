@@ -32,6 +32,11 @@ add_example(03_first_line_plot beginner/03_first_line_plot.cpp)
 add_example(04_first_histogram beginner/04_first_histogram.cpp)
 add_example(05_simple_subplots beginner/05_simple_subplots.cpp)
 
+# Advanced Examples
+add_example(advanced_01_custom_styling advanced/01_custom_styling_and_advanced_features.cpp)
+add_example(advanced_02_complex_dashboards advanced/02_complex_dashboards_and_layouts.cpp)
+add_example(advanced_03_performance_optimization advanced/03_performance_optimization_and_large_datasets.cpp)
+
 # Create a target to build all beginner examples
 add_custom_target(beginner_examples
     DEPENDS 
@@ -40,6 +45,14 @@ add_custom_target(beginner_examples
         03_first_line_plot
         04_first_histogram
         05_simple_subplots
+)
+
+# Create a target to build all advanced examples
+add_custom_target(advanced_examples
+    DEPENDS 
+        advanced_01_custom_styling
+        advanced_02_complex_dashboards
+        advanced_03_performance_optimization
 )
 
 # Create a target to run all beginner examples
@@ -53,6 +66,24 @@ add_custom_target(run_beginner_examples
     COMMAND echo "All beginner examples completed!"
     DEPENDS beginner_examples
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+)
+
+# Create a target to run all advanced examples
+add_custom_target(run_advanced_examples
+    COMMAND echo "Running advanced examples..."
+    COMMAND ${CMAKE_CURRENT_BINARY_DIR}/advanced_01_custom_styling
+    COMMAND ${CMAKE_CURRENT_BINARY_DIR}/advanced_02_complex_dashboards
+    COMMAND ${CMAKE_CURRENT_BINARY_DIR}/advanced_03_performance_optimization
+    COMMAND echo "All advanced examples completed!"
+    DEPENDS advanced_examples
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+)
+
+# Create a target to run all examples
+add_custom_target(run_all_examples
+    COMMAND echo "Running all examples..."
+    DEPENDS run_beginner_examples run_advanced_examples
+    COMMAND echo "All examples completed successfully!"
 )
 
 # Centralized demo example

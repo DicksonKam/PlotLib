@@ -34,13 +34,17 @@ Perfect for newcomers to plotting or PlotLib. Each example focuses on one concep
 
 **Generated plots:** 14 example plots showing all basic functionality
 
-### 🟡 Intermediate Examples (`intermediate/`)
-
-*Coming soon!* Real-world use cases and more advanced features.
-
 ### 🔴 Advanced Examples (`advanced/`)
 
-*Coming soon!* Complex visualizations and advanced customization.
+For experienced developers who want professional-quality visualizations, performance optimization, and complex data analysis.
+
+| Example | Description | What You'll Learn |
+|---------|-------------|-------------------|
+| `01_custom_styling_and_advanced_features.cpp` | Advanced styling and customization | Precise RGB control, legend management, cluster analysis |
+| `02_complex_dashboards_and_layouts.cpp` | Professional dashboard design | Executive dashboards, scientific layouts, design principles |
+| `03_performance_optimization_and_large_datasets.cpp` | Performance and scalability | Large datasets, memory optimization, benchmarking |
+
+**Generated plots:** 12+ advanced plots demonstrating professional techniques
 
 ## 🎨 What Each Example Demonstrates
 
@@ -89,8 +93,16 @@ Perfect for newcomers to plotting or PlotLib. Each example focuses on one concep
 ### Method 1: Build and Run All
 ```bash
 cd build
+# Build and run beginner examples
 make beginner_examples
 make run_beginner_examples
+
+# Build and run advanced examples
+make advanced_examples
+make run_advanced_examples
+
+# Or run everything
+make run_all_examples
 ```
 
 ### Method 2: Individual Compilation
@@ -110,13 +122,19 @@ make 01_first_scatter_plot
 
 ## 📊 Generated Output
 
-All examples save their plots to the `output/` directory. After running the beginner examples, you'll have:
+All examples save their plots to the `output/` directory. After running all examples, you'll have:
 
-- **14 example plots** demonstrating all basic features
+**Beginner Examples (14 plots):**
 - **3 plot types**: scatter, line, histogram
 - **Various layouts**: single plots and subplots
 - **Color demonstrations**: automatic and manual coloring
 - **Real-world examples**: test scores, temperature, loading times
+
+**Advanced Examples (12+ plots):**
+- **Professional styling**: Custom RGB colors, precise control
+- **Complex dashboards**: Executive (3x3), scientific (4x2) layouts
+- **Performance optimization**: Large datasets, memory management
+- **Advanced features**: Cluster analysis, statistical visualization
 
 ## 🎓 Learning Path
 

@@ -35,13 +35,29 @@ make basic_tests               # Build and run tests
 ```
 
 ### Running Examples
+
+**IMPORTANT: Always run executables from the project root directory (not from build/)**
+
 ```bash
+# Run all examples (recommended)
 cd build
-make run_beginner_examples     # Run all 5 beginner examples
+make run_beginner_examples     # Run all 6 beginner examples
 make run_advanced_examples     # Run all 4 advanced examples
 make run_all_examples          # Run everything
-./examples/01_first_scatter_plot  # Run individual example
+
+# Run individual examples (from project root)
+./build/examples/01_first_scatter_plot      # Basic scatter plot
+./build/examples/02_colors_and_multiple_series  # Colors and styling
+./build/examples/03_first_line_plot         # Basic line plot
+./build/examples/04_first_histogram         # Continuous histograms
+./build/examples/05_simple_subplots         # Subplot layouts
+./build/examples/06_discrete_histograms     # NEW: Discrete categorical histograms
 ```
+
+**Execution Rules:**
+- ✅ **DO**: Run from project root: `./build/examples/example_name`
+- ❌ **DON'T**: Run from build directory: `cd build && ./examples/example_name`
+- 📁 All output files are saved to `output/` directory
 
 ### Docker Commands
 ```bash
@@ -68,7 +84,9 @@ PlotLib is a C++ plotting library built on Cairo graphics with a hierarchical in
 - **Specific plot types** inherit from PlotManager:
   - **ScatterPlot** - Implements scatter plots with multiple marker types
   - **LinePlot** - Implements line plots with optional markers and line styles  
-  - **HistogramPlot** - Implements histograms with automatic/manual binning
+  - **HistogramPlot** - Implements both continuous and discrete histograms:
+    - Continuous: automatic/manual binning for numeric data
+    - Discrete: categorical data with individual colors per category
 - **SubplotManager** - Manages multiple plots in grid layouts
 
 ### Key Design Patterns

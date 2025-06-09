@@ -31,6 +31,7 @@ add_example(02_colors_and_multiple_series beginner/02_colors_and_multiple_series
 add_example(03_first_line_plot beginner/03_first_line_plot.cpp)
 add_example(04_first_histogram beginner/04_first_histogram.cpp)
 add_example(05_simple_subplots beginner/05_simple_subplots.cpp)
+add_example(06_discrete_histograms beginner/06_discrete_histograms.cpp)
 
 # Advanced Examples
 add_example(advanced_01_custom_styling advanced/01_custom_styling_and_advanced_features.cpp)
@@ -46,6 +47,7 @@ add_custom_target(beginner_examples
         03_first_line_plot
         04_first_histogram
         05_simple_subplots
+        06_discrete_histograms
 )
 
 # Create a target to build all advanced examples
@@ -66,6 +68,7 @@ add_custom_target(run_beginner_examples
     COMMAND ${CMAKE_CURRENT_BINARY_DIR}/03_first_line_plot
     COMMAND ${CMAKE_CURRENT_BINARY_DIR}/04_first_histogram
     COMMAND ${CMAKE_CURRENT_BINARY_DIR}/05_simple_subplots
+    COMMAND ${CMAKE_CURRENT_BINARY_DIR}/06_discrete_histograms
     COMMAND echo "All beginner examples completed!"
     DEPENDS beginner_examples
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
@@ -99,6 +102,7 @@ set_target_properties(
     03_first_line_plot
     04_first_histogram
     05_simple_subplots
+    06_discrete_histograms
     advanced_01_custom_styling
     advanced_02_complex_dashboards
     advanced_03_performance_optimization

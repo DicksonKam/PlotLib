@@ -20,11 +20,17 @@ namespace plotlib {
  * @brief Structure representing histogram data
  */
 struct HistogramData {
-    std::vector<double> values;  ///< Raw data values
-    std::vector<double> bins;    ///< Bin edges (n+1 edges for n bins)
-    std::vector<int> counts;     ///< Frequency counts for each bin
-    std::string name;            ///< Series name
-    PlotStyle style;             ///< Visual style
+    std::vector<double> values;         ///< Raw data values (for continuous data)
+    std::vector<double> bins;           ///< Bin edges (n+1 edges for n bins, for continuous data)
+    std::vector<int> counts;            ///< Frequency counts for each bin
+    std::string name;                   ///< Series name
+    PlotStyle style;                    ///< Visual style
+    
+    // Discrete histogram data
+    std::vector<std::string> categories; ///< Category names (for discrete data)
+    std::vector<PlotStyle> styles;       ///< Individual styles for each category (for discrete data)
+    bool is_discrete = false;            ///< Flag to indicate if this is discrete data
+    std::string category_prefix = "";    ///< Prefix for category labels (e.g., "structure")
     
     HistogramData(const std::string& series_name = "Default") : name(series_name) {}
 };
@@ -90,6 +96,16 @@ private:
      */
     void add_data(const std::string& name, const std::vector<double>& data, 
                   const PlotStyle& style, int bin_count = 0);
+    
+    /**
+     * @brief Internal method to add discrete histogram data (used by public methods)
+     * @param name Series name
+     * @param counts Frequency counts for each category
+     * @param category_prefix Prefix for category labels
+     * @param styles Visual styles for each category
+     */
+    void add_discrete_data(const std::string& name, const std::vector<int>& counts, 
+                          const std::string& category_prefix, const std::vector<PlotStyle>& styles);
 
 public:
     /**
@@ -121,6 +137,25 @@ public:
      */
     void add_histogram(const std::string& name, const std::vector<double>& values, 
                       const std::string& color_name, int bin_count = 0);
+    
+    /**
+     * @brief Add discrete histogram data with automatic styling (beginner-friendly)
+     * @param name Series name for legend
+     * @param counts Frequency counts for each discrete category
+     * @param category_prefix Prefix for category labels (e.g., "structure" -> "structure 1", "structure 2")
+     */
+    void add_histogram(const std::string& name, const std::vector<int>& counts, 
+                      const std::string& category_prefix);
+    
+    /**
+     * @brief Add discrete histogram data with custom colors (advanced)
+     * @param name Series name for legend
+     * @param counts Frequency counts for each discrete category
+     * @param category_prefix Prefix for category labels (e.g., "structure" -> "structure 1", "structure 2")
+     * @param color_names Vector of color names for each category
+     */
+    void add_histogram(const std::string& name, const std::vector<int>& counts, 
+                      const std::string& category_prefix, const std::vector<std::string>& color_names);
 
 protected:
     /**
@@ -133,6 +168,12 @@ protected:
      * @brief Calculate bounds from histogram data
      */
     void calculate_bounds() override;
+    
+    /**
+     * @brief Draw custom axis labels for discrete histograms
+     * @param cr Cairo context
+     */
+    void draw_axis_labels(cairo_t* cr) override;
     
     /**
      * @brief Clear all histogram data

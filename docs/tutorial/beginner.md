@@ -248,7 +248,7 @@ Create a 2x2 subplot with:
 
 Once you're comfortable with the basics:
 
-1. **Check out the [Intermediate Tutorial](intermediate.md)** for advanced features
+1. **Check out the [Advanced Tutorial](advanced.md)** for professional features
 2. **Browse the [Example Gallery](../gallery/README.md)** for inspiration
 3. **Read the [API Reference](../api/README.md)** for complete function documentation
 

@@ -18,7 +18,7 @@ To become the **go-to C++ plotting library** that combines simplicity for beginn
 
 ## 📋 Version Roadmap
 
-### 🔄 v1.1.0 - Enhanced Functionality (Q3 2024)
+### 🔄 v1.1.0 - Enhanced Functionality (Q1 2025)
 
 **Theme: Expanding Core Capabilities**
 

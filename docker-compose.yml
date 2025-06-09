@@ -14,14 +14,18 @@ services:
       echo 'PlotLib Production Container - Running All Examples...' &&
       cd /app &&
       echo 'Running beginner examples...' &&
-      for example in 01_first_scatter_plot 02_colors_and_multiple_series 03_first_line_plot 04_first_histogram 05_simple_subplots; do
-        echo \"  Running $$example...\"
-        /app/build/examples/$$example
+      for example in /app/build/examples/[0-9][0-9]_*; do
+        if [ -x \"$$example\" ]; then
+          echo \"  Running $$(basename $$example)...\"
+          $$example
+        fi
       done &&
       echo 'Running advanced examples...' &&
-      for example in advanced_01_custom_styling advanced_02_complex_dashboards advanced_03_performance_optimization advanced_04_reference_lines; do
-        echo \"  Running $$example...\"
-        /app/build/examples/$$example
+      for example in /app/build/examples/advanced_*; do
+        if [ -x \"$$example\" ]; then
+          echo \"  Running $$(basename $$example)...\"
+          $$example
+        fi
       done &&
       echo 'Running tests...' &&
       /app/build/tests/basic_tests &&
@@ -60,18 +64,27 @@ services:
       echo 'PlotLib Demo Container - Running $${DEMO_TYPE} Examples...' &&
       cd /app &&
       if [ \"$$DEMO_TYPE\" = \"beginner\" ]; then
-        for example in 01_first_scatter_plot 02_colors_and_multiple_series 03_first_line_plot; do
-          echo \"  Running $$example...\"
-          /app/build/examples/$$example
+        for example in /app/build/examples/[0-9][0-9]_*; do
+          if [ -x \"$$example\" ]; then
+            echo \"  Running $$(basename $$example)...\"
+            $$example
+          fi
         done
       elif [ \"$$DEMO_TYPE\" = \"advanced\" ]; then
-        for example in advanced_01_custom_styling advanced_02_complex_dashboards advanced_03_performance_optimization advanced_04_reference_lines; do
-          echo \"  Running $$example...\"
-          /app/build/examples/$$example
+        for example in /app/build/examples/advanced_*; do
+          if [ -x \"$$example\" ]; then
+            echo \"  Running $$(basename $$example)...\"
+            $$example
+          fi
         done
       else
         echo \"Running single example: $$DEMO_TYPE\"
-        /app/build/examples/$$DEMO_TYPE
+        if [ -x \"/app/build/examples/$$DEMO_TYPE\" ]; then
+          /app/build/examples/$$DEMO_TYPE
+        else
+          echo \"Error: Example $$DEMO_TYPE not found or not executable\"
+          exit 1
+        fi
       fi &&
       echo 'Demo completed! Check ./output for generated plots.'
       "

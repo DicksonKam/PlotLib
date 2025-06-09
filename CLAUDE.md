@@ -41,8 +41,8 @@ make basic_tests               # Build and run tests
 ```bash
 # Run all examples (recommended)
 cd build
-make run_beginner_examples     # Run all 6 beginner examples
-make run_advanced_examples     # Run all 4 advanced examples
+make run_beginner_examples     # Run all beginner examples
+make run_advanced_examples     # Run all advanced examples
 make run_all_examples          # Run everything
 
 # Run individual examples (from project root)

@@ -50,9 +50,9 @@ A simple, beginner-friendly C++ plotting library for creating beautiful scatter 
 </tr>
 </table>
 
-> 💡 **Try it now!** Generate 25+ example plots in seconds with Docker:
+> 💡 **Try it now!** Generate 30+ example plots in seconds with Docker:
 > ```bash
-> git clone https://github.com/DicksonKam/PlotLib && cd plotlib
+> git clone https://github.com/DicksonKam/PlotLib && cd PlotLib
 > docker run --rm -v ./output:/app/output plotlib /app/build/examples/01_first_scatter_plot
 > ```
 
@@ -65,7 +65,7 @@ A simple, beginner-friendly C++ plotting library for creating beautiful scatter 
 ```bash
 # Clone the repository
 git clone https://github.com/DicksonKam/PlotLib
-cd plotlib
+cd PlotLib
 
 # Build the Docker image
 docker build -t plotlib .
@@ -85,7 +85,7 @@ docker-compose up plotlib
 ```bash
 # Clone the repository
 git clone https://github.com/DicksonKam/PlotLib
-cd plotlib
+cd PlotLib
 
 # Build the library
 ./build.sh
@@ -142,6 +142,10 @@ Great for showing data distributions.
 ```cpp
 plotlib::HistogramPlot plot(800, 600);
 plot.add_histogram("Distribution", data, "purple", 20); // 20 bins
+
+// Or create discrete histograms for categorical data
+std::vector<int> counts = {10, 20, 15};
+plot.add_histogram("Categories", counts, "type"); // Creates "type 1", "type 2", "type 3"
 plot.save_png("histogram.png");
 ```
 
@@ -303,15 +307,16 @@ make run_all_examples
 ### Example Categories
 
 - **Beginner examples** (`examples/beginner/`): Simple, well-commented code
-  - 5 progressive examples covering all basic features
-  - Generates 14 example plots
+  - 6 progressive examples covering all basic features
+  - Includes continuous and discrete histograms
+  - Generates 20+ example plots
   
 - **Advanced examples** (`examples/advanced/`): Professional techniques
   - Custom styling and RGB color control
   - Complex dashboards (3x3, 4x2 layouts)
   - Performance optimization for large datasets
   - Reference lines and plot annotations
-  - Generates 19+ advanced plots
+  - Generates 25+ advanced plots
 
 All generated plots are saved to the `output/` directory.
 

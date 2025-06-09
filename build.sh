@@ -51,15 +51,23 @@ echo "  # Run everything:"
 echo "  make run_all_examples"
 echo ""
 echo "📊 Individual examples:"
-echo "  ./examples/01_first_scatter_plot"
-echo "  ./examples/02_colors_and_multiple_series"
-echo "  ./examples/03_first_line_plot"
-echo "  ./examples/04_first_histogram"
-echo "  ./examples/05_simple_subplots"
-echo "  ./examples/advanced_01_custom_styling"
-echo "  ./examples/advanced_02_complex_dashboards"
-echo "  ./examples/advanced_03_performance_optimization"
-echo "  ./examples/advanced_04_reference_lines"
+# Dynamically list all built examples
+if [ -d "examples" ]; then
+    # List beginner examples (numbered)
+    for example in examples/[0-9][0-9]_*; do
+        if [ -x "$example" ]; then
+            echo "  ./$example"
+        fi
+    done
+    # List advanced examples  
+    for example in examples/advanced_*; do
+        if [ -x "$example" ]; then
+            echo "  ./$example"
+        fi
+    done
+else
+    echo "  (No examples directory found - run build first)"
+fi
 echo ""
 echo "📁 Generated plots will be saved to output/ directory"
 echo "📖 See examples/README.md for detailed documentation"

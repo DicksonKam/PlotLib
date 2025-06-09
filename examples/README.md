@@ -31,8 +31,9 @@ Perfect for newcomers to plotting or PlotLib. Each example focuses on one concep
 | `03_first_line_plot.cpp` | Line plots and mathematical functions | Time series, functions, X/Y vectors |
 | `04_first_histogram.cpp` | Data distributions | Histograms, bin control, comparisons |
 | `05_simple_subplots.cpp` | Multiple plots in one figure | Subplot layouts, dashboards |
+| `06_discrete_histograms.cpp` | Categorical data visualization | Discrete histograms, individual colors, survey analysis |
 
-**Generated plots:** 14 example plots showing all basic functionality
+**Generated plots:** 20+ example plots showing all basic functionality including discrete histograms
 
 ### 🔴 Advanced Examples (`advanced/`)
 
@@ -45,7 +46,7 @@ For experienced developers who want professional-quality visualizations, perform
 | `03_performance_optimization_and_large_datasets.cpp` | Performance and scalability | Large datasets, memory optimization, benchmarking |
 | `04_reference_lines_and_annotations.cpp` | Reference lines and plot annotations | Dotted reference lines, custom styling, legend integration |
 
-**Generated plots:** 19+ advanced plots demonstrating professional techniques
+**Generated plots:** 25+ advanced plots demonstrating professional techniques
 
 ## 🎨 What Each Example Demonstrates
 
@@ -125,13 +126,13 @@ make 01_first_scatter_plot
 
 All examples save their plots to the `output/` directory. After running all examples, you'll have:
 
-**Beginner Examples (14 plots):**
-- **3 plot types**: scatter, line, histogram
+**Beginner Examples (20+ plots):**
+- **4 plot types**: scatter, line, continuous histogram, discrete histogram
 - **Various layouts**: single plots and subplots
 - **Color demonstrations**: automatic and manual coloring
-- **Real-world examples**: test scores, temperature, loading times
+- **Real-world examples**: test scores, temperature, loading times, survey analysis
 
-**Advanced Examples (19+ plots):**
+**Advanced Examples (25+ plots):**
 - **Professional styling**: Custom RGB colors, precise control
 - **Complex dashboards**: Executive (3x3), scientific (4x2) layouts
 - **Performance optimization**: Large datasets, memory management
@@ -142,8 +143,9 @@ All examples save their plots to the `output/` directory. After running all exam
 1. **Start with `01_first_scatter_plot.cpp`** - Get familiar with the basic workflow
 2. **Try `02_colors_and_multiple_series.cpp`** - Learn about colors and multiple data
 3. **Explore `03_first_line_plot.cpp`** - Understand line plots and functions
-4. **Study `04_first_histogram.cpp`** - Master distribution visualization
+4. **Study `04_first_histogram.cpp`** - Master continuous data distribution visualization
 5. **Practice with `05_simple_subplots.cpp`** - Create complex layouts
+6. **Explore `06_discrete_histograms.cpp`** - Learn categorical data visualization
 
 ## 🔧 Customization Ideas
 

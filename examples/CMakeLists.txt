@@ -22,53 +22,56 @@ function(add_example example_name source_file)
     set_target_properties(${example_name} PROPERTIES
         CXX_STANDARD 17
         CXX_STANDARD_REQUIRED ON
+        RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/examples
     )
 endfunction()
 
-# Beginner Examples
-add_example(01_first_scatter_plot beginner/01_first_scatter_plot.cpp)
-add_example(02_colors_and_multiple_series beginner/02_colors_and_multiple_series.cpp)
-add_example(03_first_line_plot beginner/03_first_line_plot.cpp)
-add_example(04_first_histogram beginner/04_first_histogram.cpp)
-add_example(05_simple_subplots beginner/05_simple_subplots.cpp)
-add_example(06_discrete_histograms beginner/06_discrete_histograms.cpp)
+# Dynamically discover and build beginner examples
+file(GLOB BEGINNER_SOURCES "beginner/[0-9][0-9]_*.cpp")
+set(BEGINNER_TARGETS "")
+foreach(source_file ${BEGINNER_SOURCES})
+    get_filename_component(example_name ${source_file} NAME_WE)
+    add_example(${example_name} ${source_file})
+    list(APPEND BEGINNER_TARGETS ${example_name})
+endforeach()
 
-# Advanced Examples
-add_example(advanced_01_custom_styling advanced/01_custom_styling_and_advanced_features.cpp)
-add_example(advanced_02_complex_dashboards advanced/02_complex_dashboards_and_layouts.cpp)
-add_example(advanced_03_performance_optimization advanced/03_performance_optimization_and_large_datasets.cpp)
-add_example(advanced_04_reference_lines advanced/04_reference_lines_and_annotations.cpp)
+# Dynamically discover and build advanced examples  
+file(GLOB ADVANCED_SOURCES "advanced/[0-9][0-9]_*.cpp")
+set(ADVANCED_TARGETS "")
+foreach(source_file ${ADVANCED_SOURCES})
+    get_filename_component(base_name ${source_file} NAME_WE)
+    # Create consistent naming: 01_file_name -> advanced_01_file_name
+    string(REGEX REPLACE "^([0-9]+)_(.+)" "advanced_\\1_\\2" example_name ${base_name})
+    add_example(${example_name} ${source_file})
+    list(APPEND ADVANCED_TARGETS ${example_name})
+endforeach()
 
 # Create a target to build all beginner examples
-add_custom_target(beginner_examples
-    DEPENDS 
-        01_first_scatter_plot
-        02_colors_and_multiple_series
-        03_first_line_plot
-        04_first_histogram
-        05_simple_subplots
-        06_discrete_histograms
-)
+add_custom_target(beginner_examples DEPENDS ${BEGINNER_TARGETS})
 
 # Create a target to build all advanced examples
-add_custom_target(advanced_examples
-    DEPENDS 
-        advanced_01_custom_styling
-        advanced_02_complex_dashboards
-        advanced_03_performance_optimization
-        advanced_04_reference_lines
-)
+add_custom_target(advanced_examples DEPENDS ${ADVANCED_TARGETS})
+
+# Function to generate run commands for a list of targets
+function(generate_run_commands target_list output_commands)
+    set(commands "")
+    foreach(target ${target_list})
+        list(APPEND commands "COMMAND" "${CMAKE_CURRENT_BINARY_DIR}/${target}")
+    endforeach()
+    set(${output_commands} ${commands} PARENT_SCOPE)
+endfunction()
+
+# Generate run commands for beginner examples
+generate_run_commands("${BEGINNER_TARGETS}" BEGINNER_RUN_COMMANDS)
+
+# Generate run commands for advanced examples  
+generate_run_commands("${ADVANCED_TARGETS}" ADVANCED_RUN_COMMANDS)
 
 # Create a target to run all beginner examples
 add_custom_target(run_beginner_examples
     COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_SOURCE_DIR}/output
     COMMAND echo "Running beginner examples..."
-    COMMAND ${CMAKE_CURRENT_BINARY_DIR}/01_first_scatter_plot
-    COMMAND ${CMAKE_CURRENT_BINARY_DIR}/02_colors_and_multiple_series
-    COMMAND ${CMAKE_CURRENT_BINARY_DIR}/03_first_line_plot
-    COMMAND ${CMAKE_CURRENT_BINARY_DIR}/04_first_histogram
-    COMMAND ${CMAKE_CURRENT_BINARY_DIR}/05_simple_subplots
-    COMMAND ${CMAKE_CURRENT_BINARY_DIR}/06_discrete_histograms
+    ${BEGINNER_RUN_COMMANDS}
     COMMAND echo "All beginner examples completed!"
     DEPENDS beginner_examples
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
@@ -78,10 +81,7 @@ add_custom_target(run_beginner_examples
 add_custom_target(run_advanced_examples
     COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_SOURCE_DIR}/output
     COMMAND echo "Running advanced examples..."
-    COMMAND ${CMAKE_CURRENT_BINARY_DIR}/advanced_01_custom_styling
-    COMMAND ${CMAKE_CURRENT_BINARY_DIR}/advanced_02_complex_dashboards
-    COMMAND ${CMAKE_CURRENT_BINARY_DIR}/advanced_03_performance_optimization
-    COMMAND ${CMAKE_CURRENT_BINARY_DIR}/advanced_04_reference_lines
+    ${ADVANCED_RUN_COMMANDS}
     COMMAND echo "All advanced examples completed!"
     DEPENDS advanced_examples
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
@@ -94,18 +94,3 @@ add_custom_target(run_all_examples
     COMMAND echo "All examples completed successfully!"
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
 )
-
-# Set output directory for all examples
-set_target_properties(
-    01_first_scatter_plot
-    02_colors_and_multiple_series
-    03_first_line_plot
-    04_first_histogram
-    05_simple_subplots
-    06_discrete_histograms
-    advanced_01_custom_styling
-    advanced_02_complex_dashboards
-    advanced_03_performance_optimization
-    advanced_04_reference_lines
-    PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/examples
-) 

@@ -3,7 +3,7 @@
  * @brief Histogram plotting implementation using PlotManager
  * @author PlotLib Contributors
  * @version 1.0.0
- * @date 2025-06-08
+ * @date 2024-06-08
  * 
  * This file contains the HistogramPlot class for creating histogram visualizations
  * with support for multiple series, custom binning, and subplot integration.

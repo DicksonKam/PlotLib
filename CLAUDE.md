@@ -11,6 +11,26 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Avoid hard-coding values - use parameters and embedded variables instead
 - These preferences apply across all projects and codebases
 
+**Function Parameter Ordering Standard:**
+For ALL library functions, maintain consistent parameter order:
+1. **Data values first** - The core data being processed (x_values, y_values, counts, values, etc.)
+2. **Naming second** - Labels, names, identifiers for legend and axis labels
+3. **Colors last** - Visual styling parameters (color_name, color_names)
+
+Examples:
+```cpp
+// ✅ CORRECT ordering: data → naming → colors
+add_scatter(x_values, y_values, "Series Name", "red");
+add_line(x_values, y_values, "Line Name", "blue"); 
+add_histogram(values, "Histogram Name", "green");
+add_vertical_line(x_value, "Line Label", "red");
+
+// ❌ INCORRECT - don't put naming before data
+add_scatter("Series Name", x_values, y_values, "red"); // WRONG ORDER
+```
+
+This ordering ensures intuitive, consistent API usage across all plot types and operations.
+
 ## Build Commands
 
 ### Quick Build and Test

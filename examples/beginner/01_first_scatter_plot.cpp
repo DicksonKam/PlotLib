@@ -27,7 +27,7 @@ int main() {
     
     // Step 4: Add your data to the plot
     // The library will automatically choose a nice blue color
-    plot.add_scatter("My Data", x_values, y_values);
+    plot.add_scatter(x_values, y_values, "My Data");
     
     // Step 5: Save the plot as a PNG image
     bool success = plot.save_png("output/01_first_scatter_plot.png");

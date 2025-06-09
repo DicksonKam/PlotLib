@@ -465,35 +465,33 @@ void HistogramPlot::clear() {
     y_label = "Frequency";
 }
 
-// Beginner-friendly convenience methods
-void HistogramPlot::add_histogram(const std::string& name, const std::vector<double>& data, int bin_count) {
+// Continuous histogram methods with new parameter ordering (data->naming->colors)
+void HistogramPlot::add_histogram(const std::vector<double>& values, const std::string& name, 
+                                 const std::string& color_name, int bin_count) {
+    add_data(name, values, color_to_style(color_name, 3.0, 2.0), bin_count);
+}
+
+void HistogramPlot::add_histogram(const std::vector<double>& values, const std::string& name, int bin_count) {
     // Use automatic color based on series count
     std::string color = get_auto_color(histogram_series.size());
-    add_data(name, data, color_to_style(color, 3.0, 2.0), bin_count);
+    add_data(name, values, color_to_style(color, 3.0, 2.0), bin_count);
 }
 
-void HistogramPlot::add_histogram(const std::string& name, const std::vector<double>& data, 
-                                 const std::string& color_name, int bin_count) {
-    add_data(name, data, color_to_style(color_name, 3.0, 2.0), bin_count);
+void HistogramPlot::add_histogram(const std::vector<double>& values, int bin_count) {
+    std::string auto_name = "Histogram " + std::to_string(histogram_series.size() + 1);
+    add_histogram(values, auto_name, bin_count);
 }
 
-// Discrete histogram methods
-void HistogramPlot::add_histogram(const std::string& name, const std::vector<int>& counts, 
-                                 const std::string& category_prefix) {
-    // Generate automatic colors for each category
-    std::vector<PlotStyle> styles;
-    for (size_t i = 0; i < counts.size(); ++i) {
-        std::string color = get_auto_color(histogram_series.size() * counts.size() + i);
-        styles.push_back(color_to_style(color, 3.0, 2.0));
-    }
-    
-    add_discrete_data(name, counts, category_prefix, styles);
-}
-
-void HistogramPlot::add_histogram(const std::string& name, const std::vector<int>& counts, 
-                                 const std::string& category_prefix, const std::vector<std::string>& color_names) {
+// Discrete histogram methods with simplified API (no category_prefix)
+void HistogramPlot::add_histogram(const std::vector<int>& counts, const std::vector<std::string>& names,
+                                 const std::string& name, const std::vector<std::string>& color_names) {
     if (color_names.size() != counts.size()) {
         std::cerr << "Error: Number of colors (" << color_names.size() << ") must match number of categories (" << counts.size() << ")" << std::endl;
+        return;
+    }
+    
+    if (names.size() != counts.size()) {
+        std::cerr << "Error: Number of names (" << names.size() << ") must match number of categories (" << counts.size() << ")" << std::endl;
         return;
     }
     
@@ -503,7 +501,29 @@ void HistogramPlot::add_histogram(const std::string& name, const std::vector<int
         styles.push_back(color_to_style(color_name, 3.0, 2.0));
     }
     
-    add_discrete_data(name, counts, category_prefix, styles);
+    add_discrete_data_simplified(name, counts, names, styles);
+}
+
+void HistogramPlot::add_histogram(const std::vector<int>& counts, const std::vector<std::string>& names,
+                                 const std::string& name) {
+    if (names.size() != counts.size()) {
+        std::cerr << "Error: Number of names (" << names.size() << ") must match number of categories (" << counts.size() << ")" << std::endl;
+        return;
+    }
+    
+    // Generate automatic colors for each category
+    std::vector<PlotStyle> styles;
+    for (size_t i = 0; i < counts.size(); ++i) {
+        std::string color = get_auto_color(histogram_series.size() * counts.size() + i);
+        styles.push_back(color_to_style(color, 3.0, 2.0));
+    }
+    
+    add_discrete_data_simplified(name, counts, names, styles);
+}
+
+void HistogramPlot::add_histogram(const std::vector<int>& counts, const std::vector<std::string>& names) {
+    std::string auto_name = "Histogram " + std::to_string(histogram_series.size() + 1);
+    add_histogram(counts, names, auto_name);
 }
 
 void HistogramPlot::add_discrete_data(const std::string& name, const std::vector<int>& counts, 
@@ -539,7 +559,41 @@ void HistogramPlot::add_discrete_data(const std::string& name, const std::vector
     bounds_set = false;
 }
 
-void HistogramPlot::add_vertical_line(double x_value, const std::string& label, const PlotStyle& style) {
+void HistogramPlot::add_discrete_data_simplified(const std::string& name, const std::vector<int>& counts, 
+                                                const std::vector<std::string>& names, const std::vector<PlotStyle>& styles) {
+    if (counts.empty()) {
+        std::cerr << "Error: Empty count data provided for discrete histogram series '" << name << "'" << std::endl;
+        return;
+    }
+    
+    // Validate that we're not mixing histogram types
+    validate_histogram_type_compatibility(true); // true = discrete
+    
+    if (styles.size() != counts.size()) {
+        std::cerr << "Error: Number of styles (" << styles.size() << ") must match number of categories (" << counts.size() << ")" << std::endl;
+        return;
+    }
+    
+    if (names.size() != counts.size()) {
+        std::cerr << "Error: Number of names (" << names.size() << ") must match number of categories (" << counts.size() << ")" << std::endl;
+        return;
+    }
+    
+    HistogramData hist_data(name);
+    hist_data.is_discrete = true;
+    hist_data.counts = counts;
+    hist_data.styles = styles;
+    hist_data.categories = names; // Use provided names directly
+    
+    // Use the first style as the main style for legend purposes
+    hist_data.style = styles[0];
+    
+    histogram_series.push_back(hist_data);
+    bounds_set = false;
+}
+
+
+void HistogramPlot::add_vertical_line(double x_value, const std::string& label, const std::string& color_name) {
     // Check if we have discrete histograms
     if (has_discrete_histograms()) {
         throw std::invalid_argument("Error: Vertical reference lines are not allowed for discrete histograms. "
@@ -548,13 +602,52 @@ void HistogramPlot::add_vertical_line(double x_value, const std::string& label, 
     }
     
     // Call parent implementation for continuous histograms
-    PlotManager::add_vertical_line(x_value, label, style);
+    PlotManager::add_vertical_line(x_value, label, color_name);
 }
 
-void HistogramPlot::add_horizontal_line(double y_value, const std::string& label, const PlotStyle& style) {
+void HistogramPlot::add_horizontal_line(double y_value, const std::string& label, const std::string& color_name) {
     // Horizontal lines are allowed for both discrete and continuous histograms
     // They represent frequency thresholds which are meaningful for both types
-    PlotManager::add_horizontal_line(y_value, label, style);
+    PlotManager::add_horizontal_line(y_value, label, color_name);
+}
+
+// Additional overloads to match parent class signatures
+void HistogramPlot::add_vertical_line(double x_value, const std::string& label) {
+    // Check if we have discrete histograms
+    if (has_discrete_histograms()) {
+        throw std::invalid_argument("Error: Vertical reference lines are not allowed for discrete histograms. "
+                                   "Discrete histograms use categorical X-axis where vertical lines between categories are meaningless. "
+                                   "Consider using horizontal reference lines to indicate frequency thresholds instead.");
+    }
+    
+    // Call parent implementation for continuous histograms
+    PlotManager::add_vertical_line(x_value, label);
+}
+
+void HistogramPlot::add_horizontal_line(double y_value, const std::string& label) {
+    // Horizontal lines are allowed for both discrete and continuous histograms
+    // They represent frequency thresholds which are meaningful for both types
+    PlotManager::add_horizontal_line(y_value, label);
+}
+
+void HistogramPlot::add_vertical_line(double x_value) {
+    // Check if we have discrete histograms
+    if (has_discrete_histograms()) {
+        throw std::invalid_argument("Error: Vertical reference lines are not allowed for discrete histograms. "
+                                   "Discrete histograms use categorical X-axis where vertical lines between categories are meaningless. "
+                                   "Consider using horizontal reference lines to indicate frequency thresholds instead.");
+    }
+    
+    // Call parent implementation for continuous histograms - use explicit signature to avoid ambiguity
+    std::string auto_label = "Vertical " + std::to_string(reference_lines.size() + 1);
+    PlotManager::add_vertical_line(x_value, auto_label, "black");
+}
+
+void HistogramPlot::add_horizontal_line(double y_value) {
+    // Horizontal lines are allowed for both discrete and continuous histograms
+    // They represent frequency thresholds which are meaningful for both types
+    std::string auto_label = "Horizontal " + std::to_string(reference_lines.size() + 1);
+    PlotManager::add_horizontal_line(y_value, auto_label, "black");
 }
 
 } // namespace plotlib 

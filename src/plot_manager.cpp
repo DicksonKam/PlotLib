@@ -678,12 +678,34 @@ void PlotManager::show_all_legend_items() {
 }
 
 // Reference line management methods
-void PlotManager::add_vertical_line(double x_value, const std::string& label, const PlotStyle& style) {
+void PlotManager::add_vertical_line(double x_value, const std::string& label, const std::string& color_name) {
+    PlotStyle style = color_to_style(color_name, 2.0, 2.0);
     add_reference_line(true, x_value, label, style);
 }
 
-void PlotManager::add_horizontal_line(double y_value, const std::string& label, const PlotStyle& style) {
+void PlotManager::add_horizontal_line(double y_value, const std::string& label, const std::string& color_name) {
+    PlotStyle style = color_to_style(color_name, 2.0, 2.0);
     add_reference_line(false, y_value, label, style);
+}
+
+void PlotManager::add_vertical_line(double x_value, const std::string& label) {
+    std::string final_label = label.empty() ? ("Vertical " + std::to_string(reference_lines.size() + 1)) : label;
+    PlotStyle style = color_to_style("black", 2.0, 2.0);
+    add_reference_line(true, x_value, final_label, style);
+}
+
+void PlotManager::add_horizontal_line(double y_value, const std::string& label) {
+    std::string final_label = label.empty() ? ("Horizontal " + std::to_string(reference_lines.size() + 1)) : label;
+    PlotStyle style = color_to_style("black", 2.0, 2.0);
+    add_reference_line(false, y_value, final_label, style);
+}
+
+void PlotManager::add_vertical_line(double x_value) {
+    add_vertical_line(x_value, "");
+}
+
+void PlotManager::add_horizontal_line(double y_value) {
+    add_horizontal_line(y_value, "");
 }
 
 void PlotManager::add_reference_line(bool is_vertical, double value, const std::string& label, const PlotStyle& style) {

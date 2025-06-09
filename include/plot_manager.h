@@ -397,20 +397,44 @@ public:
     /**
      * @brief Add a vertical reference line
      * @param x_value X coordinate where the vertical line should be drawn
-     * @param label Label for the legend (default: auto-generated)
-     * @param style Visual styling (default: dotted black line)
+     * @param label Label for the legend
+     * @param color_name Color name ("red", "blue", "green", etc.)
      */
-    virtual void add_vertical_line(double x_value, const std::string& label = "", 
-                                  const PlotStyle& style = PlotStyle());
+    virtual void add_vertical_line(double x_value, const std::string& label, const std::string& color_name);
     
     /**
      * @brief Add a horizontal reference line
      * @param y_value Y coordinate where the horizontal line should be drawn
-     * @param label Label for the legend (default: auto-generated)
-     * @param style Visual styling (default: dotted black line)
+     * @param label Label for the legend
+     * @param color_name Color name ("red", "blue", "green", etc.)
      */
-    virtual void add_horizontal_line(double y_value, const std::string& label = "", 
-                                    const PlotStyle& style = PlotStyle());
+    virtual void add_horizontal_line(double y_value, const std::string& label, const std::string& color_name);
+    
+    /**
+     * @brief Add a vertical reference line with auto-generated label
+     * @param x_value X coordinate where the vertical line should be drawn
+     * @param label Label for the legend (optional)
+     */
+    virtual void add_vertical_line(double x_value, const std::string& label = "");
+    
+    /**
+     * @brief Add a horizontal reference line with auto-generated label
+     * @param y_value Y coordinate where the horizontal line should be drawn
+     * @param label Label for the legend (optional)
+     */
+    virtual void add_horizontal_line(double y_value, const std::string& label = "");
+    
+    /**
+     * @brief Add a vertical reference line (value only)
+     * @param x_value X coordinate where the vertical line should be drawn
+     */
+    virtual void add_vertical_line(double x_value);
+    
+    /**
+     * @brief Add a horizontal reference line (value only)
+     * @param y_value Y coordinate where the horizontal line should be drawn
+     */
+    virtual void add_horizontal_line(double y_value);
     
     /**
      * @brief Add a reference line (vertical or horizontal)

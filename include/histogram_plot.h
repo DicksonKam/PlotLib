@@ -119,6 +119,16 @@ private:
      */
     void add_discrete_data(const std::string& name, const std::vector<int>& counts, 
                           const std::string& category_prefix, const std::vector<PlotStyle>& styles);
+    
+    /**
+     * @brief Internal method to add simplified discrete histogram data (used by new API)
+     * @param name Series name
+     * @param counts Frequency counts for each category
+     * @param names Category names (used for both legend and x-axis labels)
+     * @param styles Visual styles for each category
+     */
+    void add_discrete_data_simplified(const std::string& name, const std::vector<int>& counts, 
+                                     const std::vector<std::string>& names, const std::vector<PlotStyle>& styles);
 
 public:
     /**
@@ -134,58 +144,99 @@ public:
     virtual ~HistogramPlot() = default;
     
     /**
-     * @brief Add histogram data with automatic styling (beginner-friendly)
-     * @param name Series name for legend
+     * @brief Add continuous histogram data with custom color and bin count
      * @param values Raw data values for histogram
-     * @param bin_count Optional number of bins (0 for automatic)
-     */
-    void add_histogram(const std::string& name, const std::vector<double>& values, int bin_count = 0);
-    
-    /**
-     * @brief Add histogram data with custom color (beginner-friendly)
      * @param name Series name for legend
-     * @param values Raw data values for histogram
      * @param color_name Color name ("red", "blue", "green", "orange", "purple", "cyan", "magenta", "yellow")
-     * @param bin_count Optional number of bins (0 for automatic)
+     * @param bin_count Number of bins (0 for automatic)
      */
-    void add_histogram(const std::string& name, const std::vector<double>& values, 
+    void add_histogram(const std::vector<double>& values, const std::string& name, 
                       const std::string& color_name, int bin_count = 0);
     
     /**
-     * @brief Add discrete histogram data with automatic styling (beginner-friendly)
+     * @brief Add continuous histogram data with automatic styling
+     * @param values Raw data values for histogram
      * @param name Series name for legend
-     * @param counts Frequency counts for each discrete category
-     * @param category_prefix Prefix for category labels (e.g., "structure" -> "structure 1", "structure 2")
+     * @param bin_count Number of bins (0 for automatic)
      */
-    void add_histogram(const std::string& name, const std::vector<int>& counts, 
-                      const std::string& category_prefix);
+    void add_histogram(const std::vector<double>& values, const std::string& name, int bin_count = 0);
     
     /**
-     * @brief Add discrete histogram data with custom colors (advanced)
-     * @param name Series name for legend
+     * @brief Add continuous histogram data with auto-generated name
+     * @param values Raw data values for histogram
+     * @param bin_count Number of bins (0 for automatic)
+     */
+    void add_histogram(const std::vector<double>& values, int bin_count = 0);
+    
+    /**
+     * @brief Add discrete histogram data with custom colors
      * @param counts Frequency counts for each discrete category
-     * @param category_prefix Prefix for category labels (e.g., "structure" -> "structure 1", "structure 2")
+     * @param names Category names for X-axis labels and legend
+     * @param name Series name for legend
      * @param color_names Vector of color names for each category
      */
-    void add_histogram(const std::string& name, const std::vector<int>& counts, 
-                      const std::string& category_prefix, const std::vector<std::string>& color_names);
+    void add_histogram(const std::vector<int>& counts, const std::vector<std::string>& names,
+                      const std::string& name, const std::vector<std::string>& color_names);
     
     /**
-     * @brief Add vertical reference line (restricted for discrete histograms)
+     * @brief Add discrete histogram data with automatic styling
+     * @param counts Frequency counts for each discrete category
+     * @param names Category names for X-axis labels and legend
+     * @param name Series name for legend
+     */
+    void add_histogram(const std::vector<int>& counts, const std::vector<std::string>& names,
+                      const std::string& name);
+    
+    /**
+     * @brief Add discrete histogram data with auto-generated name
+     * @param counts Frequency counts for each discrete category
+     * @param names Category names for X-axis labels and legend
+     */
+    void add_histogram(const std::vector<int>& counts, const std::vector<std::string>& names);
+    
+    
+    /**
+     * @brief Add vertical reference line with color name (restricted for discrete histograms)
      * @param x_value X-axis value for the line
      * @param label Label for the line in legend
-     * @param style Line style
+     * @param color_name Color name ("red", "blue", "green", etc.)
      * @throws std::invalid_argument if called on discrete histograms
      */
-    void add_vertical_line(double x_value, const std::string& label = "", const PlotStyle& style = PlotStyle()) override;
+    void add_vertical_line(double x_value, const std::string& label, const std::string& color_name) override;
     
     /**
-     * @brief Add horizontal reference line (allowed for all histogram types)
+     * @brief Add horizontal reference line with color name (allowed for all histogram types)
      * @param y_value Y-axis value for the line
      * @param label Label for the line in legend
-     * @param style Line style
+     * @param color_name Color name ("red", "blue", "green", etc.)
      */
-    void add_horizontal_line(double y_value, const std::string& label = "", const PlotStyle& style = PlotStyle()) override;
+    void add_horizontal_line(double y_value, const std::string& label, const std::string& color_name) override;
+    
+    /**
+     * @brief Add vertical reference line with auto-label (restricted for discrete histograms)
+     * @param x_value X-axis value for the line
+     * @throws std::invalid_argument if called on discrete histograms
+     */
+    void add_vertical_line(double x_value, const std::string& label = "") override;
+    
+    /**
+     * @brief Add horizontal reference line with auto-label (allowed for all histogram types)
+     * @param y_value Y-axis value for the line
+     */
+    void add_horizontal_line(double y_value, const std::string& label = "") override;
+    
+    /**
+     * @brief Add vertical reference line with auto-label and auto-name (restricted for discrete histograms)
+     * @param x_value X-axis value for the line
+     * @throws std::invalid_argument if called on discrete histograms
+     */
+    void add_vertical_line(double x_value) override;
+    
+    /**
+     * @brief Add horizontal reference line with auto-label and auto-name (allowed for all histogram types)
+     * @param y_value Y-axis value for the line
+     */
+    void add_horizontal_line(double y_value) override;
 
 protected:
     /**

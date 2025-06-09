@@ -27,7 +27,7 @@ int main() {
     }
     
     // Add data with custom color
-    scatter_plot.add_scatter("Experimental Data", data_x, data_y, "red");
+    scatter_plot.add_scatter(data_x, data_y, "Experimental Data", "red");
     
     scatter_plot.save_png("output/advanced_04_scatter_advanced.png");
     
@@ -47,8 +47,8 @@ int main() {
         target_temp.push_back(24.0);  // Target temperature line
     }
     
-    line_plot.add_line("Actual Temperature", time_values, temp_values, "blue");
-    line_plot.add_line("Target Temperature", time_values, target_temp, "red");
+    line_plot.add_line(time_values, temp_values, "Actual Temperature", "blue");
+    line_plot.add_line(time_values, target_temp, "Target Temperature", "red");
     
     line_plot.save_png("output/advanced_04_line_multiSeries.png");
     
@@ -82,8 +82,8 @@ int main() {
         }
     }
     
-    hist_plot.add_histogram("Original Distribution", normal_data, "blue", 30);
-    hist_plot.add_histogram("Shifted Distribution", shifted_data, "orange", 30);
+    hist_plot.add_histogram(normal_data, "Original Distribution", "blue", 30);
+    hist_plot.add_histogram(shifted_data, "Shifted Distribution", "orange", 30);
     
     hist_plot.save_png("output/advanced_04_histogram_multiDist.png");
     
@@ -104,7 +104,7 @@ int main() {
         corr_x.push_back(x);
         corr_y.push_back(y);
     }
-    subplot1.add_scatter("Data Points", corr_x, corr_y, "blue");
+    subplot1.add_scatter(corr_x, corr_y, "Data Points", "blue");
     
     // Subplot 2: Line plot with performance monitoring
     auto& subplot2 = subplots.get_subplot<plotlib::LinePlot>(0, 1);
@@ -118,8 +118,8 @@ int main() {
         perf_value.push_back(perf);
         threshold_value.push_back(60.0);  // Performance threshold
     }
-    subplot2.add_line("Performance", perf_time, perf_value, "green");
-    subplot2.add_line("Target", perf_time, threshold_value, "red");
+    subplot2.add_line(perf_time, perf_value, "Performance", "green");
+    subplot2.add_line(perf_time, threshold_value, "Target", "red");
     
     // Subplot 3: Histogram with distribution analysis
     auto& subplot3 = subplots.get_subplot<plotlib::HistogramPlot>(1, 0);
@@ -130,7 +130,7 @@ int main() {
         double val = 25.0 + (rand() % 1000 - 500) * 0.02;
         dist_data.push_back(val);
     }
-    subplot3.add_histogram("Sample Data", dist_data, "purple", 25);
+    subplot3.add_histogram(dist_data, "Sample Data", "purple", 25);
     
     // Subplot 4: Multi-series scatter analysis
     auto& subplot4 = subplots.get_subplot<plotlib::ScatterPlot>(1, 1);
@@ -147,8 +147,8 @@ int main() {
         group_b_y.push_back(5.0 + (rand() % 100) * 0.05);
     }
     
-    subplot4.add_scatter("Group A", group_a_x, group_a_y, "orange");
-    subplot4.add_scatter("Group B", group_b_x, group_b_y, "cyan");
+    subplot4.add_scatter(group_a_x, group_a_y, "Group A", "orange");
+    subplot4.add_scatter(group_b_x, group_b_y, "Group B", "cyan");
     
     subplots.save_png("output/advanced_04_complex_subplots.png");
     

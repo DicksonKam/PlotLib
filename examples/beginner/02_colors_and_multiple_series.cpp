@@ -31,12 +31,12 @@ int main() {
     
     // Method 1: Let the library choose colors automatically
     std::cout << "Adding data with automatic colors..." << std::endl;
-    plot.add_scatter("Dataset A", x_a, y_a);  // Will be blue (first automatic color)
-    plot.add_scatter("Dataset B", x_b, y_b);  // Will be red (second automatic color)
+    plot.add_scatter(x_a, y_a, "Dataset A");  // Will be blue (first automatic color)
+    plot.add_scatter(x_b, y_b, "Dataset B");  // Will be red (second automatic color)
     
     // Method 2: Choose your own colors using color names
     std::cout << "Adding data with custom color..." << std::endl;
-    plot.add_scatter("Dataset C", x_c, y_c, "green");  // Explicitly green
+    plot.add_scatter(x_c, y_c, "Dataset C", "green");  // Explicitly green
     
     // Save the plot
     bool success = plot.save_png("output/02_colors_and_multiple_series.png");
@@ -60,7 +60,7 @@ int main() {
     for (size_t i = 0; i < colors.size(); ++i) {
         std::vector<double> x_color = {static_cast<double>(i), static_cast<double>(i), static_cast<double>(i)};
         std::vector<double> y_color = {1, 2, 3};
-        color_demo.add_scatter(colors[i], x_color, y_color, colors[i]);
+        color_demo.add_scatter(x_color, y_color, colors[i], colors[i]);
     }
     
     bool color_success = color_demo.save_png("output/02_color_showcase.png");

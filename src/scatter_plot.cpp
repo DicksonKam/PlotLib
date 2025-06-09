@@ -63,8 +63,23 @@ void ScatterPlot::draw_cluster_points(cairo_t* cr) {
 }
 
 // Beginner-friendly convenience methods
-void ScatterPlot::add_scatter(const std::string& name, const std::vector<double>& x_values, 
-                             const std::vector<double>& y_values) {
+void ScatterPlot::add_scatter(const std::vector<double>& x_values, const std::vector<double>& y_values,
+                             const std::string& name, const std::string& color_name) {
+    if (x_values.size() != y_values.size()) {
+        std::cerr << "Error: X and Y vectors must have the same size" << std::endl;
+        return;
+    }
+    
+    std::vector<Point2D> data;
+    for (size_t i = 0; i < x_values.size(); ++i) {
+        data.emplace_back(x_values[i], y_values[i]);
+    }
+    
+    add_series(name, data, color_to_style(color_name, 3.0, 2.0));
+}
+
+void ScatterPlot::add_scatter(const std::vector<double>& x_values, const std::vector<double>& y_values,
+                             const std::string& name) {
     if (x_values.size() != y_values.size()) {
         std::cerr << "Error: X and Y vectors must have the same size" << std::endl;
         return;
@@ -79,19 +94,9 @@ void ScatterPlot::add_scatter(const std::string& name, const std::vector<double>
     add_series(name, data, color_to_style(color, 3.0, 2.0));
 }
 
-void ScatterPlot::add_scatter(const std::string& name, const std::vector<double>& x_values, 
-                             const std::vector<double>& y_values, const std::string& color_name) {
-    if (x_values.size() != y_values.size()) {
-        std::cerr << "Error: X and Y vectors must have the same size" << std::endl;
-        return;
-    }
-    
-    std::vector<Point2D> data;
-    for (size_t i = 0; i < x_values.size(); ++i) {
-        data.emplace_back(x_values[i], y_values[i]);
-    }
-    
-    add_series(name, data, color_to_style(color_name, 3.0, 2.0));
+void ScatterPlot::add_scatter(const std::vector<double>& x_values, const std::vector<double>& y_values) {
+    std::string auto_name = "Scatter " + std::to_string(data_series.size() + 1);
+    add_scatter(x_values, y_values, auto_name);
 }
 
 void ScatterPlot::add_clusters(const std::vector<double>& x_values, const std::vector<double>& y_values, 

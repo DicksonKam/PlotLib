@@ -27,7 +27,7 @@ int main() {
     plot.set_labels("Test Scores Distribution", "Score", "Number of Students");
     
     // Add histogram with automatic bin count and custom color
-    plot.add_histogram("Test Scores", test_scores, "blue");
+    plot.add_histogram(test_scores, "Test Scores", "blue");
     
     bool success = plot.save_png("output/04_test_scores.png");
     
@@ -52,13 +52,13 @@ int main() {
     // Create histogram with 10 bins
     plotlib::HistogramPlot hist_10(800, 600);
     hist_10.set_labels("IQ Scores (10 bins)", "IQ Score", "Frequency");
-    hist_10.add_histogram("IQ Scores", iq_scores, "green", 10);  // color first, then bins
+    hist_10.add_histogram(iq_scores, "IQ Scores", "green", 10);
     hist_10.save_png("output/04_iq_10_bins.png");
     
     // Create histogram with 30 bins
     plotlib::HistogramPlot hist_30(800, 600);
     hist_30.set_labels("IQ Scores (30 bins)", "IQ Score", "Frequency");
-    hist_30.add_histogram("IQ Scores", iq_scores, "red", 30);  // color first, then bins
+    hist_30.add_histogram(iq_scores, "IQ Scores", "red", 30);
     hist_30.save_png("output/04_iq_30_bins.png");
     
     std::cout << "✅ Different bin count histograms saved!" << std::endl;
@@ -83,8 +83,8 @@ int main() {
     comparison.set_labels("Group Comparison", "Score", "Frequency");
     
     // Add both groups with different colors
-    comparison.add_histogram("Group A", group_a_scores, "blue", 20);
-    comparison.add_histogram("Group B", group_b_scores, "orange", 20);
+    comparison.add_histogram(group_a_scores, "Group A", "blue", 20);
+    comparison.add_histogram(group_b_scores, "Group B", "orange", 20);
     
     bool comp_success = comparison.save_png("output/04_group_comparison.png");
     
@@ -105,7 +105,7 @@ int main() {
     
     plotlib::HistogramPlot loading_plot(800, 600);
     loading_plot.set_labels("Website Loading Times", "Loading Time (seconds)", "Number of Requests");
-    loading_plot.add_histogram("Loading Times", loading_times, "purple", 15);
+    loading_plot.add_histogram(loading_times, "Loading Times", "purple", 15);
     
     bool loading_success = loading_plot.save_png("output/04_loading_times.png");
     

@@ -70,9 +70,9 @@ int main() {
     }
     
     // Add series with custom styles using simplified API + manual styling
-    custom_plot.add_scatter("Corporate", corporate_x, corporate_y, "blue");
-    custom_plot.add_scatter("Research", research_x, research_y, "red");
-    custom_plot.add_scatter("Academic", academic_x, academic_y, "green");
+    custom_plot.add_scatter(corporate_x, corporate_y, "Corporate", "blue");
+    custom_plot.add_scatter(research_x, research_y, "Research", "red");
+    custom_plot.add_scatter(academic_x, academic_y, "Academic", "green");
     
     // Set custom bounds for professional appearance
     custom_plot.set_bounds(0, 80, 0, 120);
@@ -87,17 +87,17 @@ int main() {
     legend_plot.set_labels("Selective Legend Display", "Performance", "Efficiency");
     
     // Add multiple series using the simplified API
-    legend_plot.add_scatter("Primary Results", corporate_x, corporate_y, "blue");
-    legend_plot.add_scatter("Secondary Results", research_x, research_y, "red");
-    legend_plot.add_scatter("Control Group", academic_x, academic_y, "green");
+    legend_plot.add_scatter(corporate_x, corporate_y, "Primary Results", "blue");
+    legend_plot.add_scatter(research_x, research_y, "Secondary Results", "red");
+    legend_plot.add_scatter(academic_x, academic_y, "Control Group", "green");
     
     std::vector<double> outlier_x = {10, 70};
     std::vector<double> outlier_y = {10, 110};
-    legend_plot.add_scatter("Outlier Data", outlier_x, outlier_y, "orange");
+    legend_plot.add_scatter(outlier_x, outlier_y, "Outlier Data", "orange");
     
     std::vector<double> baseline_x = {0, 80};
     std::vector<double> baseline_y = {50, 50};
-    legend_plot.add_scatter("Baseline", baseline_x, baseline_y, "gray");
+    legend_plot.add_scatter(baseline_x, baseline_y, "Baseline", "gray");
     
     // Selectively hide some legend items for cleaner presentation
     legend_plot.hide_legend_item("Outlier Data");
@@ -131,9 +131,9 @@ int main() {
     }
     
     // Add lines with custom colors
-    advanced_line.add_line("Primary Signal", time_points, signal_a, "blue");
-    advanced_line.add_line("Secondary Signal", time_points, signal_b, "red");
-    advanced_line.add_line("Reference Signal", time_points, signal_c, "green");
+    advanced_line.add_line(time_points, signal_a, "Primary Signal", "blue");
+    advanced_line.add_line(time_points, signal_b, "Secondary Signal", "red");
+    advanced_line.add_line(time_points, signal_c, "Reference Signal", "green");
     
     advanced_line.save_png("output/advanced_01_complex_lines.png");
     std::cout << "✅ Advanced line plot saved!" << std::endl;
@@ -155,8 +155,8 @@ int main() {
     }
     
     // Add histograms with precise bin control
-    advanced_hist.add_histogram("Normal Distribution", normal_data, "blue", 30);
-    advanced_hist.add_histogram("Shifted Distribution", shifted_data, "red", 30);
+    advanced_hist.add_histogram(normal_data, "Normal Distribution", "blue", 30);
+    advanced_hist.add_histogram(shifted_data, "Shifted Distribution", "red", 30);
     
     advanced_hist.save_png("output/advanced_01_histogram_analysis.png");
     std::cout << "✅ Histogram analysis plot saved!" << std::endl;

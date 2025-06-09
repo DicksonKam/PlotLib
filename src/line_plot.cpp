@@ -159,8 +159,23 @@ void LinePlot::draw_cluster_lines(cairo_t* cr) {
 }
 
 // Beginner-friendly convenience methods
-void LinePlot::add_line(const std::string& name, const std::vector<double>& x_values, 
-                       const std::vector<double>& y_values) {
+void LinePlot::add_line(const std::vector<double>& x_values, const std::vector<double>& y_values,
+                       const std::string& name, const std::string& color_name) {
+    if (x_values.size() != y_values.size()) {
+        std::cerr << "Error: X and Y vectors must have the same size" << std::endl;
+        return;
+    }
+    
+    std::vector<Point2D> data;
+    for (size_t i = 0; i < x_values.size(); ++i) {
+        data.emplace_back(x_values[i], y_values[i]);
+    }
+    
+    add_series(name, data, color_to_style(color_name, 3.0, 2.0));
+}
+
+void LinePlot::add_line(const std::vector<double>& x_values, const std::vector<double>& y_values,
+                       const std::string& name) {
     if (x_values.size() != y_values.size()) {
         std::cerr << "Error: X and Y vectors must have the same size" << std::endl;
         return;
@@ -175,19 +190,9 @@ void LinePlot::add_line(const std::string& name, const std::vector<double>& x_va
     add_series(name, data, color_to_style(color, 3.0, 2.0));
 }
 
-void LinePlot::add_line(const std::string& name, const std::vector<double>& x_values, 
-                       const std::vector<double>& y_values, const std::string& color_name) {
-    if (x_values.size() != y_values.size()) {
-        std::cerr << "Error: X and Y vectors must have the same size" << std::endl;
-        return;
-    }
-    
-    std::vector<Point2D> data;
-    for (size_t i = 0; i < x_values.size(); ++i) {
-        data.emplace_back(x_values[i], y_values[i]);
-    }
-    
-    add_series(name, data, color_to_style(color_name, 3.0, 2.0));
+void LinePlot::add_line(const std::vector<double>& x_values, const std::vector<double>& y_values) {
+    std::string auto_name = "Line " + std::to_string(data_series.size() + 1);
+    add_line(x_values, y_values, auto_name);
 }
 
 } // namespace plotlib 

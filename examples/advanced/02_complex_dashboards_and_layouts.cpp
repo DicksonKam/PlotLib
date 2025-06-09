@@ -46,8 +46,8 @@ int main() {
         revenue_2023.push_back(revenue_dist(gen) + i * 50);  // Growth trend
         revenue_2024.push_back(revenue_dist(gen) + i * 75);  // Better growth
     }
-    revenue_trend.add_line("2023", months, revenue_2023, "blue");
-    revenue_trend.add_line("2024", months, revenue_2024, "green");
+    revenue_trend.add_line(months, revenue_2023, "2023", "blue");
+    revenue_trend.add_line(months, revenue_2024, "2024", "green");
     
     // (0,1) - Customer Satisfaction Distribution
     auto& satisfaction_dist = executive_dashboard.get_subplot<plotlib::HistogramPlot>(0, 1);
@@ -57,7 +57,7 @@ int main() {
     for (int i = 0; i < 500; ++i) {
         satisfaction_scores.push_back(std::max(0.0, std::min(100.0, customer_dist(gen))));
     }
-    satisfaction_dist.add_histogram("Q4 Ratings", satisfaction_scores, "orange", 20);
+    satisfaction_dist.add_histogram(satisfaction_scores, "Q4 Ratings", "orange", 20);
     
     // (0,2) - Regional Performance Scatter
     auto& regional_perf = executive_dashboard.get_subplot<plotlib::ScatterPlot>(0, 2);
@@ -78,10 +78,10 @@ int main() {
         east_x.push_back(gen() % 90 + 40);
         east_y.push_back(revenue_dist(gen) * 0.9);
     }
-    regional_perf.add_scatter("North", north_x, north_y, "blue");
-    regional_perf.add_scatter("South", south_x, south_y, "red");
-    regional_perf.add_scatter("West", west_x, west_y, "green");
-    regional_perf.add_scatter("East", east_x, east_y, "orange");
+    regional_perf.add_scatter(north_x, north_y, "North", "blue");
+    regional_perf.add_scatter(south_x, south_y, "South", "red");
+    regional_perf.add_scatter(west_x, west_y, "West", "green");
+    regional_perf.add_scatter(east_x, east_y, "East", "orange");
     
     // Row 2: Operational Metrics
     // (1,0) - Efficiency Over Time
@@ -96,9 +96,9 @@ int main() {
         logistics_eff.push_back(efficiency_dist(gen) * 100);
         sales_eff.push_back(efficiency_dist(gen) * 100);
     }
-    efficiency_trend.add_line("Production", weeks, production_eff, "blue");
-    efficiency_trend.add_line("Logistics", weeks, logistics_eff, "red");
-    efficiency_trend.add_line("Sales", weeks, sales_eff, "green");
+    efficiency_trend.add_line(weeks, production_eff, "Production", "blue");
+    efficiency_trend.add_line(weeks, logistics_eff, "Logistics", "red");
+    efficiency_trend.add_line(weeks, sales_eff, "Sales", "green");
     
     // (1,1) - Cost Distribution
     auto& cost_analysis = executive_dashboard.get_subplot<plotlib::HistogramPlot>(1, 1);
@@ -110,8 +110,8 @@ int main() {
         operational_costs.push_back(std::max(0.0, cost_dist(gen)));
         marketing_costs.push_back(std::max(0.0, cost_dist(gen) * 0.6));
     }
-    cost_analysis.add_histogram("Operational", operational_costs, "red", 25);
-    cost_analysis.add_histogram("Marketing", marketing_costs, "blue", 25);
+    cost_analysis.add_histogram(operational_costs, "Operational", "red", 25);
+    cost_analysis.add_histogram(marketing_costs, "Marketing", "blue", 25);
     
     // (1,2) - Product Performance
     auto& product_perf = executive_dashboard.get_subplot<plotlib::ScatterPlot>(1, 2);
@@ -131,9 +131,9 @@ int main() {
         product_c_x.push_back(units_dist(gen));
         product_c_y.push_back(margin_dist(gen));
     }
-    product_perf.add_scatter("Product A", product_a_x, product_a_y, "blue");
-    product_perf.add_scatter("Product B", product_b_x, product_b_y, "red");
-    product_perf.add_scatter("Product C", product_c_x, product_c_y, "green");
+    product_perf.add_scatter(product_a_x, product_a_y, "Product A", "blue");
+    product_perf.add_scatter(product_b_x, product_b_y, "Product B", "red");
+    product_perf.add_scatter(product_c_x, product_c_y, "Product C", "green");
     
     // Row 3: Strategic Insights
     // (2,0) - Market Trends
@@ -143,8 +143,8 @@ int main() {
     std::vector<double> quarters = {1, 2, 3, 4, 5, 6, 7, 8};
     std::vector<double> our_share = {15, 17, 19, 22, 25, 27, 30, 32};
     std::vector<double> competitor_share = {35, 34, 33, 31, 29, 28, 26, 25};
-    market_trends.add_line("Our Company", quarters, our_share, "green");
-    market_trends.add_line("Main Competitor", quarters, competitor_share, "red");
+    market_trends.add_line(quarters, our_share, "Our Company", "green");
+    market_trends.add_line(quarters, competitor_share, "Main Competitor", "red");
     
     // (2,1) - Risk Assessment
     auto& risk_assessment = executive_dashboard.get_subplot<plotlib::HistogramPlot>(2, 1);
@@ -157,9 +157,9 @@ int main() {
         operational_risks.push_back(std::max(0.0, std::min(100.0, risk_dist(gen) + 10)));
         market_risks.push_back(std::max(0.0, std::min(100.0, risk_dist(gen) + 20)));
     }
-    risk_assessment.add_histogram("Financial", financial_risks, "green", 15);
-    risk_assessment.add_histogram("Operational", operational_risks, "orange", 15);
-    risk_assessment.add_histogram("Market", market_risks, "red", 15);
+    risk_assessment.add_histogram(financial_risks, "Financial", "green", 15);
+    risk_assessment.add_histogram(operational_risks, "Operational", "orange", 15);
+    risk_assessment.add_histogram(market_risks, "Market", "red", 15);
     
     // (2,2) - Strategic Positioning
     auto& strategic_pos = executive_dashboard.get_subplot<plotlib::ScatterPlot>(2, 2);
@@ -173,9 +173,9 @@ int main() {
         competitors_x.push_back(gen() % 100);
         competitors_y.push_back(gen() % 100);
     }
-    strategic_pos.add_scatter("Current Position", current_x, current_y, "blue");
-    strategic_pos.add_scatter("Target Position", target_x, target_y, "green");
-    strategic_pos.add_scatter("Competitors", competitors_x, competitors_y, "red");
+    strategic_pos.add_scatter(current_x, current_y, "Current Position", "blue");
+    strategic_pos.add_scatter(target_x, target_y, "Target Position", "green");
+    strategic_pos.add_scatter(competitors_x, competitors_y, "Competitors", "red");
     
     executive_dashboard.save_png("output/advanced_02_executive_dashboard.png");
     std::cout << "✅ Executive dashboard saved!" << std::endl;
@@ -202,8 +202,8 @@ int main() {
         control_signal.push_back(measurement_dist(gen) + 0.1 * std::sin(0.2 * t));
         treatment_signal.push_back(measurement_dist(gen) + 0.3 * std::sin(0.2 * t) + 0.5);
     }
-    time_series.add_line("Control", time_points, control_signal, "blue");
-    time_series.add_line("Treatment", time_points, treatment_signal, "red");
+    time_series.add_line(time_points, control_signal, "Control", "blue");
+    time_series.add_line(time_points, treatment_signal, "Treatment", "red");
     
     // (0,1) - Statistical Distribution
     auto& stat_dist = research_dashboard.get_subplot<plotlib::HistogramPlot>(0, 1);
@@ -214,8 +214,8 @@ int main() {
         control_measurements.push_back(measurement_dist(gen));
         treatment_measurements.push_back(measurement_dist(gen) + 0.5);
     }
-    stat_dist.add_histogram("Control", control_measurements, "blue", 30);
-    stat_dist.add_histogram("Treatment", treatment_measurements, "red", 30);
+    stat_dist.add_histogram(control_measurements, "Control", "blue", 30);
+    stat_dist.add_histogram(treatment_measurements, "Treatment", "red", 30);
     
     // (1,0) - Correlation Analysis
     auto& correlation = research_dashboard.get_subplot<plotlib::ScatterPlot>(1, 0);
@@ -229,7 +229,7 @@ int main() {
         corr_x.push_back(x);
         corr_y.push_back(y);
     }
-    correlation.add_scatter("Experimental Data", corr_x, corr_y, "purple");
+    correlation.add_scatter(corr_x, corr_y, "Experimental Data", "purple");
     
     // (1,1) - Error Analysis
     auto& error_analysis = research_dashboard.get_subplot<plotlib::HistogramPlot>(1, 1);
@@ -239,7 +239,7 @@ int main() {
     for (int i = 0; i < 500; ++i) {
         residuals.push_back(measurement_dist(gen) * 0.1);  // Small errors
     }
-    error_analysis.add_histogram("Residuals", residuals, "orange", 25);
+    error_analysis.add_histogram(residuals, "Residuals", "orange", 25);
     
     // (2,0) - Dose-Response Curve
     auto& dose_response = research_dashboard.get_subplot<plotlib::LinePlot>(2, 0);
@@ -254,8 +254,8 @@ int main() {
         response_a.push_back(100 / (1 + std::exp(-(conc - 5))));
         response_b.push_back(100 / (1 + std::exp(-(conc - 7))));
     }
-    dose_response.add_line("Compound A", concentrations, response_a, "blue");
-    dose_response.add_line("Compound B", concentrations, response_b, "red");
+    dose_response.add_line(concentrations, response_a, "Compound A", "blue");
+    dose_response.add_line(concentrations, response_b, "Compound B", "red");
     
     // (2,1) - Quality Control
     auto& quality_control = research_dashboard.get_subplot<plotlib::ScatterPlot>(2, 1);
@@ -268,7 +268,7 @@ int main() {
         qc_x.push_back(i);
         qc_y.push_back(std::max(90.0, std::min(100.0, purity_dist(gen))));
     }
-    quality_control.add_scatter("Batch Quality", qc_x, qc_y, "green");
+    quality_control.add_scatter(qc_x, qc_y, "Batch Quality", "green");
     
     // (3,0) - Comparative Analysis
     auto& comparative = research_dashboard.get_subplot<plotlib::HistogramPlot>(3, 0);
@@ -281,8 +281,8 @@ int main() {
         method1_data.push_back(method1_dist(gen));
         method2_data.push_back(method2_dist(gen));
     }
-    comparative.add_histogram("Method 1", method1_data, "blue", 20);
-    comparative.add_histogram("Method 2", method2_data, "red", 20);
+    comparative.add_histogram(method1_data, "Method 1", "blue", 20);
+    comparative.add_histogram(method2_data, "Method 2", "red", 20);
     
     // (3,1) - Cluster Analysis
     auto& cluster_analysis = research_dashboard.get_subplot<plotlib::ScatterPlot>(3, 1);

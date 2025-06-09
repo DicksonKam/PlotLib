@@ -125,7 +125,7 @@ int main() {
         PerformanceTimer timer("Direct plotting of 100K points");
         plotlib::ScatterPlot large_plot(1200, 800);
         large_plot.set_labels("Large Dataset - Direct Plot", "X", "Y");
-        large_plot.add_scatter("Raw Data", large_x, large_y, "blue");
+        large_plot.add_scatter(large_x, large_y, "Raw Data", "blue");
         large_plot.save_png("output/advanced_03_large_direct.png");
     }
     
@@ -138,7 +138,7 @@ int main() {
         
         plotlib::ScatterPlot sampled_plot(1200, 800);
         sampled_plot.set_labels("Large Dataset - Sampled Plot", "X", "Y");
-        sampled_plot.add_scatter("Sampled Data", sampled_x, sampled_y, "red");
+        sampled_plot.add_scatter(sampled_x, sampled_y, "Sampled Data", "red");
         sampled_plot.save_png("output/advanced_03_large_sampled.png");
     }
     
@@ -151,7 +151,7 @@ int main() {
         
         plotlib::ScatterPlot aggregated_plot(1200, 800);
         aggregated_plot.set_labels("Large Dataset - Aggregated Plot", "X", "Y");
-        aggregated_plot.add_scatter("Aggregated Data", agg_x, agg_y, "green");
+        aggregated_plot.add_scatter(agg_x, agg_y, "Aggregated Data", "green");
         aggregated_plot.save_png("output/advanced_03_large_aggregated.png");
     }
     
@@ -195,7 +195,7 @@ int main() {
         
         plotlib::LinePlot time_series_plot(1400, 600);
         time_series_plot.set_labels("High-Frequency Time Series", "Time (s)", "Amplitude");
-        time_series_plot.add_line("Signal", downsampled_time, downsampled_signal, "blue");
+        time_series_plot.add_line(downsampled_time, downsampled_signal, "Signal", "blue");
         time_series_plot.save_png("output/advanced_03_time_series.png");
     }
     
@@ -221,7 +221,7 @@ int main() {
         large_histogram.set_labels("Large Dataset Histogram", "Value", "Frequency");
         
         // Use optimal bin count (automatic bin calculation)
-        large_histogram.add_histogram("1M Data Points", histogram_data, "purple");
+        large_histogram.add_histogram(histogram_data, "1M Data Points", "purple");
         large_histogram.save_png("output/advanced_03_large_histogram.png");
         
         // Calculate basic statistics manually since get_statistics is removed
@@ -252,9 +252,9 @@ int main() {
         std::vector<double> sampled_times = {8, 12, 15, 18, 22, 25};         // Much better
         std::vector<double> aggregated_times = {5, 6, 7, 8, 9, 10};         // Best
         
-        size_vs_time.add_line("Direct Plotting", sizes, direct_times, "red");
-        size_vs_time.add_line("Sampled Plotting", sizes, sampled_times, "blue");
-        size_vs_time.add_line("Aggregated Plotting", sizes, aggregated_times, "green");
+        size_vs_time.add_line(sizes, direct_times, "Direct Plotting", "red");
+        size_vs_time.add_line(sizes, sampled_times, "Sampled Plotting", "blue");
+        size_vs_time.add_line(sizes, aggregated_times, "Aggregated Plotting", "green");
         
         // (0,1) - Memory Usage Comparison
         auto& memory_usage = perf_dashboard.get_subplot<plotlib::HistogramPlot>(0, 1);
@@ -263,8 +263,8 @@ int main() {
         std::vector<double> direct_memory = {50, 250, 500, 1250, 2500, 5000};
         std::vector<double> optimized_memory = {5, 25, 50, 125, 250, 500};
         
-        memory_usage.add_histogram("Direct Method", direct_memory, "red", 10);
-        memory_usage.add_histogram("Optimized Method", optimized_memory, "green", 10);
+        memory_usage.add_histogram(direct_memory, "Direct Method", "red", 10);
+        memory_usage.add_histogram(optimized_memory, "Optimized Method", "green", 10);
         
         // (1,0) - Accuracy vs Performance Trade-off
         auto& accuracy_perf = perf_dashboard.get_subplot<plotlib::ScatterPlot>(1, 0);
@@ -273,7 +273,7 @@ int main() {
         // Convert Point2D data to separate x/y vectors
         std::vector<double> method_x = {1.0, 15.0, 30.0, 25.0};
         std::vector<double> method_y = {100.0, 95.0, 85.0, 90.0};
-        accuracy_perf.add_scatter("Optimization Methods", method_x, method_y, "purple");
+        accuracy_perf.add_scatter(method_x, method_y, "Optimization Methods", "purple");
         
         // (1,1) - Scalability Analysis
         auto& scalability = perf_dashboard.get_subplot<plotlib::LinePlot>(1, 1);
@@ -283,8 +283,8 @@ int main() {
         std::vector<double> direct_score = {100, 80, 60, 30, 10, 2};
         std::vector<double> optimized_score = {100, 98, 95, 90, 85, 80};
         
-        scalability.add_line("Direct Method", log_sizes, direct_score, "red");
-        scalability.add_line("Optimized Method", log_sizes, optimized_score, "green");
+        scalability.add_line(log_sizes, direct_score, "Direct Method", "red");
+        scalability.add_line(log_sizes, optimized_score, "Optimized Method", "green");
         
         perf_dashboard.save_png("output/advanced_03_performance_dashboard.png");
     }
@@ -315,7 +315,7 @@ int main() {
         plotlib::LinePlot realtime_plot(1400, 600);
         realtime_plot.set_labels("Real-time Sensor Data", "Time (s)", "Sensor Value");
         realtime_plot.set_default_show_markers(false);  // Disable markers for performance
-        realtime_plot.add_line("Live Data", time_buffer, data_buffer, "blue");
+        realtime_plot.add_line(time_buffer, data_buffer, "Live Data", "blue");
         realtime_plot.save_png("output/advanced_03_realtime.png");
     }
     
@@ -344,7 +344,7 @@ int main() {
         
         plotlib::ScatterPlot memory_optimized(1200, 800);
         memory_optimized.set_labels("Memory Optimized Plot", "X", "Y");
-        memory_optimized.add_scatter("Optimized Data", optimized_x, optimized_y, "orange");
+        memory_optimized.add_scatter(optimized_x, optimized_y, "Optimized Data", "orange");
         memory_optimized.save_png("output/advanced_03_memory_optimized.png");
     }
     

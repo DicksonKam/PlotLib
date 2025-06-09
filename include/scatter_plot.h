@@ -87,23 +87,30 @@ public:
     void set_default_marker_type(MarkerType marker_type);
     
     /**
-     * @brief Add a scatter series with automatic styling (beginner-friendly)
-     * @param name Series name for legend
-     * @param x_values Vector of X coordinates
-     * @param y_values Vector of Y coordinates
-     */
-    void add_scatter(const std::string& name, const std::vector<double>& x_values, 
-                     const std::vector<double>& y_values);
-    
-    /**
      * @brief Add a scatter series with custom color (beginner-friendly)
-     * @param name Series name for legend
      * @param x_values Vector of X coordinates
      * @param y_values Vector of Y coordinates
+     * @param name Series name for legend
      * @param color_name Color name ("red", "blue", "green", "orange", "purple", "cyan", "magenta", "yellow")
      */
-    void add_scatter(const std::string& name, const std::vector<double>& x_values, 
-                     const std::vector<double>& y_values, const std::string& color_name);
+    void add_scatter(const std::vector<double>& x_values, const std::vector<double>& y_values,
+                     const std::string& name, const std::string& color_name);
+    
+    /**
+     * @brief Add a scatter series with automatic styling (beginner-friendly)
+     * @param x_values Vector of X coordinates
+     * @param y_values Vector of Y coordinates
+     * @param name Series name for legend
+     */
+    void add_scatter(const std::vector<double>& x_values, const std::vector<double>& y_values,
+                     const std::string& name);
+    
+    /**
+     * @brief Add a scatter series with auto-generated name and styling
+     * @param x_values Vector of X coordinates
+     * @param y_values Vector of Y coordinates
+     */
+    void add_scatter(const std::vector<double>& x_values, const std::vector<double>& y_values);
     
     /**
      * @brief Add cluster data with automatic styling (beginner-friendly)

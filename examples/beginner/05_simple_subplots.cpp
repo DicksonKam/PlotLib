@@ -33,7 +33,7 @@ int main() {
     
     std::vector<double> scatter_x = {1, 2, 3, 4, 5, 6};
     std::vector<double> scatter_y = {2, 4, 3, 5, 4, 6};
-    scatter.add_scatter("Data Points", scatter_x, scatter_y, "blue");
+    scatter.add_scatter(scatter_x, scatter_y, "Data Points", "blue");
     
     // Top-right (0,1): Line plot
     auto& line = manager.get_subplot<plotlib::LinePlot>(0, 1);
@@ -41,7 +41,7 @@ int main() {
     
     std::vector<double> time = {0, 1, 2, 3, 4, 5};
     std::vector<double> values = {10, 15, 12, 18, 16, 20};
-    line.add_line("Trend", time, values, "red");
+    line.add_line(time, values, "Trend", "red");
     
     // Bottom-left (1,0): Histogram
     auto& hist = manager.get_subplot<plotlib::HistogramPlot>(1, 0);
@@ -50,7 +50,7 @@ int main() {
     std::vector<double> hist_data = {
         1, 2, 2, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 6, 6, 7
     };
-    hist.add_histogram("Distribution", hist_data, "green", 7);
+    hist.add_histogram(hist_data, "Distribution", "green", 7);
     
     // Bottom-right (1,1): Cluster plot
     auto& scatter2 = manager.get_subplot<plotlib::ScatterPlot>(1, 1);
@@ -80,7 +80,7 @@ int main() {
     
     std::vector<double> months = {1, 2, 3, 4, 5, 6};
     std::vector<double> revenue = {1000, 1200, 1100, 1400, 1300, 1600};
-    sales.add_line("Revenue", months, revenue, "blue");
+    sales.add_line(months, revenue, "Revenue", "blue");
     
     // Middle plot: Customer satisfaction
     auto& satisfaction = horizontal.get_subplot<plotlib::ScatterPlot>(0, 1);
@@ -88,7 +88,7 @@ int main() {
     
     std::vector<double> service_x = {1, 2, 3, 4, 5, 6};
     std::vector<double> rating_y = {4.2, 4.5, 4.1, 4.7, 4.3, 4.8};
-    satisfaction.add_scatter("Ratings", service_x, rating_y, "orange");
+    satisfaction.add_scatter(service_x, rating_y, "Ratings", "orange");
     
     // Right plot: Response times
     auto& response = horizontal.get_subplot<plotlib::HistogramPlot>(0, 2);
@@ -102,7 +102,7 @@ int main() {
     for (int i = 0; i < 100; ++i) {
         times.push_back(std::max(50.0, dist(gen)));  // Minimum 50ms
     }
-    response.add_histogram("Response Times", times, "purple", 15);
+    response.add_histogram(times, "Response Times", "purple", 15);
     
     bool horizontal_success = horizontal.save_png("output/05_horizontal_layout.png");
     
@@ -123,14 +123,14 @@ int main() {
     
     std::vector<double> hours = {0, 6, 12, 18, 24};
     std::vector<double> temperature = {15, 18, 25, 22, 16};
-    temp.add_line("Temperature", hours, temperature, "red");
+    temp.add_line(hours, temperature, "Temperature", "red");
     
     // Middle plot: Humidity
     auto& humidity = vertical.get_subplot<plotlib::LinePlot>(1, 0);
     humidity.set_labels("Humidity", "Hour", "%");
     
     std::vector<double> humidity_values = {60, 65, 45, 55, 70};
-    humidity.add_line("Humidity", hours, humidity_values, "blue");
+    humidity.add_line(hours, humidity_values, "Humidity", "blue");
     
     // Bottom plot: Wind speed distribution
     auto& wind = vertical.get_subplot<plotlib::HistogramPlot>(2, 0);
@@ -140,7 +140,7 @@ int main() {
         5, 8, 12, 6, 9, 15, 7, 11, 13, 8, 10, 14, 6, 9, 12,
         7, 11, 16, 8, 10, 13, 9, 12, 15, 7, 10, 14, 8, 11
     };
-    wind.add_histogram("Wind Speed", wind_speeds, "green", 10);
+    wind.add_histogram(wind_speeds, "Wind Speed", "green", 10);
     
     bool vertical_success = vertical.save_png("output/05_vertical_layout.png");
     

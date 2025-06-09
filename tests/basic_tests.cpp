@@ -27,7 +27,7 @@ void test_basic_plot_creation() {
         
         std::vector<double> x_data = {1.0, 2.0, 3.0};
         std::vector<double> y_data = {2.0, 3.0, 1.0};
-        plot.add_scatter("Test Series", x_data, y_data, "blue");
+        plot.add_scatter(x_data, y_data, "Test Series", "blue");
         
         test_assert(true, "Basic plot creation and data addition");
     } catch (const std::exception& e) {
@@ -43,7 +43,7 @@ void test_line_plot_creation() {
         
         std::vector<double> x_vals = {1.0, 2.0, 3.0, 4.0};
         std::vector<double> y_vals = {1.0, 4.0, 9.0, 16.0};
-        plot.add_line("Square Function", x_vals, y_vals, "red");
+        plot.add_line(x_vals, y_vals, "Square Function", "red");
         
         test_assert(true, "Line plot creation");
     } catch (const std::exception& e) {
@@ -58,7 +58,7 @@ void test_histogram_creation() {
         plot.set_labels("Histogram Test", "Value", "Frequency");
         
         std::vector<double> data = {1.0, 1.5, 2.0, 2.2, 2.5, 3.0, 3.1, 3.5, 4.0};
-        plot.add_histogram("Test Data", data, "green");
+        plot.add_histogram(data, "Test Data", "green");
         
         test_assert(true, "Histogram creation");
     } catch (const std::exception& e) {
@@ -77,7 +77,7 @@ void test_subplot_creation() {
         
         std::vector<double> x_data = {0.0, 1.0};
         std::vector<double> y_data = {0.0, 1.0};
-        subplot.add_scatter("Test", x_data, y_data, "blue");
+        subplot.add_scatter(x_data, y_data, "Test", "blue");
         
         test_assert(true, "Subplot creation and configuration");
     } catch (const std::exception& e) {
@@ -114,7 +114,7 @@ void test_file_output() {
         
         std::vector<double> x_data = {0.0, 1.0, 2.0};
         std::vector<double> y_data = {0.0, 1.0, 0.5};
-        plot.add_scatter("Test", x_data, y_data, "red");
+        plot.add_scatter(x_data, y_data, "Test", "red");
         
         plot.save_png("test_output/test_plot.png");
         
@@ -172,8 +172,8 @@ void test_automatic_colors() {
         std::vector<double> y2 = {3.0, 4.0};
         
         // Test automatic color assignment
-        plot.add_scatter("Series 1", x1, y1);  // Should get first auto color
-        plot.add_scatter("Series 2", x2, y2);  // Should get second auto color
+        plot.add_scatter(x1, y1, "Series 1");  // Should get first auto color
+        plot.add_scatter(x2, y2, "Series 2");  // Should get second auto color
         
         test_assert(true, "Automatic color assignment");
     } catch (const std::exception& e) {

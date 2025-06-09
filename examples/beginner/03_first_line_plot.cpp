@@ -24,7 +24,7 @@ int main() {
     plot.set_labels("Temperature Over Time", "Time (hours)", "Temperature (°C)");
     
     // Add the line using X and Y vectors - super easy!
-    plot.add_line("Temperature", time, temperature, "red");
+    plot.add_line(time, temperature, "Temperature", "red");
     
     bool success = plot.save_png("output/03_temperature_line.png");
     
@@ -52,8 +52,8 @@ int main() {
     }
     
     // Add both functions to the same plot
-    math_plot.add_line("sin(x)", x_values, sine_values, "blue");
-    math_plot.add_line("cos(x)", x_values, cosine_values, "green");
+    math_plot.add_line(x_values, sine_values, "sin(x)", "blue");
+    math_plot.add_line(x_values, cosine_values, "cos(x)", "green");
     
     bool math_success = math_plot.save_png("output/03_math_functions.png");
     
@@ -72,7 +72,7 @@ int main() {
     growth_plot.set_labels("Company Growth", "Year", "Revenue (thousands)");
     
     // Use automatic color selection
-    growth_plot.add_line("Revenue", years, revenue);
+    growth_plot.add_line(years, revenue, "Revenue");
     
     bool growth_success = growth_plot.save_png("output/03_growth_trend.png");
     

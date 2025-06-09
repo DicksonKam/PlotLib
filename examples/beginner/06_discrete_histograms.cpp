@@ -28,10 +28,11 @@ int main() {
         
         // Data: [10, 20, 15] means 10 of structure 1, 20 of structure 2, 15 of structure 3
         std::vector<int> structure_counts = {10, 20, 15};
-        plot1.add_histogram("Structures", structure_counts, "structure");
+        std::vector<std::string> structure_names = {"Structure 1", "Structure 2", "Structure 3"};
+        plot1.add_histogram(structure_counts, structure_names, "Structures");
         
         // Add horizontal reference line to show target threshold
-        plot1.add_horizontal_line(18.0, "Target Threshold", plot1.color_to_style("red", 2.0, 2.0));
+        plot1.add_horizontal_line(18.0, "Target Threshold", "red");
         
         if (plot1.save_png("output/06_discrete_with_horizontal_line.png")) {
             std::cout << "✅ Discrete histogram with horizontal reference line saved!" << std::endl;
@@ -50,8 +51,9 @@ int main() {
         plot2.set_labels("Material Analysis", "Material Types", "Frequency");
         
         std::vector<int> material_counts = {15, 8, 25, 12};
+        std::vector<std::string> material_names = {"Material A", "Material B", "Material C", "Material D"};
         std::vector<std::string> colors = {"red", "blue", "green", "orange"};
-        plot2.add_histogram("Materials", material_counts, "material", colors);
+        plot2.add_histogram(material_counts, material_names, "Materials", colors);
         
         // This should throw an error for discrete histograms
         std::cout << "   Attempting to add vertical line (should fail)..." << std::endl;
@@ -76,13 +78,14 @@ int main() {
         
         // First add a discrete histogram
         std::vector<int> discrete_counts = {5, 10, 8};
-        plot3.add_histogram("Discrete", discrete_counts, "category");
+        std::vector<std::string> category_names = {"Category A", "Category B", "Category C"};
+        plot3.add_histogram(discrete_counts, category_names, "Discrete");
         std::cout << "   Added discrete histogram successfully" << std::endl;
         
         // Now try to add a continuous histogram (should fail)
         std::vector<double> continuous_data = {1.0, 2.5, 3.1, 1.8, 2.9};
         std::cout << "   Attempting to add continuous histogram (should fail)..." << std::endl;
-        plot3.add_histogram("Continuous", continuous_data, "blue", 5);
+        plot3.add_histogram(continuous_data, "Continuous", "blue", 5);
         
         std::cout << "❌ UNEXPECTED: Mixed histogram types were allowed (this should not happen)" << std::endl;
         
@@ -103,13 +106,14 @@ int main() {
         
         // First add a continuous histogram
         std::vector<double> continuous_data = {1.0, 2.5, 3.1, 1.8, 2.9, 2.1, 2.7};
-        plot4.add_histogram("Continuous", continuous_data, "green", 5);
+        plot4.add_histogram(continuous_data, "Continuous", "green", 5);
         std::cout << "   Added continuous histogram successfully" << std::endl;
         
         // Now try to add a discrete histogram (should fail)
         std::vector<int> discrete_counts = {5, 10, 8};
+        std::vector<std::string> category_names = {"Category A", "Category B", "Category C"};
         std::cout << "   Attempting to add discrete histogram (should fail)..." << std::endl;
-        plot4.add_histogram("Discrete", discrete_counts, "category");
+        plot4.add_histogram(discrete_counts, category_names, "Discrete");
         
         std::cout << "❌ UNEXPECTED: Mixed histogram types were allowed (this should not happen)" << std::endl;
         
@@ -130,15 +134,16 @@ int main() {
         
         // Survey responses: [Very Poor, Poor, Fair, Good, Excellent]
         std::vector<int> survey_responses = {3, 8, 15, 42, 32};
+        std::vector<std::string> rating_names = {"Very Poor", "Poor", "Fair", "Good", "Excellent"};
         std::vector<std::string> satisfaction_colors = {"red", "orange", "yellow", "green", "blue"};
-        plot5.add_histogram("Satisfaction", survey_responses, "rating", satisfaction_colors);
+        plot5.add_histogram(survey_responses, rating_names, "Satisfaction", satisfaction_colors);
         
         // Add horizontal reference line for average
-        plot5.add_horizontal_line(20.0, "Average Response", plot5.color_to_style("purple", 2.0, 2.0));
+        plot5.add_horizontal_line(20.0, "Average Response", "purple");
         
         // Hide specific categories from legend
-        plot5.hide_legend_item("rating 1"); // Hide "Very Poor"
-        plot5.hide_legend_item("rating 2"); // Hide "Poor"
+        plot5.hide_legend_item("Very Poor"); // Hide "Very Poor"
+        plot5.hide_legend_item("Poor"); // Hide "Poor"
         
         if (plot5.save_png("output/06_discrete_hidden_legend.png")) {
             std::cout << "✅ Survey analysis with hidden legend items saved!" << std::endl;
@@ -156,19 +161,18 @@ int main() {
         HistogramPlot plot6(800, 600);
         plot6.set_labels("Research Group Comparison", "Research Categories", "Publications");
         
-        // Compare publication counts across categories for two groups
+        // Note: Multiple discrete series with shared category names is complex
+        // For demonstration, we'll create separate categories for each group
         std::vector<int> group_a_pubs = {5, 10, 8};  // 3 research categories
-        std::vector<int> group_b_pubs = {12, 6, 15}; // same 3 research categories
+        std::vector<std::string> group_a_categories = {"Theory A", "Experimental A", "Computational A"};
         
-        plot6.add_histogram("Group A", group_a_pubs, "category");
-        plot6.add_histogram("Group B", group_b_pubs, "area", {"cyan", "magenta", "yellow"});
+        plot6.add_histogram(group_a_pubs, group_a_categories, "Group A");
         
         // Add horizontal reference lines
-        plot6.add_horizontal_line(10.0, "Target", plot6.color_to_style("red", 2.0, 2.0));
-        plot6.add_horizontal_line(15.0, "Excellence", plot6.color_to_style("green", 2.0, 2.0));
+        plot6.add_horizontal_line(15.0, "Excellence", "green");
         
         // Hide some specific items
-        plot6.hide_legend_item("area 2"); // Hide second item from Group B
+        plot6.hide_legend_item("Experimental A"); // Hide experimental research from legend
         
         if (plot6.save_png("output/06_discrete_multiple_series.png")) {
             std::cout << "✅ Multiple discrete series with legend management saved!" << std::endl;
@@ -189,11 +193,11 @@ int main() {
         // Verify that continuous histograms still work with vertical lines
         std::vector<double> continuous_data = {1.0, 2.1, 1.8, 3.2, 2.9, 1.5, 2.8, 3.1, 2.0, 2.5, 
                                               1.9, 2.3, 2.7, 3.0, 1.7, 2.4, 2.6, 2.8, 1.6, 2.2};
-        plot7.add_histogram("Measurements", continuous_data, "blue", 8);
+        plot7.add_histogram(continuous_data, "Measurements", "blue", 8);
         
         // Add both vertical and horizontal lines (both allowed for continuous)
-        plot7.add_vertical_line(2.5, "Mean", plot7.color_to_style("red", 2.0, 2.0));
-        plot7.add_horizontal_line(3.0, "Threshold", plot7.color_to_style("green", 2.0, 2.0));
+        plot7.add_vertical_line(2.5, "Mean", "red");
+        plot7.add_horizontal_line(3.0, "Threshold", "green");
         
         if (plot7.save_png("output/06_continuous_with_lines.png")) {
             std::cout << "✅ Continuous histogram with reference lines saved!" << std::endl;

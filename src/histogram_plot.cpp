@@ -227,6 +227,47 @@ void HistogramPlot::draw_data(cairo_t* cr) {
     }
 }
 
+void HistogramPlot::draw_axis_ticks(cairo_t* cr) {
+    // Check if we have any discrete data
+    bool has_discrete = false;
+    for (const auto& hist_data : histogram_series) {
+        if (hist_data.is_discrete) {
+            has_discrete = true;
+            break;
+        }
+    }
+    
+    if (has_discrete) {
+        // For discrete histograms, only draw Y-axis ticks (no X-axis numeric ticks)
+        cairo_set_source_rgb(cr, 0, 0, 0);
+        cairo_set_line_width(cr, 1.0);
+        cairo_select_font_face(cr, "Arial", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
+        cairo_set_font_size(cr, 10);
+        
+        // Y-axis ticks only
+        auto y_ticks = generate_nice_ticks(min_y, max_y, 6);
+        for (double tick : y_ticks) {
+            double screen_x, screen_y;
+            transform_point(min_x, tick, screen_x, screen_y);
+            
+            // Draw tick mark
+            cairo_move_to(cr, margin_left, screen_y);
+            cairo_line_to(cr, margin_left - 5, screen_y);
+            cairo_stroke(cr);
+            
+            // Draw tick label
+            std::string label = format_number(tick);
+            cairo_text_extents_t extents;
+            cairo_text_extents(cr, label.c_str(), &extents);
+            cairo_move_to(cr, margin_left - extents.width - 10, screen_y + extents.height/2);
+            cairo_show_text(cr, label.c_str());
+        }
+    } else {
+        // Use parent implementation for continuous data
+        PlotManager::draw_axis_ticks(cr);
+    }
+}
+
 void HistogramPlot::draw_axis_labels(cairo_t* cr) {
     // Check if we have any discrete data
     bool has_discrete = false;
@@ -240,8 +281,8 @@ void HistogramPlot::draw_axis_labels(cairo_t* cr) {
     if (has_discrete) {
         // Draw custom X-axis labels for discrete data
         cairo_set_source_rgb(cr, 0, 0, 0);
-        cairo_select_font_face(cr, "Arial", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
-        cairo_set_font_size(cr, 10);
+        cairo_select_font_face(cr, "Arial", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD);
+        cairo_set_font_size(cr, 12);
         
         // Draw discrete category labels
         for (const auto& hist_data : histogram_series) {
@@ -262,7 +303,20 @@ void HistogramPlot::draw_axis_labels(cairo_t* cr) {
             }
         }
         
-        // Draw Y-axis label only (let parent handle it for consistency)
+        // Draw axis labels (X and Y)
+        cairo_select_font_face(cr, "Arial", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD);
+        cairo_set_font_size(cr, 12);
+        
+        // X-axis label
+        if (!x_label.empty()) {
+            cairo_text_extents_t extents;
+            cairo_text_extents(cr, x_label.c_str(), &extents);
+            double x_pos = margin_left + (width - margin_left - margin_right) / 2 - extents.width / 2;
+            cairo_move_to(cr, x_pos, height - 15);
+            cairo_show_text(cr, x_label.c_str());
+        }
+        
+        // Y-axis label (rotated)
         if (!y_label.empty()) {
             cairo_text_extents_t extents;
             cairo_text_extents(cr, y_label.c_str(), &extents);
@@ -277,6 +331,89 @@ void HistogramPlot::draw_axis_labels(cairo_t* cr) {
     } else {
         // Use parent implementation for continuous data
         PlotManager::draw_axis_labels(cr);
+    }
+}
+
+void HistogramPlot::draw_legend(cairo_t* cr) {
+    if (!show_legend) return;
+    
+    // Check if we have any discrete data
+    bool has_discrete = false;
+    for (const auto& hist_data : histogram_series) {
+        if (hist_data.is_discrete) {
+            has_discrete = true;
+            break;
+        }
+    }
+    
+    if (has_discrete) {
+        // Custom legend for discrete histograms
+        std::vector<std::pair<std::string, PlotStyle>> legend_items;
+        
+        // Add discrete histogram categories
+        for (const auto& hist_data : histogram_series) {
+            if (hist_data.is_discrete && !hist_data.categories.empty()) {
+                for (size_t i = 0; i < hist_data.categories.size(); ++i) {
+                    if (i < hist_data.styles.size() && hist_data.counts[i] > 0) {
+                        // Only show categories that have data
+                        legend_items.emplace_back(hist_data.categories[i], hist_data.styles[i]);
+                    }
+                }
+            }
+        }
+        
+        // Add continuous histogram series if any
+        for (const auto& hist_data : histogram_series) {
+            if (!hist_data.is_discrete && !hist_data.name.empty() && hist_data.name != "Default") {
+                legend_items.emplace_back(hist_data.name, hist_data.style);
+            }
+        }
+        
+        if (legend_items.empty()) return;
+        
+        cairo_set_source_rgb(cr, 0, 0, 0);
+        cairo_select_font_face(cr, "Arial", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
+        cairo_set_font_size(cr, 10);
+        
+        double legend_x = width - margin_right + 10;
+        double legend_y = margin_top + 20;
+        double line_height = 20;
+        
+        // Draw legend background
+        double legend_width = 120;
+        double legend_height = legend_items.size() * line_height + 10;
+        cairo_set_source_rgba(cr, 1, 1, 1, 0.9);
+        cairo_rectangle(cr, legend_x - 5, legend_y - 15, legend_width, legend_height);
+        cairo_fill(cr);
+        
+        cairo_set_source_rgba(cr, 0, 0, 0, 0.3);
+        cairo_rectangle(cr, legend_x - 5, legend_y - 15, legend_width, legend_height);
+        cairo_stroke(cr);
+        
+        // Draw legend items
+        for (size_t i = 0; i < legend_items.size(); ++i) {
+            double y_pos = legend_y + i * line_height;
+            
+            // Draw colored rectangle for histogram bars
+            cairo_set_source_rgba(cr, legend_items[i].second.r, legend_items[i].second.g, 
+                                 legend_items[i].second.b, legend_items[i].second.alpha);
+            cairo_rectangle(cr, legend_x + 2, y_pos - 4, 12, 8);
+            cairo_fill(cr);
+            
+            // Draw border
+            cairo_set_source_rgba(cr, legend_items[i].second.r * 0.7, legend_items[i].second.g * 0.7, 
+                                 legend_items[i].second.b * 0.7, legend_items[i].second.alpha);
+            cairo_rectangle(cr, legend_x + 2, y_pos - 4, 12, 8);
+            cairo_stroke(cr);
+            
+            // Draw text
+            cairo_set_source_rgb(cr, 0, 0, 0);
+            cairo_move_to(cr, legend_x + 20, y_pos + 4);
+            cairo_show_text(cr, legend_items[i].first.c_str());
+        }
+    } else {
+        // Use parent implementation for continuous data
+        PlotManager::draw_legend(cr);
     }
 }
 

@@ -176,6 +176,18 @@ protected:
     void draw_axis_labels(cairo_t* cr) override;
     
     /**
+     * @brief Draw custom axis ticks for discrete histograms (disable x-axis numeric ticks)
+     * @param cr Cairo context
+     */
+    void draw_axis_ticks(cairo_t* cr) override;
+    
+    /**
+     * @brief Draw custom legend for discrete histograms
+     * @param cr Cairo context
+     */
+    void draw_legend(cairo_t* cr) override;
+    
+    /**
      * @brief Clear all histogram data
      */
     void clear() override;

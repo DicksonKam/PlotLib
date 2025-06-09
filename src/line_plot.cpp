@@ -159,15 +159,20 @@ void LinePlot::draw_cluster_lines(cairo_t* cr) {
 }
 
 // Beginner-friendly convenience methods
-void LinePlot::add_line(const std::string& name, const std::vector<Point2D>& data) {
-    // Use automatic color based on series count
-    std::vector<std::string> auto_colors = {"blue", "red", "green", "orange", "purple", "cyan", "magenta", "yellow"};
-    std::string color = auto_colors[data_series.size() % auto_colors.size()];
+void LinePlot::add_line(const std::string& name, const std::vector<double>& x_values, 
+                       const std::vector<double>& y_values) {
+    if (x_values.size() != y_values.size()) {
+        std::cerr << "Error: X and Y vectors must have the same size" << std::endl;
+        return;
+    }
+    
+    std::vector<Point2D> data;
+    for (size_t i = 0; i < x_values.size(); ++i) {
+        data.emplace_back(x_values[i], y_values[i]);
+    }
+    
+    std::string color = get_auto_color(data_series.size());
     add_series(name, data, color_to_style(color, 3.0, 2.0));
-}
-
-void LinePlot::add_line(const std::string& name, const std::vector<Point2D>& data, const std::string& color_name) {
-    add_series(name, data, color_to_style(color_name, 3.0, 2.0));
 }
 
 void LinePlot::add_line(const std::string& name, const std::vector<double>& x_values, 
@@ -182,11 +187,7 @@ void LinePlot::add_line(const std::string& name, const std::vector<double>& x_va
         data.emplace_back(x_values[i], y_values[i]);
     }
     
-    if (color_name == "auto") {
-        add_line(name, data);
-    } else {
-        add_line(name, data, color_name);
-    }
+    add_series(name, data, color_to_style(color_name, 3.0, 2.0));
 }
 
 } // namespace plotlib 

@@ -22,13 +22,14 @@ Create a file called `my_plot.cpp`:
 #include <vector>
 
 int main() {
-    // Create data
-    std::vector<plotlib::Point2D> data = {{1, 2}, {2, 4}, {3, 6}};
+    // Create data using separate x/y vectors
+    std::vector<double> x_values = {1, 2, 3};
+    std::vector<double> y_values = {2, 4, 6};
     
     // Create plot
     plotlib::ScatterPlot plot(800, 600);
     plot.set_labels("My Plot", "X", "Y");
-    plot.add_data("Data", data);
+    plot.add_scatter("Data", x_values, y_values);
     
     // Save
     plot.save_png("my_plot.png");
@@ -47,8 +48,8 @@ g++ -std=c++17 -I./include my_plot.cpp -L./build -lplotlib `pkg-config --cflags 
 ### Scatter Plot with Colors
 ```cpp
 plotlib::ScatterPlot plot(800, 600);
-plot.add_data("Series 1", data1, "blue");
-plot.add_data("Series 2", data2, "red");
+plot.add_scatter("Series 1", x1_values, y1_values, "blue");
+plot.add_scatter("Series 2", x2_values, y2_values, "red");
 plot.save_png("scatter.png");
 ```
 

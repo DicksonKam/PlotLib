@@ -41,8 +41,6 @@ class HistogramPlot : public PlotManager {
 private:
     std::vector<HistogramData> histogram_series; ///< Collection of histogram data series
     int default_bin_count = 20;                  ///< Default number of bins for auto-binning
-    bool normalize = false;                      ///< Whether to normalize histograms to probability density
-    bool cumulative = false;                     ///< Whether to show cumulative distribution
     
     /**
      * @brief Calculate optimal bin edges using Sturges' rule or custom count
@@ -66,17 +64,9 @@ private:
      * @return Vector of cumulative counts
      */
     std::vector<int> calculate_cumulative(const std::vector<int>& counts);
-
-public:
-    /**
-     * @brief Constructor
-     * @param w Width of the plot in pixels
-     * @param h Height of the plot in pixels
-     */
-    HistogramPlot(int w, int h);
     
     /**
-     * @brief Add histogram data with automatic binning
+     * @brief Internal method to add histogram data (used by public methods)
      * @param name Series name
      * @param data Raw data values
      * @param style Visual style for the histogram
@@ -84,58 +74,31 @@ public:
      */
     void add_data(const std::string& name, const std::vector<double>& data, 
                   const PlotStyle& style, int bin_count = 0);
-    
-    /**
-     * @brief Add histogram data with custom bins
-     * @param name Series name
-     * @param data Raw data values
-     * @param bins Custom bin edges
-     * @param style Visual style for the histogram
-     */
-    void add_data_with_bins(const std::string& name, const std::vector<double>& data,
-                           const std::vector<double>& bins, const PlotStyle& style);
-    
-    /**
-     * @brief Set default number of bins for automatic binning
-     * @param count Number of bins
-     */
-    void set_default_bin_count(int count);
-    
-    /**
-     * @brief Enable or disable normalization to probability density
-     * @param enable Whether to normalize
-     */
-    void set_normalize(bool enable);
-    
-    /**
-     * @brief Enable or disable cumulative distribution
-     * @param enable Whether to show cumulative distribution
-     */
-    void set_cumulative(bool enable);
-    
-    /**
-     * @brief Get histogram statistics for a series
-     * @param series_name Name of the series
-     * @return Pair of (mean, standard_deviation)
-     */
-    std::pair<double, double> get_statistics(const std::string& series_name) const;
 
+public:
+    /**
+     * @brief Constructor for HistogramPlot
+     * @param w Canvas width in pixels (default: 800)
+     * @param h Canvas height in pixels (default: 600)
+     */
+    HistogramPlot(int w = 800, int h = 600);
+    
     /**
      * @brief Add histogram data with automatic styling (beginner-friendly)
      * @param name Series name for legend
-     * @param data Raw data values
+     * @param values Raw data values for histogram
      * @param bins Optional number of bins (0 for automatic)
      */
-    void add_histogram(const std::string& name, const std::vector<double>& data, int bins = 0);
+    void add_histogram(const std::string& name, const std::vector<double>& values, int bins = 0);
     
     /**
      * @brief Add histogram data with custom color (beginner-friendly)
      * @param name Series name for legend
-     * @param data Raw data values
+     * @param values Raw data values for histogram
      * @param color_name Color name ("red", "blue", "green", "orange", "purple", "cyan", "magenta", "yellow")
      * @param bins Optional number of bins (0 for automatic)
      */
-    void add_histogram(const std::string& name, const std::vector<double>& data, 
+    void add_histogram(const std::string& name, const std::vector<double>& values, 
                       const std::string& color_name, int bins = 0);
 
 protected:

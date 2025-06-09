@@ -85,74 +85,7 @@ void HistogramPlot::add_data(const std::string& name, const std::vector<double>&
     bounds_set = false;
 }
 
-void HistogramPlot::add_data_with_bins(const std::string& name, const std::vector<double>& data,
-                                      const std::vector<double>& bins, const PlotStyle& style) {
-    if (data.empty()) {
-        std::cerr << "Warning: Empty data provided for histogram series '" << name << "'" << std::endl;
-        return;
-    }
-    
-    if (bins.size() < 2) {
-        std::cerr << "Error: At least 2 bin edges required for histogram series '" << name << "'" << std::endl;
-        return;
-    }
-    
-    HistogramData hist_data(name);
-    hist_data.values = data;
-    hist_data.style = style;
-    hist_data.bins = bins;
-    hist_data.counts = calculate_counts(data, bins);
-    
-    histogram_series.push_back(hist_data);
-    bounds_set = false;
-}
 
-void HistogramPlot::set_default_bin_count(int count) {
-    default_bin_count = std::max(1, count);
-}
-
-void HistogramPlot::set_normalize(bool enable) {
-    normalize = enable;
-    if (normalize) {
-        y_label = "Probability Density";
-    } else {
-        y_label = cumulative ? "Cumulative Frequency" : "Frequency";
-    }
-}
-
-void HistogramPlot::set_cumulative(bool enable) {
-    cumulative = enable;
-    if (cumulative) {
-        y_label = normalize ? "Cumulative Probability" : "Cumulative Frequency";
-    } else {
-        y_label = normalize ? "Probability Density" : "Frequency";
-    }
-}
-
-std::pair<double, double> HistogramPlot::get_statistics(const std::string& series_name) const {
-    auto it = std::find_if(histogram_series.begin(), histogram_series.end(),
-                          [&series_name](const HistogramData& h) { return h.name == series_name; });
-    
-    if (it == histogram_series.end()) {
-        return {0.0, 0.0};
-    }
-    
-    const auto& data = it->values;
-    if (data.empty()) return {0.0, 0.0};
-    
-    // Calculate mean
-    double mean = std::accumulate(data.begin(), data.end(), 0.0) / data.size();
-    
-    // Calculate standard deviation
-    double variance = 0.0;
-    for (double value : data) {
-        variance += (value - mean) * (value - mean);
-    }
-    variance /= data.size();
-    double std_dev = std::sqrt(variance);
-    
-    return {mean, std_dev};
-}
 
 void HistogramPlot::calculate_bounds() {
     if (histogram_series.empty()) return;
@@ -167,17 +100,9 @@ void HistogramPlot::calculate_bounds() {
         double series_max_x = hist_data.bins.back();
         
         // Y bounds from counts
-        auto counts_to_use = cumulative ? calculate_cumulative(hist_data.counts) : hist_data.counts;
-        auto minmax_y = std::minmax_element(counts_to_use.begin(), counts_to_use.end());
+        auto minmax_y = std::minmax_element(hist_data.counts.begin(), hist_data.counts.end());
         double series_min_y = 0.0; // Histograms always start from 0
         double series_max_y = static_cast<double>(*minmax_y.second);
-        
-        // Apply normalization if enabled
-        if (normalize && !hist_data.values.empty()) {
-            double bin_width = (hist_data.bins.back() - hist_data.bins.front()) / (hist_data.bins.size() - 1);
-            double total_area = hist_data.values.size() * bin_width;
-            series_max_y /= total_area;
-        }
         
         if (first) {
             min_x = series_min_x;
@@ -216,24 +141,14 @@ void HistogramPlot::draw_data(cairo_t* cr) {
     for (const auto& hist_data : histogram_series) {
         if (hist_data.bins.empty() || hist_data.counts.empty()) continue;
         
-        // Get counts (regular or cumulative)
-        auto counts_to_draw = cumulative ? calculate_cumulative(hist_data.counts) : hist_data.counts;
-        
         // Set color and style
         cairo_set_source_rgba(cr, hist_data.style.r, hist_data.style.g, hist_data.style.b, hist_data.style.alpha);
         
         // Draw histogram bars
-        for (size_t i = 0; i < counts_to_draw.size() && i < hist_data.bins.size() - 1; ++i) {
+        for (size_t i = 0; i < hist_data.counts.size() && i < hist_data.bins.size() - 1; ++i) {
             double bin_left = hist_data.bins[i];
             double bin_right = hist_data.bins[i + 1];
-            double count = static_cast<double>(counts_to_draw[i]);
-            
-            // Apply normalization if enabled
-            if (normalize && !hist_data.values.empty()) {
-                double bin_width = bin_right - bin_left;
-                double total_area = hist_data.values.size() * bin_width;
-                count /= total_area;
-            }
+            double count = static_cast<double>(hist_data.counts[i]);
             
             // Transform to screen coordinates
             double screen_left, screen_bottom, screen_right, screen_top;
@@ -258,16 +173,13 @@ void HistogramPlot::draw_data(cairo_t* cr) {
 void HistogramPlot::clear() {
     PlotManager::clear();
     histogram_series.clear();
-    normalize = false;
-    cumulative = false;
     y_label = "Frequency";
 }
 
 // Beginner-friendly convenience methods
 void HistogramPlot::add_histogram(const std::string& name, const std::vector<double>& data, int bins) {
     // Use automatic color based on series count
-    std::vector<std::string> auto_colors = {"blue", "red", "green", "orange", "purple", "cyan", "magenta", "yellow"};
-    std::string color = auto_colors[histogram_series.size() % auto_colors.size()];
+    std::string color = get_auto_color(histogram_series.size());
     add_data(name, data, color_to_style(color, 3.0, 2.0), bins);
 }
 

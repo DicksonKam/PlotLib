@@ -62,50 +62,51 @@ void ScatterPlot::draw_cluster_points(cairo_t* cr) {
     }
 }
 
-// Legacy methods for backward compatibility
-void ScatterPlot::add_point(double x, double y, const PlotStyle& style) {
-    // For backward compatibility, add to a default series
-    if (data_series.empty()) {
-        DataSeries default_series("Default");
-        default_series.style = style;
-        data_series.push_back(default_series);
-    }
-    data_series[0].points.emplace_back(x, y);
-    bounds_set = false;
-}
-
-void ScatterPlot::add_points(const std::vector<Point2D>& pts, const PlotStyle& style) {
-    // For backward compatibility, add to a default series
-    if (data_series.empty()) {
-        DataSeries default_series("Default");
-        default_series.style = style;
-        data_series.push_back(default_series);
-    }
-    for (const auto& pt : pts) {
-        data_series[0].points.push_back(pt);
-    }
-    bounds_set = false;
-}
-
 // Beginner-friendly convenience methods
-void ScatterPlot::add_data(const std::string& name, const std::vector<Point2D>& data) {
-    // Use automatic color based on series count
-    std::vector<std::string> auto_colors = {"blue", "red", "green", "orange", "purple", "cyan", "magenta", "yellow"};
-    std::string color = auto_colors[data_series.size() % auto_colors.size()];
+void ScatterPlot::add_scatter(const std::string& name, const std::vector<double>& x_values, 
+                             const std::vector<double>& y_values) {
+    if (x_values.size() != y_values.size()) {
+        std::cerr << "Error: X and Y vectors must have the same size" << std::endl;
+        return;
+    }
+    
+    std::vector<Point2D> data;
+    for (size_t i = 0; i < x_values.size(); ++i) {
+        data.emplace_back(x_values[i], y_values[i]);
+    }
+    
+    std::string color = get_auto_color(data_series.size());
     add_series(name, data, color_to_style(color, 3.0, 2.0));
 }
 
-void ScatterPlot::add_data(const std::string& name, const std::vector<Point2D>& data, const std::string& color_name) {
+void ScatterPlot::add_scatter(const std::string& name, const std::vector<double>& x_values, 
+                             const std::vector<double>& y_values, const std::string& color_name) {
+    if (x_values.size() != y_values.size()) {
+        std::cerr << "Error: X and Y vectors must have the same size" << std::endl;
+        return;
+    }
+    
+    std::vector<Point2D> data;
+    for (size_t i = 0; i < x_values.size(); ++i) {
+        data.emplace_back(x_values[i], y_values[i]);
+    }
+    
     add_series(name, data, color_to_style(color_name, 3.0, 2.0));
 }
 
-void ScatterPlot::add_clusters(const std::vector<Point2D>& data, const std::vector<int>& labels) {
+void ScatterPlot::add_clusters(const std::vector<double>& x_values, const std::vector<double>& y_values, 
+                              const std::vector<int>& labels) {
+    if (x_values.size() != y_values.size() || x_values.size() != labels.size()) {
+        std::cerr << "Error: X, Y and labels vectors must have the same size" << std::endl;
+        return;
+    }
+    
+    std::vector<Point2D> data;
+    for (size_t i = 0; i < x_values.size(); ++i) {
+        data.emplace_back(x_values[i], y_values[i]);
+    }
+    
     add_cluster_data("Clusters", data, labels);
-}
-
-// Implementation of the non-template get_subplot method for backward compatibility
-ScatterPlot& SubplotManager::get_subplot(int row, int col) {
-    return get_subplot<ScatterPlot>(row, col);
 }
 
 } // namespace plotlib

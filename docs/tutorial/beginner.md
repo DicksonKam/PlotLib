@@ -27,10 +27,9 @@ Let's create a simple scatter plot. A scatter plot shows individual data points 
 #include <vector>
 
 int main() {
-    // Step 1: Create your data
-    std::vector<plotlib::Point2D> data = {
-        {1, 2}, {2, 4}, {3, 6}, {4, 8}
-    };
+    // Step 1: Create your data using separate x/y vectors
+    std::vector<double> x_values = {1, 2, 3, 4};
+    std::vector<double> y_values = {2, 4, 6, 8};
     
     // Step 2: Create a plot
     plotlib::ScatterPlot plot(800, 600);  // 800x600 pixels
@@ -39,7 +38,7 @@ int main() {
     plot.set_labels("My First Plot", "X Values", "Y Values");
     
     // Step 4: Add your data
-    plot.add_data("My Data", data);
+    plot.add_scatter("My Data", x_values, y_values);
     
     // Step 5: Save it
     plot.save_png("my_first_plot.png");
@@ -64,12 +63,12 @@ plotlib::ScatterPlot plot(800, 600);
 plot.set_labels("Colorful Plot", "X", "Y");
 
 // Method 1: Let the library choose colors automatically
-plot.add_data("Series 1", data1);  // Automatically blue
-plot.add_data("Series 2", data2);  // Automatically red
+plot.add_scatter("Series 1", x1_values, y1_values);  // Automatically blue
+plot.add_scatter("Series 2", x2_values, y2_values);  // Automatically red
 
 // Method 2: Choose your own colors
-plot.add_data("Series 3", data3, "green");
-plot.add_data("Series 4", data4, "purple");
+plot.add_scatter("Series 3", x3_values, y3_values, "green");
+plot.add_scatter("Series 4", x4_values, y4_values, "purple");
 ```
 
 **Available colors:**
@@ -143,7 +142,7 @@ manager.set_main_title("My Dashboard");
 // Top-left (row 0, column 0): Scatter plot
 auto& scatter = manager.get_subplot<plotlib::ScatterPlot>(0, 0);
 scatter.set_labels("Scatter", "X", "Y");
-scatter.add_data("Data", scatter_data, "blue");
+scatter.add_scatter("Data", scatter_x, scatter_y, "blue");
 
 // Top-right (row 0, column 1): Line plot
 auto& line = manager.get_subplot<plotlib::LinePlot>(0, 1);
@@ -194,9 +193,9 @@ manager.save_png("dashboard.png");
 plotlib::ScatterPlot plot(800, 600);
 plot.set_labels("Group Comparison", "X", "Y");
 
-plot.add_data("Group A", group_a_data, "blue");
-plot.add_data("Group B", group_b_data, "red");
-plot.add_data("Group C", group_c_data, "green");
+plot.add_scatter("Group A", group_a_x, group_a_y, "blue");
+plot.add_scatter("Group B", group_b_x, group_b_y, "red");
+plot.add_scatter("Group C", group_c_x, group_c_y, "green");
 ```
 
 ### Pattern 2: Time Series Analysis

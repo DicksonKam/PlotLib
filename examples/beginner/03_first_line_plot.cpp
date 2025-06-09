@@ -62,16 +62,17 @@ int main() {
         std::cout << "📈 You can see both sine and cosine waves on the same plot!" << std::endl;
     }
     
-    // Method 3: Using Point2D data (alternative way)
+    // Method 3: Create a growth trend plot with automatic colors
     std::cout << "Creating a growth trend plot..." << std::endl;
     
-    std::vector<plotlib::Point2D> growth_data = {
-        {2020, 100}, {2021, 120}, {2022, 150}, {2023, 180}, {2024, 220}
-    };
+    std::vector<double> years = {2020, 2021, 2022, 2023, 2024};
+    std::vector<double> revenue = {100, 120, 150, 180, 220};
     
     plotlib::LinePlot growth_plot(800, 600);
     growth_plot.set_labels("Company Growth", "Year", "Revenue (thousands)");
-    growth_plot.add_line("Revenue", growth_data, "purple");
+    
+    // Use automatic color selection
+    growth_plot.add_line("Revenue", years, revenue);
     
     bool growth_success = growth_plot.save_png("output/03_growth_trend.png");
     
@@ -84,10 +85,10 @@ int main() {
 
 /*
  * 🎯 What you learned:
- * - How to create line plots using X and Y vectors (easiest method!)
+ * - How to create line plots using X and Y vectors (simple and intuitive!)
  * - How to plot mathematical functions like sin(x) and cos(x)
  * - How to plot multiple lines on the same graph
- * - How to use Point2D data for line plots (alternative method)
+ * - How to use both custom colors and automatic color selection
  * - Line plots are perfect for showing trends over time
  * 
  * 🚀 Try this:

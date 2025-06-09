@@ -14,30 +14,19 @@ This guide is for experienced developers who want to leverage the full power of 
 
 ## Advanced Styling and Customization
 
-### Precise Color Control
+### Professional Color Usage
 
-Use RGB values (0.0-1.0) for exact color specification:
-
-```cpp
-plotlib::PlotStyle custom_style;
-custom_style.r = 0.2;      // 20% red
-custom_style.g = 0.4;      // 40% green  
-custom_style.b = 0.8;      // 80% blue
-custom_style.alpha = 0.85; // 85% opacity
-custom_style.point_size = 4.5;
-custom_style.line_width = 2.0;
-```
-
-### Professional Color Schemes
+The simplified API provides an elegant color system with automatic color assignment and manual color specification:
 
 ```cpp
-// Corporate blue palette
-plotlib::PlotStyle corporate_blue = {0.2, 0.4, 0.8, 0.9, 4.0, 2.0, "Corporate"};
-plotlib::PlotStyle corporate_light = {0.6, 0.7, 0.9, 0.7, 3.0, 1.5, "Light"};
+// Automatic color assignment (recommended for beginners)
+plot.add_scatter("Series 1", x1, y1);  // Auto-assigned blue
+plot.add_scatter("Series 2", x2, y2);  // Auto-assigned red
+plot.add_scatter("Series 3", x3, y3);  // Auto-assigned green
 
-// Scientific color schemes
-plotlib::PlotStyle scientific_red = {0.8, 0.2, 0.2, 0.9, 3.5, 2.0, "Treatment"};
-plotlib::PlotStyle scientific_blue = {0.2, 0.2, 0.8, 0.9, 3.5, 2.0, "Control"};
+// Manual color specification (for precise control)
+plot.add_scatter("Treatment", x_treat, y_treat, "red");
+plot.add_scatter("Control", x_control, y_control, "blue");
 ```
 
 ### Advanced Legend Management
@@ -86,46 +75,46 @@ std::vector<T> sample_data(const std::vector<T>& data, size_t target_size) {
     return sampled;
 }
 
-// Usage
-auto sampled_data = sample_data(large_dataset, 5000);
-plot.add_data("Sampled", sampled_data, "blue");
+// Usage with separate x/y vectors
+auto sampled_x = sample_data(large_x_data, 5000);
+auto sampled_y = sample_data(large_y_data, 5000);
+plot.add_scatter("Sampled", sampled_x, sampled_y, "blue");
 ```
 
 #### 2. Data Aggregation
 For trend analysis with massive datasets:
 
 ```cpp
-std::vector<plotlib::Point2D> aggregate_points(
-    const std::vector<plotlib::Point2D>& points, 
-    size_t bin_count) {
+void aggregate_points(const std::vector<double>& x_data, const std::vector<double>& y_data,
+                     size_t bin_count, std::vector<double>& agg_x, std::vector<double>& agg_y) {
     
     // Find bounds
-    auto x_minmax = std::minmax_element(points.begin(), points.end(),
-        [](const auto& a, const auto& b) { return a.x < b.x; });
-    
-    double x_min = x_minmax.first->x;
-    double x_max = x_minmax.second->x;
+    auto x_minmax = std::minmax_element(x_data.begin(), x_data.end());
+    double x_min = *x_minmax.first;
+    double x_max = *x_minmax.second;
     double bin_width = (x_max - x_min) / bin_count;
     
     std::vector<std::vector<double>> bins(bin_count);
+    std::vector<double> bin_centers(bin_count);
     
     // Populate bins
-    for (const auto& point : points) {
-        int bin_idx = static_cast<int>((point.x - x_min) / bin_width);
+    for (size_t i = 0; i < x_data.size(); ++i) {
+        int bin_idx = static_cast<int>((x_data[i] - x_min) / bin_width);
         bin_idx = std::max(0, std::min(static_cast<int>(bin_count - 1), bin_idx));
-        bins[bin_idx].push_back(point.y);
+        bins[bin_idx].push_back(y_data[i]);
+        bin_centers[bin_idx] = x_min + (bin_idx + 0.5) * bin_width;
     }
     
     // Calculate means
-    std::vector<plotlib::Point2D> aggregated;
+    agg_x.clear();
+    agg_y.clear();
     for (size_t i = 0; i < bin_count; ++i) {
         if (!bins[i].empty()) {
             double mean_y = std::accumulate(bins[i].begin(), bins[i].end(), 0.0) / bins[i].size();
-            double x_center = x_min + (i + 0.5) * bin_width;
-            aggregated.emplace_back(x_center, mean_y);
+            agg_x.push_back(bin_centers[i]);
+            agg_y.push_back(mean_y);
         }
     }
-    return aggregated;
 }
 ```
 
@@ -153,7 +142,7 @@ public:
 // Usage
 {
     PerformanceTimer timer("Large dataset plotting");
-    plot.add_data("Large Dataset", huge_dataset, "blue");
+    plot.add_scatter("Large Dataset", huge_x_data, huge_y_data, "blue");
     plot.save_png("output.png");
 }
 ```
@@ -182,7 +171,7 @@ const std::string EFFICIENCY_COLOR = "blue";
 const std::string RISK_COLOR = "orange";
 
 // Apply consistently across related plots
-revenue_plot.add_line("Revenue", data, REVENUE_COLOR);
+revenue_plot.add_line("Revenue", time_data, revenue_data, REVENUE_COLOR);
 cost_plot.add_histogram("Costs", cost_data, COST_COLOR);
 ```
 
@@ -200,324 +189,189 @@ auto& quality = dashboard.get_subplot<plotlib::HistogramPlot>(1, 1);
 auto& capacity = dashboard.get_subplot<plotlib::ScatterPlot>(1, 2);
 ```
 
-### Advanced Dashboard Patterns
+### Real-World Dashboard Examples
 
 #### Scientific Research Dashboard
 ```cpp
-plotlib::SubplotManager research(4, 2, 1600, 1400);
-
-// Time series analysis
-auto& temporal = research.get_subplot<plotlib::LinePlot>(0, 0);
-temporal.set_show_markers(true);
-temporal.add_line("Control", time_data, control_signal, "blue");
-temporal.add_line("Treatment", time_data, treatment_signal, "red");
-
-// Statistical distributions
-auto& distributions = research.get_subplot<plotlib::HistogramPlot>(0, 1);
-distributions.set_normalize(true);  // Probability density
-distributions.add_histogram("Control", control_data, "blue", 30);
-distributions.add_histogram("Treatment", treatment_data, "red", 30);
+// Research analysis with multiple data types
+plotlib::SubplotManager research(2, 3, 1400, 1000);
+research.set_main_title("Experimental Analysis Dashboard");
 
 // Correlation analysis
-auto& correlation = research.get_subplot<plotlib::ScatterPlot>(1, 0);
-correlation.add_data("Experimental Data", correlation_points, "purple");
+auto& correlation = research.get_subplot<plotlib::ScatterPlot>(0, 0);
+correlation.set_labels("Variable Correlation", "X", "Y");
+std::vector<double> corr_x, corr_y;
+// ... generate correlation data
+correlation.add_scatter("Experimental Data", corr_x, corr_y, "purple");
 
-// Error analysis
-auto& errors = research.get_subplot<plotlib::HistogramPlot>(1, 1);
-errors.add_histogram("Residuals", residual_data, "orange", 25);
+// Time series
+auto& timeseries = research.get_subplot<plotlib::LinePlot>(0, 1);
+timeseries.set_labels("Signal Over Time", "Time", "Amplitude");
+timeseries.add_line("Control", time_data, control_signal, "blue");
+timeseries.add_line("Treatment", time_data, treatment_signal, "red");
+
+// Distribution comparison
+auto& distributions = research.get_subplot<plotlib::HistogramPlot>(0, 2);
+distributions.set_labels("Response Distribution", "Value", "Frequency");
+distributions.add_histogram("Before", before_data, "red", 30);
+distributions.add_histogram("After", after_data, "green", 30);
 ```
 
 ## Memory Management
 
-### Efficient Memory Usage
+### Efficient Data Handling
 
-#### 1. Reserve Capacity
+#### 1. Memory Pre-allocation
 ```cpp
-// Reserve memory upfront to avoid reallocations
-std::vector<plotlib::Point2D> data;
-data.reserve(expected_size);
+// Reserve memory for known data sizes
+std::vector<double> large_x, large_y;
+large_x.reserve(expected_size);
+large_y.reserve(expected_size);
 
-// Use emplace_back for efficiency
-for (size_t i = 0; i < size; ++i) {
-    data.emplace_back(x_values[i], y_values[i]);
+// Use efficient data generation
+for (size_t i = 0; i < expected_size; ++i) {
+    large_x.push_back(generate_x(i));
+    large_y.push_back(generate_y(i));
 }
 ```
 
-#### 2. Memory Cleanup
+#### 2. Memory-Efficient Processing
 ```cpp
-// Clear unused data
-large_dataset.clear();
-large_dataset.shrink_to_fit();  // Release memory to OS
+// Process large datasets in chunks
+const size_t CHUNK_SIZE = 10000;
+plotlib::ScatterPlot plot(800, 600);
 
-// Use RAII for automatic cleanup
-{
-    std::vector<plotlib::Point2D> temp_data(1000000);
-    // ... use temp_data
-} // Automatically freed here
-```
-
-#### 3. Real-time Data Patterns
-```cpp
-// Rolling buffer for continuous data
-class RollingBuffer {
-private:
-    std::vector<double> buffer;
-    size_t capacity;
-    size_t current_pos = 0;
-    bool is_full = false;
+for (size_t start = 0; start < total_data_size; start += CHUNK_SIZE) {
+    size_t end = std::min(start + CHUNK_SIZE, total_data_size);
     
-public:
-    RollingBuffer(size_t size) : capacity(size) {
-        buffer.reserve(size);
-    }
+    std::vector<double> chunk_x(x_data.begin() + start, x_data.begin() + end);
+    std::vector<double> chunk_y(y_data.begin() + start, y_data.begin() + end);
     
-    void add_point(double value) {
-        if (buffer.size() < capacity) {
-            buffer.push_back(value);
-        } else {
-            buffer[current_pos] = value;
-            current_pos = (current_pos + 1) % capacity;
-            is_full = true;
-        }
-    }
-    
-    std::vector<double> get_data() const {
-        if (!is_full) return buffer;
-        
-        std::vector<double> result;
-        result.reserve(capacity);
-        
-        // Copy from current position to end
-        result.insert(result.end(), 
-                     buffer.begin() + current_pos, buffer.end());
-        // Copy from beginning to current position
-        result.insert(result.end(), 
-                     buffer.begin(), buffer.begin() + current_pos);
-        
-        return result;
-    }
-};
+    plot.add_scatter("Chunk " + std::to_string(start/CHUNK_SIZE), chunk_x, chunk_y);
+}
 ```
 
 ## Advanced Plot Types
 
-### Cluster Analysis Visualization
-
+### Cluster Visualization
 ```cpp
-// Generate cluster data with outliers
-std::vector<plotlib::Point2D> points;
-std::vector<int> labels;
+// Generate clustered data
+std::vector<double> cluster_x, cluster_y;
+std::vector<int> cluster_labels;
 
-// Cluster 1: Dense cluster
-std::normal_distribution<> cluster1_x(20, 5);
-std::normal_distribution<> cluster1_y(30, 4);
-for (int i = 0; i < 50; ++i) {
-    points.emplace_back(cluster1_x(gen), cluster1_y(gen));
-    labels.push_back(0);
-}
+// ... populate cluster data
 
-// Add outliers (label -1)
-for (int i = 0; i < 10; ++i) {
-    points.emplace_back(outlier_x(gen), outlier_y(gen));
-    labels.push_back(-1);
-}
-
-// Visualize clusters
-plot.add_cluster_data("DBSCAN Results", points, labels, 4.0, 0.8);
+// Use clustering functionality
+plotlib::ScatterPlot cluster_plot(800, 600);
+cluster_plot.set_labels("Cluster Analysis", "X", "Y");
+cluster_plot.add_clusters(cluster_x, cluster_y, cluster_labels);
 ```
 
-### Statistical Analysis
-
+### Multi-Series Analysis
 ```cpp
-// Normalized histograms for probability density
-histogram.set_normalize(true);
-histogram.add_histogram("Distribution A", data_a, "blue", 30);
-histogram.add_histogram("Distribution B", data_b, "red", 30);
+// Compare multiple datasets efficiently
+plotlib::LinePlot comparison(1000, 600);
+comparison.set_labels("Performance Comparison", "Time", "Metric");
 
-// Get statistics
-auto stats_a = histogram.get_statistics("Distribution A");
-auto stats_b = histogram.get_statistics("Distribution B");
-
-std::cout << "Mean A: " << stats_a.first << ", Std A: " << stats_a.second << std::endl;
-std::cout << "Mean B: " << stats_b.first << ", Std B: " << stats_b.second << std::endl;
-```
-
-### Signal Processing Visualization
-
-```cpp
-// Complex signal with multiple components
-for (size_t i = 0; i < TIME_SERIES_SIZE; ++i) {
-    double t = i * 0.001;  // 1ms resolution
-    
-    double signal = 2.0 * std::sin(2 * M_PI * 10 * t) +     // 10 Hz
-                   1.0 * std::sin(2 * M_PI * 50 * t) +      // 50 Hz  
-                   0.5 * std::sin(2 * M_PI * 100 * t) +     // 100 Hz
-                   noise_dist(gen);                          // Noise
-    
-    time_points.push_back(t);
-    signal_values.push_back(signal);
-}
-
-// Efficient plotting with downsampling
-std::vector<double> downsampled_time, downsampled_signal;
-for (size_t i = 0; i < TIME_SERIES_SIZE; i += 10) {  // Every 10th point
-    downsampled_time.push_back(time_points[i]);
-    downsampled_signal.push_back(signal_values[i]);
-}
-
-line_plot.add_line("Signal", downsampled_time, downsampled_signal, "blue");
+// Add multiple series with descriptive names
+comparison.add_line("Baseline", time_data, baseline_data, "black");
+comparison.add_line("Optimized v1", time_data, opt_v1_data, "blue");
+comparison.add_line("Optimized v2", time_data, opt_v2_data, "red");
+comparison.add_line("Target", time_data, target_data, "green");
 ```
 
 ## Integration Patterns
 
-### Template-Based Generic Plotting
-
+### Template-Based Plotting
 ```cpp
 template<typename DataContainer>
-void plot_generic_data(const DataContainer& data, 
-                      const std::string& title,
-                      const std::string& color = "blue") {
+void create_comparison_plot(const DataContainer& data1, const DataContainer& data2,
+                          const std::string& title) {
     plotlib::ScatterPlot plot(800, 600);
     plot.set_labels(title, "X", "Y");
     
-    std::vector<plotlib::Point2D> points;
-    points.reserve(data.size());
+    // Convert container data to vectors
+    std::vector<double> x1, y1, x2, y2;
+    // ... extract data from containers
     
-    for (const auto& item : data) {
-        points.emplace_back(item.x, item.y);
-    }
-    
-    plot.add_data("Data", points, color);
-    plot.save_png("output/" + title + ".png");
+    plot.add_scatter("Dataset 1", x1, y1, "blue");
+    plot.add_scatter("Dataset 2", x2, y2, "red");
+    plot.save_png(title + ".png");
 }
 ```
 
 ### Factory Pattern for Plot Creation
-
 ```cpp
 class PlotFactory {
 public:
-    enum class PlotType { SCATTER, LINE, HISTOGRAM };
-    
-    template<typename PlotT>
-    static std::unique_ptr<PlotT> create_plot(int width, int height) {
-        return std::make_unique<PlotT>(width, height);
+    static std::unique_ptr<plotlib::ScatterPlot> create_scatter(
+        const std::string& title, int width = 800, int height = 600) {
+        auto plot = std::make_unique<plotlib::ScatterPlot>(width, height);
+        plot->set_labels(title, "X", "Y");
+        return plot;
     }
     
-    static std::unique_ptr<plotlib::PlotManager> create_plot(
-        PlotType type, int width, int height) {
-        switch (type) {
-            case PlotType::SCATTER:
-                return std::make_unique<plotlib::ScatterPlot>(width, height);
-            case PlotType::LINE:
-                return std::make_unique<plotlib::LinePlot>(width, height);
-            case PlotType::HISTOGRAM:
-                return std::make_unique<plotlib::HistogramPlot>(width, height);
-            default:
-                throw std::invalid_argument("Unknown plot type");
-        }
-    }
-};
-```
-
-### Configuration-Driven Plotting
-
-```cpp
-struct PlotConfig {
-    std::string title;
-    std::string x_label;
-    std::string y_label;
-    int width = 800;
-    int height = 600;
-    std::string output_file;
-    bool show_legend = true;
-    bool normalize_histogram = false;
-};
-
-class ConfigurablePlot {
-public:
-    template<typename PlotT>
-    static void create_from_config(const PlotConfig& config) {
-        PlotT plot(config.width, config.height);
-        plot.set_labels(config.title, config.x_label, config.y_label);
-        plot.set_legend_enabled(config.show_legend);
-        
-        if constexpr (std::is_same_v<PlotT, plotlib::HistogramPlot>) {
-            plot.set_normalize(config.normalize_histogram);
-        }
-        
-        // Add data based on configuration...
-        plot.save_png(config.output_file);
+    static std::unique_ptr<plotlib::LinePlot> create_timeseries(
+        const std::string& title, int width = 1000, int height = 400) {
+        auto plot = std::make_unique<plotlib::LinePlot>(width, height);
+        plot->set_labels(title, "Time", "Value");
+        return plot;
     }
 };
 ```
 
 ## Troubleshooting and Debugging
 
-### Performance Issues
+### Common Performance Issues
 
-#### Symptoms: Slow rendering with large datasets
-**Solutions:**
-1. Use data sampling: `sample_data(dataset, 5000)`
-2. Implement data aggregation for trend analysis
-3. Consider switching to line plots for time series
-4. Disable markers: `line_plot.set_show_markers(false)`
+1. **Large datasets without sampling**
+   ```cpp
+   // Problem: Direct plotting of 100K+ points
+   plot.add_scatter("Raw", huge_x, huge_y);  // Slow!
+   
+   // Solution: Sample or aggregate
+   auto sampled_x = sample_data(huge_x, 5000);
+   auto sampled_y = sample_data(huge_y, 5000);
+   plot.add_scatter("Sampled", sampled_x, sampled_y);
+   ```
 
-#### Symptoms: High memory usage
-**Solutions:**
-1. Reserve vector capacity: `data.reserve(expected_size)`
-2. Clear unused data: `data.clear(); data.shrink_to_fit()`
-3. Use rolling buffers for real-time data
-4. Process data in chunks
+2. **Memory inefficient data handling**
+   ```cpp
+   // Problem: Creating unnecessary copies
+   std::vector<double> x_copy = original_x;  // Unnecessary copy
+   
+   // Solution: Use references or move semantics
+   const auto& x_ref = original_x;  // No copy
+   ```
 
-### Visual Quality Issues
+### Debugging Visualization Issues
 
-#### Symptoms: Overlapping points in scatter plots
-**Solutions:**
-1. Reduce point size: `style.point_size = 2.0`
-2. Increase transparency: `style.alpha = 0.6`
-3. Use data aggregation or sampling
-4. Consider switching to density plots
-
-#### Symptoms: Legend overcrowding
-**Solutions:**
-1. Hide less important series: `plot.hide_legend_item("series")`
-2. Use shorter labels: `style.label = "Short"`
-3. Increase plot size to accommodate legend
-4. Group similar series
-
-### Common Compilation Issues
-
-#### Missing includes:
 ```cpp
-#include <vector>      // For std::vector
-#include <random>      // For random number generation
-#include <algorithm>   // For std::minmax_element
-#include <numeric>     // For std::accumulate
-#include <chrono>      // For performance timing
+// Add debug information to plots
+plot.set_labels("Debug: " + debug_info, "X (range: " + x_range + ")", "Y");
+
+// Verify data ranges
+auto x_minmax = std::minmax_element(x_data.begin(), x_data.end());
+auto y_minmax = std::minmax_element(y_data.begin(), y_data.end());
+std::cout << "X range: [" << *x_minmax.first << ", " << *x_minmax.second << "]" << std::endl;
+std::cout << "Y range: [" << *y_minmax.first << ", " << *y_minmax.second << "]" << std::endl;
 ```
 
-#### Template instantiation errors:
-```cpp
-// Explicit template instantiation
-auto& subplot = dashboard.get_subplot<plotlib::LinePlot>(0, 0);
-// Not: auto& subplot = dashboard.get_subplot(0, 0);
-```
+## Best Practices Summary
 
-### Best Practices Summary
+1. **Use the simplified API**: Prefer `add_scatter()` with x/y vectors over complex data structures
+2. **Sample large datasets**: Don't plot more than 10,000 points without sampling
+3. **Pre-allocate memory**: Use `reserve()` for known data sizes
+4. **Choose appropriate plot types**: Scatter for relationships, lines for trends, histograms for distributions
+5. **Use consistent color schemes**: Maintain visual coherence across dashboards
+6. **Profile performance**: Use timing tools for optimization
+7. **Plan your layout**: Design dashboard hierarchy before implementation
 
-1. **Performance**: Always profile before optimizing
-2. **Memory**: Reserve capacity, use RAII, clear unused data
-3. **Visual Design**: Consistent colors, logical grouping, appropriate plot types
-4. **Code Organization**: Use templates, factories, and configuration patterns
-5. **Debugging**: Start simple, add complexity incrementally
-6. **Documentation**: Comment complex algorithms and design decisions
+## Advanced Resources
 
-### Advanced Example References
+- **Examples**: Check `examples/advanced/` for complete working examples
+- **Performance**: Study `03_performance_optimization_and_large_datasets.cpp`
+- **Dashboards**: Explore `02_complex_dashboards_and_layouts.cpp`
+- **Styling**: Reference `01_custom_styling_and_advanced_features.cpp`
 
-See the advanced examples for complete implementations:
-- `examples/advanced/01_custom_styling_and_advanced_features.cpp`
-- `examples/advanced/02_complex_dashboards_and_layouts.cpp`
-- `examples/advanced/03_performance_optimization_and_large_datasets.cpp`
-
-These examples demonstrate real-world usage patterns and advanced techniques for professional-quality visualizations. 
+Happy advanced plotting! 🚀📊 

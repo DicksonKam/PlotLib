@@ -26,7 +26,7 @@ int main() {
     plotlib::HistogramPlot plot(800, 600);
     plot.set_labels("Test Scores Distribution", "Score", "Number of Students");
     
-    // Add histogram with automatic bin count
+    // Add histogram with automatic bin count and custom color
     plot.add_histogram("Test Scores", test_scores, "blue");
     
     bool success = plot.save_png("output/04_test_scores.png");
@@ -52,13 +52,13 @@ int main() {
     // Create histogram with 10 bins
     plotlib::HistogramPlot hist_10(800, 600);
     hist_10.set_labels("IQ Scores (10 bins)", "IQ Score", "Frequency");
-    hist_10.add_histogram("IQ Scores", iq_scores, "green", 10);  // 10 bins
+    hist_10.add_histogram("IQ Scores", iq_scores, "green", 10);  // color first, then bins
     hist_10.save_png("output/04_iq_10_bins.png");
     
     // Create histogram with 30 bins
     plotlib::HistogramPlot hist_30(800, 600);
     hist_30.set_labels("IQ Scores (30 bins)", "IQ Score", "Frequency");
-    hist_30.add_histogram("IQ Scores", iq_scores, "red", 30);  // 30 bins
+    hist_30.add_histogram("IQ Scores", iq_scores, "red", 30);  // color first, then bins
     hist_30.save_png("output/04_iq_30_bins.png");
     
     std::cout << "✅ Different bin count histograms saved!" << std::endl;

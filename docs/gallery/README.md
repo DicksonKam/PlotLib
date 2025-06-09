@@ -11,22 +11,22 @@ Perfect for showing relationships between variables and cluster analysis.
 ```cpp
 plotlib::ScatterPlot plot(800, 600);
 plot.set_labels("My First Plot", "X Values", "Y Values");
-plot.add_data("Data", points, "blue");
+plot.add_scatter("Data", x_values, y_values, "blue");
 plot.save_png("scatter.png");
 ```
 *Shows individual data points with automatic styling*
 
 #### Multiple Series with Colors
 ```cpp
-plot.add_data("Series A", data_a, "blue");
-plot.add_data("Series B", data_b, "red");
-plot.add_data("Series C", data_c, "green");
+plot.add_scatter("Series A", x_a, y_a, "blue");
+plot.add_scatter("Series B", x_b, y_b, "red");
+plot.add_scatter("Series C", x_c, y_c, "green");
 ```
 *Multiple datasets with different colors and automatic legend*
 
 #### Cluster Visualization
 ```cpp
-plot.add_clusters(points, cluster_labels);
+plot.add_clusters(x_values, y_values, cluster_labels);
 ```
 *Automatic coloring for clustering results with outlier detection*
 
@@ -127,9 +127,9 @@ PlotLib supports these color names:
 
 ### Automatic Color Assignment
 ```cpp
-plot.add_data("Series 1", data1);  // Automatically blue
-plot.add_data("Series 2", data2);  // Automatically red
-plot.add_data("Series 3", data3);  // Automatically green
+plot.add_scatter("Series 1", x1, y1);  // Automatically blue
+plot.add_scatter("Series 2", x2, y2);  // Automatically red
+plot.add_scatter("Series 3", x3, y3);  // Automatically green
 ```
 *Library automatically chooses contrasting colors*
 
@@ -169,8 +169,8 @@ plot.add_line("2024", q2024, revenue_2024, "red");
 plot.set_labels("Experimental Results", 
                 "Time (seconds)", 
                 "Amplitude (mV)");
-plot.add_data("Control", control_data, "black");
-plot.add_data("Treatment", treatment_data, "red");
+plot.add_scatter("Control", control_x, control_y, "black");
+plot.add_scatter("Treatment", treatment_x, treatment_y, "red");
 ```
 
 ### Educational Dashboards
@@ -220,7 +220,7 @@ manager.set_main_title("Student Performance Analysis");
 #include "scatter_plot.h"
 plotlib::ScatterPlot plot(800, 600);
 plot.set_labels("Title", "X", "Y");
-plot.add_data("Data", points, "blue");
+plot.add_scatter("Data", x_values, y_values, "blue");
 plot.save_png("output.png");
 ```
 

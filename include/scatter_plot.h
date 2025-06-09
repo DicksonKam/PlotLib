@@ -82,53 +82,32 @@ public:
     void set_default_marker_type(MarkerType marker_type);
     
     /**
-     * @brief Get the current default marker type
-     * @return The current default marker type
-     */
-    MarkerType get_default_marker_type() const { return default_marker_type; }
-    
-    // Legacy methods for backward compatibility
-    
-    /**
-     * @brief Add a single data point (legacy method)
-     * @param x X coordinate
-     * @param y Y coordinate
-     * @param style Visual styling for the point (optional)
-     * 
-     * @deprecated Use add_series or add_series_point instead
-     */
-    void add_point(double x, double y, const PlotStyle& style = PlotStyle());
-    
-    /**
-     * @brief Add multiple data points (legacy method)
-     * @param pts Vector of 2D points
-     * @param style Visual styling for the points (optional)
-     * 
-     * @deprecated Use add_series instead
-     */
-    void add_points(const std::vector<Point2D>& pts, const PlotStyle& style = PlotStyle());
-    
-    /**
-     * @brief Add a simple data series with automatic styling (beginner-friendly)
+     * @brief Add a scatter series with automatic styling (beginner-friendly)
      * @param name Series name for legend
-     * @param data Vector of 2D points
+     * @param x_values Vector of X coordinates
+     * @param y_values Vector of Y coordinates
      */
-    void add_data(const std::string& name, const std::vector<Point2D>& data);
+    void add_scatter(const std::string& name, const std::vector<double>& x_values, 
+                     const std::vector<double>& y_values);
     
     /**
-     * @brief Add a simple data series with custom color (beginner-friendly)
+     * @brief Add a scatter series with custom color (beginner-friendly)
      * @param name Series name for legend
-     * @param data Vector of 2D points
+     * @param x_values Vector of X coordinates
+     * @param y_values Vector of Y coordinates
      * @param color_name Color name ("red", "blue", "green", "orange", "purple", "cyan", "magenta", "yellow")
      */
-    void add_data(const std::string& name, const std::vector<Point2D>& data, const std::string& color_name);
+    void add_scatter(const std::string& name, const std::vector<double>& x_values, 
+                     const std::vector<double>& y_values, const std::string& color_name);
     
     /**
      * @brief Add cluster data with automatic styling (beginner-friendly)
-     * @param data Vector of 2D points
-     * @param labels Cluster labels for each point
+     * @param x_values Vector of X coordinates
+     * @param y_values Vector of Y coordinates
+     * @param labels Cluster labels for each point (-1 for outliers, 0+ for clusters)
      */
-    void add_clusters(const std::vector<Point2D>& data, const std::vector<int>& labels);
+    void add_clusters(const std::vector<double>& x_values, const std::vector<double>& y_values, 
+                      const std::vector<int>& labels);
 };
 
 } // namespace plotlib

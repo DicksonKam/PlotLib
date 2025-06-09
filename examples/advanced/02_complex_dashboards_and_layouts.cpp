@@ -63,17 +63,25 @@ int main() {
     auto& regional_perf = executive_dashboard.get_subplot<plotlib::ScatterPlot>(0, 2);
     regional_perf.set_labels("Regional Performance", "Market Size", "Revenue");
     
-    std::vector<plotlib::Point2D> north_region, south_region, west_region, east_region;
+    // Convert Point2D data to separate x/y vectors
+    std::vector<double> north_x, north_y, south_x, south_y, west_x, west_y, east_x, east_y;
     for (int i = 0; i < 15; ++i) {
-        north_region.emplace_back(gen() % 100 + 50, revenue_dist(gen));
-        south_region.emplace_back(gen() % 80 + 30, revenue_dist(gen) * 0.8);
-        west_region.emplace_back(gen() % 120 + 70, revenue_dist(gen) * 1.2);
-        east_region.emplace_back(gen() % 90 + 40, revenue_dist(gen) * 0.9);
+        north_x.push_back(gen() % 100 + 50);
+        north_y.push_back(revenue_dist(gen));
+        
+        south_x.push_back(gen() % 80 + 30);
+        south_y.push_back(revenue_dist(gen) * 0.8);
+        
+        west_x.push_back(gen() % 120 + 70);
+        west_y.push_back(revenue_dist(gen) * 1.2);
+        
+        east_x.push_back(gen() % 90 + 40);
+        east_y.push_back(revenue_dist(gen) * 0.9);
     }
-    regional_perf.add_data("North", north_region, "blue");
-    regional_perf.add_data("South", south_region, "red");
-    regional_perf.add_data("West", west_region, "green");
-    regional_perf.add_data("East", east_region, "orange");
+    regional_perf.add_scatter("North", north_x, north_y, "blue");
+    regional_perf.add_scatter("South", south_x, south_y, "red");
+    regional_perf.add_scatter("West", west_x, west_y, "green");
+    regional_perf.add_scatter("East", east_x, east_y, "orange");
     
     // Row 2: Operational Metrics
     // (1,0) - Efficiency Over Time
@@ -109,17 +117,23 @@ int main() {
     auto& product_perf = executive_dashboard.get_subplot<plotlib::ScatterPlot>(1, 2);
     product_perf.set_labels("Product Performance", "Units Sold", "Profit Margin %");
     
-    std::vector<plotlib::Point2D> product_a, product_b, product_c;
+    // Convert Point2D data to separate x/y vectors
+    std::vector<double> product_a_x, product_a_y, product_b_x, product_b_y, product_c_x, product_c_y;
     std::uniform_real_distribution<> units_dist(100, 1000);
     std::uniform_real_distribution<> margin_dist(10, 40);
     for (int i = 0; i < 20; ++i) {
-        product_a.emplace_back(units_dist(gen), margin_dist(gen));
-        product_b.emplace_back(units_dist(gen), margin_dist(gen));
-        product_c.emplace_back(units_dist(gen), margin_dist(gen));
+        product_a_x.push_back(units_dist(gen));
+        product_a_y.push_back(margin_dist(gen));
+        
+        product_b_x.push_back(units_dist(gen));
+        product_b_y.push_back(margin_dist(gen));
+        
+        product_c_x.push_back(units_dist(gen));
+        product_c_y.push_back(margin_dist(gen));
     }
-    product_perf.add_data("Product A", product_a, "blue");
-    product_perf.add_data("Product B", product_b, "red");
-    product_perf.add_data("Product C", product_c, "green");
+    product_perf.add_scatter("Product A", product_a_x, product_a_y, "blue");
+    product_perf.add_scatter("Product B", product_b_x, product_b_y, "red");
+    product_perf.add_scatter("Product C", product_c_x, product_c_y, "green");
     
     // Row 3: Strategic Insights
     // (2,0) - Market Trends
@@ -151,15 +165,17 @@ int main() {
     auto& strategic_pos = executive_dashboard.get_subplot<plotlib::ScatterPlot>(2, 2);
     strategic_pos.set_labels("Strategic Positioning", "Innovation Index", "Market Position");
     
-    std::vector<plotlib::Point2D> current_pos = {{75, 68}};
-    std::vector<plotlib::Point2D> target_pos = {{85, 80}};
-    std::vector<plotlib::Point2D> competitors;
+    // Convert Point2D data to separate x/y vectors
+    std::vector<double> current_x = {75}, current_y = {68};
+    std::vector<double> target_x = {85}, target_y = {80};
+    std::vector<double> competitors_x, competitors_y;
     for (int i = 0; i < 8; ++i) {
-        competitors.emplace_back(gen() % 100, gen() % 100);
+        competitors_x.push_back(gen() % 100);
+        competitors_y.push_back(gen() % 100);
     }
-    strategic_pos.add_data("Current Position", current_pos, "blue");
-    strategic_pos.add_data("Target Position", target_pos, "green");
-    strategic_pos.add_data("Competitors", competitors, "red");
+    strategic_pos.add_scatter("Current Position", current_x, current_y, "blue");
+    strategic_pos.add_scatter("Target Position", target_x, target_y, "green");
+    strategic_pos.add_scatter("Competitors", competitors_x, competitors_y, "red");
     
     executive_dashboard.save_png("output/advanced_02_executive_dashboard.png");
     std::cout << "✅ Executive dashboard saved!" << std::endl;
@@ -192,7 +208,6 @@ int main() {
     // (0,1) - Statistical Distribution
     auto& stat_dist = research_dashboard.get_subplot<plotlib::HistogramPlot>(0, 1);
     stat_dist.set_labels("Measurement Distribution", "Value", "Frequency");
-    stat_dist.set_normalize(true);
     
     std::vector<double> control_measurements, treatment_measurements;
     for (int i = 0; i < 1000; ++i) {
@@ -206,13 +221,15 @@ int main() {
     auto& correlation = research_dashboard.get_subplot<plotlib::ScatterPlot>(1, 0);
     correlation.set_labels("Variable Correlation", "Variable X", "Variable Y");
     
-    std::vector<plotlib::Point2D> corr_data;
+    // Convert Point2D data to separate x/y vectors
+    std::vector<double> corr_x, corr_y;
     for (int i = 0; i < 200; ++i) {
         double x = measurement_dist(gen);
         double y = 0.7 * x + 0.3 * measurement_dist(gen);  // Strong correlation
-        corr_data.emplace_back(x, y);
+        corr_x.push_back(x);
+        corr_y.push_back(y);
     }
-    correlation.add_data("Experimental Data", corr_data, "purple");
+    correlation.add_scatter("Experimental Data", corr_x, corr_y, "purple");
     
     // (1,1) - Error Analysis
     auto& error_analysis = research_dashboard.get_subplot<plotlib::HistogramPlot>(1, 1);
@@ -244,17 +261,18 @@ int main() {
     auto& quality_control = research_dashboard.get_subplot<plotlib::ScatterPlot>(2, 1);
     quality_control.set_labels("Quality Control", "Batch", "Purity (%)");
     
-    std::vector<plotlib::Point2D> qc_data;
+    // Convert Point2D data to separate x/y vectors
+    std::vector<double> qc_x, qc_y;
     std::normal_distribution<> purity_dist(98, 1);
     for (int i = 1; i <= 50; ++i) {
-        qc_data.emplace_back(i, std::max(90.0, std::min(100.0, purity_dist(gen))));
+        qc_x.push_back(i);
+        qc_y.push_back(std::max(90.0, std::min(100.0, purity_dist(gen))));
     }
-    quality_control.add_data("Batch Quality", qc_data, "green");
+    quality_control.add_scatter("Batch Quality", qc_x, qc_y, "green");
     
     // (3,0) - Comparative Analysis
     auto& comparative = research_dashboard.get_subplot<plotlib::HistogramPlot>(3, 0);
-    comparative.set_labels("Method Comparison", "Measurement", "Density");
-    comparative.set_normalize(true);
+    comparative.set_labels("Method Comparison", "Measurement", "Frequency");
     
     std::normal_distribution<> method1_dist(10, 2);
     std::normal_distribution<> method2_dist(12, 1.5);
@@ -270,7 +288,8 @@ int main() {
     auto& cluster_analysis = research_dashboard.get_subplot<plotlib::ScatterPlot>(3, 1);
     cluster_analysis.set_labels("Sample Clustering", "PC1", "PC2");
     
-    std::vector<plotlib::Point2D> cluster_points;
+    // Convert Point2D cluster data to separate x/y vectors
+    std::vector<double> cluster_x, cluster_y;
     std::vector<int> cluster_labels;
     
     // Generate 3 distinct clusters
@@ -279,19 +298,22 @@ int main() {
     std::normal_distribution<> cluster3_dist(2, 0.6);
     
     for (int i = 0; i < 30; ++i) {
-        cluster_points.emplace_back(cluster1_dist(gen), cluster1_dist(gen));
+        cluster_x.push_back(cluster1_dist(gen));
+        cluster_y.push_back(cluster1_dist(gen));
         cluster_labels.push_back(0);
     }
     for (int i = 0; i < 35; ++i) {
-        cluster_points.emplace_back(cluster2_dist(gen), cluster2_dist(gen));
+        cluster_x.push_back(cluster2_dist(gen));
+        cluster_y.push_back(cluster2_dist(gen));
         cluster_labels.push_back(1);
     }
     for (int i = 0; i < 25; ++i) {
-        cluster_points.emplace_back(cluster3_dist(gen), cluster3_dist(gen));
+        cluster_x.push_back(cluster3_dist(gen));
+        cluster_y.push_back(cluster3_dist(gen));
         cluster_labels.push_back(2);
     }
     
-    cluster_analysis.add_clusters(cluster_points, cluster_labels);
+    cluster_analysis.add_clusters(cluster_x, cluster_y, cluster_labels);
     
     research_dashboard.save_png("output/advanced_02_research_dashboard.png");
     std::cout << "✅ Research dashboard saved!" << std::endl;

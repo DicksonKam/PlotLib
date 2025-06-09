@@ -55,40 +55,38 @@ std::vector<T> sample_data(const std::vector<T>& data, size_t target_size) {
     return sampled;
 }
 
-// Utility function for data aggregation
-std::vector<plotlib::Point2D> aggregate_points(const std::vector<plotlib::Point2D>& points, 
-                                               size_t bin_count) {
-    if (points.empty()) return {};
+// Utility function for data aggregation - updated to work with separate x/y vectors
+void aggregate_points(const std::vector<double>& x_data, const std::vector<double>& y_data, 
+                     size_t bin_count, std::vector<double>& agg_x, std::vector<double>& agg_y) {
+    if (x_data.empty() || y_data.empty()) return;
     
     // Find data bounds
-    auto x_minmax = std::minmax_element(points.begin(), points.end(),
-        [](const plotlib::Point2D& a, const plotlib::Point2D& b) { return a.x < b.x; });
-    
-    double x_min = x_minmax.first->x;
-    double x_max = x_minmax.second->x;
+    auto x_minmax = std::minmax_element(x_data.begin(), x_data.end());
+    double x_min = *x_minmax.first;
+    double x_max = *x_minmax.second;
     double bin_width = (x_max - x_min) / bin_count;
     
     std::vector<std::vector<double>> bins(bin_count);
     std::vector<double> bin_centers(bin_count);
     
     // Populate bins
-    for (const auto& point : points) {
-        int bin_idx = static_cast<int>((point.x - x_min) / bin_width);
+    for (size_t i = 0; i < x_data.size(); ++i) {
+        int bin_idx = static_cast<int>((x_data[i] - x_min) / bin_width);
         bin_idx = std::max(0, std::min(static_cast<int>(bin_count - 1), bin_idx));
-        bins[bin_idx].push_back(point.y);
+        bins[bin_idx].push_back(y_data[i]);
         bin_centers[bin_idx] = x_min + (bin_idx + 0.5) * bin_width;
     }
     
     // Calculate aggregated points (mean of each bin)
-    std::vector<plotlib::Point2D> aggregated;
+    agg_x.clear();
+    agg_y.clear();
     for (size_t i = 0; i < bin_count; ++i) {
         if (!bins[i].empty()) {
             double mean_y = std::accumulate(bins[i].begin(), bins[i].end(), 0.0) / bins[i].size();
-            aggregated.emplace_back(bin_centers[i], mean_y);
+            agg_x.push_back(bin_centers[i]);
+            agg_y.push_back(mean_y);
         }
     }
-    
-    return aggregated;
 }
 
 int main() {
@@ -107,15 +105,17 @@ int main() {
     
     std::normal_distribution<> large_dist(0, 1);
     
-    // Generate large dataset
-    std::vector<plotlib::Point2D> large_dataset;
+    // Generate large dataset using separate x/y vectors
+    std::vector<double> large_x, large_y;
     {
         PerformanceTimer timer("Generating 100K data points");
-        large_dataset.reserve(LARGE_SIZE);
+        large_x.reserve(LARGE_SIZE);
+        large_y.reserve(LARGE_SIZE);
         for (size_t i = 0; i < LARGE_SIZE; ++i) {
             double x = i * 0.01;
             double y = large_dist(gen) + 0.1 * std::sin(0.01 * x);
-            large_dataset.emplace_back(x, y);
+            large_x.push_back(x);
+            large_y.push_back(y);
         }
     }
     
@@ -125,7 +125,7 @@ int main() {
         PerformanceTimer timer("Direct plotting of 100K points");
         plotlib::ScatterPlot large_plot(1200, 800);
         large_plot.set_labels("Large Dataset - Direct Plot", "X", "Y");
-        large_plot.add_data("Raw Data", large_dataset, "blue");
+        large_plot.add_scatter("Raw Data", large_x, large_y, "blue");
         large_plot.save_png("output/advanced_03_large_direct.png");
     }
     
@@ -133,11 +133,12 @@ int main() {
     std::cout << "\nTest 2: Sampled plotting performance..." << std::endl;
     {
         PerformanceTimer timer("Sampled plotting (10K from 100K points)");
-        auto sampled_data = sample_data(large_dataset, MEDIUM_SIZE);
+        auto sampled_x = sample_data(large_x, MEDIUM_SIZE);
+        auto sampled_y = sample_data(large_y, MEDIUM_SIZE);
         
         plotlib::ScatterPlot sampled_plot(1200, 800);
         sampled_plot.set_labels("Large Dataset - Sampled Plot", "X", "Y");
-        sampled_plot.add_data("Sampled Data", sampled_data, "red");
+        sampled_plot.add_scatter("Sampled Data", sampled_x, sampled_y, "red");
         sampled_plot.save_png("output/advanced_03_large_sampled.png");
     }
     
@@ -145,11 +146,12 @@ int main() {
     std::cout << "\nTest 3: Aggregated plotting performance..." << std::endl;
     {
         PerformanceTimer timer("Aggregated plotting (1K bins from 100K points)");
-        auto aggregated_data = aggregate_points(large_dataset, SMALL_SIZE);
+        std::vector<double> agg_x, agg_y;
+        aggregate_points(large_x, large_y, SMALL_SIZE, agg_x, agg_y);
         
         plotlib::ScatterPlot aggregated_plot(1200, 800);
         aggregated_plot.set_labels("Large Dataset - Aggregated Plot", "X", "Y");
-        aggregated_plot.add_data("Aggregated Data", aggregated_data, "green");
+        aggregated_plot.add_scatter("Aggregated Data", agg_x, agg_y, "green");
         aggregated_plot.save_png("output/advanced_03_large_aggregated.png");
     }
     
@@ -217,17 +219,19 @@ int main() {
         // Create histogram with optimal bin count
         plotlib::HistogramPlot large_histogram(1200, 800);
         large_histogram.set_labels("Large Dataset Histogram", "Value", "Frequency");
-        large_histogram.set_normalize(true);
         
-        // Use optimal bin count (Sturges' rule is automatically applied)
+        // Use optimal bin count (automatic bin calculation)
         large_histogram.add_histogram("1M Data Points", histogram_data, "purple");
         large_histogram.save_png("output/advanced_03_large_histogram.png");
         
-        // Display statistics
-        auto stats = large_histogram.get_statistics("1M Data Points");
+        // Calculate basic statistics manually since get_statistics is removed
+        double mean = std::accumulate(histogram_data.begin(), histogram_data.end(), 0.0) / histogram_data.size();
+        double sq_sum = std::inner_product(histogram_data.begin(), histogram_data.end(), histogram_data.begin(), 0.0);
+        double stdev = std::sqrt(sq_sum / histogram_data.size() - mean * mean);
+        
         std::cout << "📊 Dataset Statistics:" << std::endl;
-        std::cout << "   Mean: " << stats.first << std::endl;
-        std::cout << "   Std Dev: " << stats.second << std::endl;
+        std::cout << "   Mean: " << mean << std::endl;
+        std::cout << "   Std Dev: " << stdev << std::endl;
     }
     
     // Example 4: Performance Comparison Dashboard
@@ -266,13 +270,10 @@ int main() {
         auto& accuracy_perf = perf_dashboard.get_subplot<plotlib::ScatterPlot>(1, 0);
         accuracy_perf.set_labels("Accuracy vs Performance", "Rendering Speed (fps)", "Data Accuracy (%)");
         
-        std::vector<plotlib::Point2D> methods = {
-            {1.0, 100.0},    // Direct: slow but perfect
-            {15.0, 95.0},    // Sampled: fast with good accuracy
-            {30.0, 85.0},    // Aggregated: fastest with reasonable accuracy
-            {25.0, 90.0}     // Adaptive: balanced approach
-        };
-        accuracy_perf.add_data("Optimization Methods", methods, "purple");
+        // Convert Point2D data to separate x/y vectors
+        std::vector<double> method_x = {1.0, 15.0, 30.0, 25.0};
+        std::vector<double> method_y = {100.0, 95.0, 85.0, 90.0};
+        accuracy_perf.add_scatter("Optimization Methods", method_x, method_y, "purple");
         
         // (1,1) - Scalability Analysis
         auto& scalability = perf_dashboard.get_subplot<plotlib::LinePlot>(1, 1);
@@ -325,21 +326,25 @@ int main() {
         PerformanceTimer timer("Memory optimization techniques");
         
         // Technique 1: Reserve memory upfront
-        std::vector<plotlib::Point2D> optimized_data;
-        optimized_data.reserve(MEDIUM_SIZE);  // Avoid reallocations
+        std::vector<double> optimized_x, optimized_y;
+        optimized_x.reserve(MEDIUM_SIZE);  // Avoid reallocations
+        optimized_y.reserve(MEDIUM_SIZE);
         
-        // Technique 2: Use move semantics where possible
+        // Technique 2: Use efficient data generation
         for (size_t i = 0; i < MEDIUM_SIZE; ++i) {
-            optimized_data.emplace_back(i * 0.01, large_dist(gen));  // emplace_back is more efficient
+            optimized_x.push_back(i * 0.01);
+            optimized_y.push_back(large_dist(gen));
         }
         
         // Technique 3: Clear unused data
-        large_dataset.clear();
-        large_dataset.shrink_to_fit();  // Release memory
+        large_x.clear();
+        large_x.shrink_to_fit();  // Release memory
+        large_y.clear();
+        large_y.shrink_to_fit();
         
         plotlib::ScatterPlot memory_optimized(1200, 800);
         memory_optimized.set_labels("Memory Optimized Plot", "X", "Y");
-        memory_optimized.add_data("Optimized Data", optimized_data, "orange");
+        memory_optimized.add_scatter("Optimized Data", optimized_x, optimized_y, "orange");
         memory_optimized.save_png("output/advanced_03_memory_optimized.png");
     }
     
@@ -371,7 +376,7 @@ int main() {
  * 
  * 3. MEMORY OPTIMIZATION:
  *    - Reserve vector capacity upfront
- *    - Use emplace_back instead of push_back
+ *    - Use efficient data structures
  *    - Clear and shrink unused containers
  *    - Avoid unnecessary data copies
  * 

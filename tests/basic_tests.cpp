@@ -25,8 +25,9 @@ void test_basic_plot_creation() {
         plotlib::ScatterPlot plot(800, 600);
         plot.set_labels("Test Plot", "X", "Y");
         
-        std::vector<plotlib::Point2D> data = {{1.0, 2.0}, {2.0, 3.0}, {3.0, 1.0}};
-        plot.add_data("Test Series", data, "blue");
+        std::vector<double> x_data = {1.0, 2.0, 3.0};
+        std::vector<double> y_data = {2.0, 3.0, 1.0};
+        plot.add_scatter("Test Series", x_data, y_data, "blue");
         
         test_assert(true, "Basic plot creation and data addition");
     } catch (const std::exception& e) {
@@ -74,8 +75,9 @@ void test_subplot_creation() {
         auto& subplot = manager.get_subplot<plotlib::ScatterPlot>(0, 0);
         subplot.set_labels("Test", "X", "Y");
         
-        std::vector<plotlib::Point2D> data = {{0.0, 0.0}, {1.0, 1.0}};
-        subplot.add_data("Test", data, "blue");
+        std::vector<double> x_data = {0.0, 1.0};
+        std::vector<double> y_data = {0.0, 1.0};
+        subplot.add_scatter("Test", x_data, y_data, "blue");
         
         test_assert(true, "Subplot creation and configuration");
     } catch (const std::exception& e) {
@@ -89,10 +91,11 @@ void test_cluster_visualization() {
         plotlib::ScatterPlot plot(600, 400);
         plot.set_labels("Cluster Test", "X", "Y");
         
-        std::vector<plotlib::Point2D> points = {{1.0, 1.0}, {1.1, 1.1}, {-1.0, -1.0}, {-1.1, -1.1}};
+        std::vector<double> x_points = {1.0, 1.1, -1.0, -1.1};
+        std::vector<double> y_points = {1.0, 1.1, -1.0, -1.1};
         std::vector<int> labels = {0, 0, 1, 1};
         
-        plot.add_clusters(points, labels);
+        plot.add_clusters(x_points, y_points, labels);
         
         test_assert(true, "Cluster visualization");
     } catch (const std::exception& e) {
@@ -109,8 +112,9 @@ void test_file_output() {
         plotlib::ScatterPlot plot(400, 300);
         plot.set_labels("Output Test", "X", "Y");
         
-        std::vector<plotlib::Point2D> data = {{0.0, 0.0}, {1.0, 1.0}, {2.0, 0.5}};
-        plot.add_data("Test", data, "red");
+        std::vector<double> x_data = {0.0, 1.0, 2.0};
+        std::vector<double> y_data = {0.0, 1.0, 0.5};
+        plot.add_scatter("Test", x_data, y_data, "red");
         
         plot.save_png("test_output/test_plot.png");
         
@@ -157,6 +161,27 @@ void test_plot_style() {
     test_assert(style.alpha == 0.8, "PlotStyle alpha");
 }
 
+void test_automatic_colors() {
+    try {
+        plotlib::ScatterPlot plot(600, 400);
+        plot.set_labels("Auto Color Test", "X", "Y");
+        
+        std::vector<double> x1 = {1.0, 2.0};
+        std::vector<double> y1 = {1.0, 2.0};
+        std::vector<double> x2 = {3.0, 4.0};
+        std::vector<double> y2 = {3.0, 4.0};
+        
+        // Test automatic color assignment
+        plot.add_scatter("Series 1", x1, y1);  // Should get first auto color
+        plot.add_scatter("Series 2", x2, y2);  // Should get second auto color
+        
+        test_assert(true, "Automatic color assignment");
+    } catch (const std::exception& e) {
+        std::cout << "Error: " << e.what() << std::endl;
+        test_assert(false, "Automatic color assignment");
+    }
+}
+
 int main() {
     std::cout << "=== PlotLib Basic Tests ===" << std::endl;
     std::cout << "Running basic functionality tests...\n" << std::endl;
@@ -170,6 +195,7 @@ int main() {
     test_subplot_creation();
     test_cluster_visualization();
     test_file_output();
+    test_automatic_colors();
     
     // Print results
     std::cout << "\n=== Test Results ===" << std::endl;

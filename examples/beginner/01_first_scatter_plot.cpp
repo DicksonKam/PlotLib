@@ -13,15 +13,10 @@
 int main() {
     std::cout << "Creating your first scatter plot..." << std::endl;
     
-    // Step 1: Create some simple data points
-    // Each point has an X and Y coordinate
-    std::vector<plotlib::Point2D> my_data = {
-        {1, 2},    // Point at (1, 2)
-        {2, 4},    // Point at (2, 4)
-        {3, 6},    // Point at (3, 6)
-        {4, 8},    // Point at (4, 8)
-        {5, 10}    // Point at (5, 10)
-    };
+    // Step 1: Create some simple data
+    // Separate X and Y coordinate vectors
+    std::vector<double> x_values = {1, 2, 3, 4, 5};    // X coordinates
+    std::vector<double> y_values = {2, 4, 6, 8, 10};   // Y coordinates
     
     // Step 2: Create a scatter plot
     // The numbers (800, 600) are the width and height in pixels
@@ -32,7 +27,7 @@ int main() {
     
     // Step 4: Add your data to the plot
     // The library will automatically choose a nice blue color
-    plot.add_data("My Data", my_data);
+    plot.add_scatter("My Data", x_values, y_values);
     
     // Step 5: Save the plot as a PNG image
     bool success = plot.save_png("output/01_first_scatter_plot.png");
@@ -49,14 +44,14 @@ int main() {
 
 /*
  * 🎯 What you learned:
- * - How to create data points using Point2D
+ * - How to create data using separate X and Y vectors
  * - How to create a scatter plot with set dimensions
  * - How to add titles and axis labels
- * - How to add data with automatic coloring
+ * - How to add data with automatic coloring using add_scatter()
  * - How to save your plot as an image
  * 
  * 🚀 Next steps:
- * - Try changing the data points
+ * - Try changing the data values
  * - Try different plot dimensions
  * - Run example 02 to learn about colors!
  */ 

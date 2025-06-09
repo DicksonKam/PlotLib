@@ -206,6 +206,9 @@ protected:
     // Cluster color management
     std::vector<std::vector<double>> cluster_colors; ///< RGB colors for cluster visualization
     
+    // Auto color management for series
+    static std::vector<std::string> auto_colors; ///< Centralized auto colors for all plot types
+    
     // Legend management
     std::set<std::string> hidden_legend_items; ///< Set of legend items to hide
     bool show_legend = true;                  ///< Whether to show legend at all
@@ -436,6 +439,13 @@ public:
      * @return PlotStyle with the specified color
      */
     static PlotStyle color_to_style(const std::string& color_name, double point_size = 3.0, double line_width = 2.0);
+    
+    /**
+     * @brief Get auto color for series index (utility for beginner-friendly API)
+     * @param series_index Index of the data series
+     * @return Color name string
+     */
+    static std::string get_auto_color(size_t series_index);
     
     /**
      * @brief Get the number of data series

@@ -10,6 +10,9 @@
 
 namespace plotlib {
 
+// Static member initialization
+std::vector<std::string> PlotManager::auto_colors = {"blue", "red", "green", "orange", "purple", "cyan", "magenta", "yellow"};
+
 PlotManager::PlotManager(int w, int h) : width(w), height(h) {
     initialize_cluster_colors();
 }
@@ -726,6 +729,10 @@ PlotStyle PlotManager::color_to_style(const std::string& color_name, double poin
     }
     
     return style;
+}
+
+std::string PlotManager::get_auto_color(size_t series_index) {
+    return auto_colors[series_index % auto_colors.size()];
 }
 
 // SubplotManager implementation

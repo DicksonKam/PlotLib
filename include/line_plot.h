@@ -111,22 +111,10 @@ public:
     void set_default_line_style(LineStyle style);
     
     /**
-     * @brief Get the current default line style
-     * @return The current default line style
-     */
-    LineStyle get_default_line_style() const { return default_line_style; }
-    
-    /**
      * @brief Set the default line width for new series
      * @param width Line width in pixels
      */
     void set_default_line_width(double width);
-    
-    /**
-     * @brief Get the current default line width
-     * @return The current default line width
-     */
-    double get_default_line_width() const { return default_line_width; }
     
     /**
      * @brief Enable or disable markers at data points
@@ -135,47 +123,29 @@ public:
     void set_show_markers(bool enabled);
     
     /**
-     * @brief Check if markers are enabled
-     * @return True if markers are shown
-     */
-    bool get_show_markers() const { return show_markers; }
-    
-    /**
      * @brief Set the default marker type when markers are enabled
      * @param marker_type The marker type to use
      */
     void set_default_marker_type(MarkerType marker_type);
     
     /**
-     * @brief Get the current default marker type
-     * @return The current default marker type
-     */
-    MarkerType get_default_marker_type() const { return default_marker_type; }
-    
-    /**
-     * @brief Add a simple line series with automatic styling (beginner-friendly)
-     * @param name Series name for legend
-     * @param data Vector of 2D points
-     */
-    void add_line(const std::string& name, const std::vector<Point2D>& data);
-    
-    /**
-     * @brief Add a simple line series with custom color (beginner-friendly)
-     * @param name Series name for legend
-     * @param data Vector of 2D points
-     * @param color_name Color name ("red", "blue", "green", "orange", "purple", "cyan", "magenta", "yellow")
-     */
-    void add_line(const std::string& name, const std::vector<Point2D>& data, const std::string& color_name);
-    
-    /**
-     * @brief Add line from X and Y vectors (beginner-friendly)
+     * @brief Add a line series with automatic styling (beginner-friendly)
      * @param name Series name for legend
      * @param x_values Vector of X coordinates
      * @param y_values Vector of Y coordinates
-     * @param color_name Optional color name
      */
     void add_line(const std::string& name, const std::vector<double>& x_values, 
-                  const std::vector<double>& y_values, const std::string& color_name = "auto");
+                  const std::vector<double>& y_values);
+    
+    /**
+     * @brief Add a line series with custom color (beginner-friendly)
+     * @param name Series name for legend
+     * @param x_values Vector of X coordinates
+     * @param y_values Vector of Y coordinates
+     * @param color_name Color name ("red", "blue", "green", "orange", "purple", "cyan", "magenta", "yellow")
+     */
+    void add_line(const std::string& name, const std::vector<double>& x_values, 
+                  const std::vector<double>& y_values, const std::string& color_name);
 };
 
 } // namespace plotlib

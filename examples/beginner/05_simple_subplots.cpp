@@ -31,10 +31,9 @@ int main() {
     auto& scatter = manager.get_subplot<plotlib::ScatterPlot>(0, 0);
     scatter.set_labels("Scatter Plot", "X", "Y");
     
-    std::vector<plotlib::Point2D> scatter_data = {
-        {1, 2}, {2, 4}, {3, 3}, {4, 5}, {5, 4}, {6, 6}
-    };
-    scatter.add_data("Data Points", scatter_data, "blue");
+    std::vector<double> scatter_x = {1, 2, 3, 4, 5, 6};
+    std::vector<double> scatter_y = {2, 4, 3, 5, 4, 6};
+    scatter.add_scatter("Data Points", scatter_x, scatter_y, "blue");
     
     // Top-right (0,1): Line plot
     auto& line = manager.get_subplot<plotlib::LinePlot>(0, 1);
@@ -53,15 +52,14 @@ int main() {
     };
     hist.add_histogram("Distribution", hist_data, "green", 7);
     
-    // Bottom-right (1,1): Another scatter plot
+    // Bottom-right (1,1): Cluster plot
     auto& scatter2 = manager.get_subplot<plotlib::ScatterPlot>(1, 1);
     scatter2.set_labels("Clusters", "X", "Y");
     
-    std::vector<plotlib::Point2D> cluster_data = {
-        {1, 1}, {1.5, 1.2}, {2, 1.1}, {5, 5}, {5.2, 5.1}, {4.8, 5.2}
-    };
+    std::vector<double> cluster_x = {1, 1.5, 2, 5, 5.2, 4.8};
+    std::vector<double> cluster_y = {1, 1.2, 1.1, 5, 5.1, 5.2};
     std::vector<int> labels = {0, 0, 0, 1, 1, 1};
-    scatter2.add_clusters(cluster_data, labels);
+    scatter2.add_clusters(cluster_x, cluster_y, labels);
     
     bool success = manager.save_png("output/05_first_dashboard.png");
     
@@ -88,10 +86,9 @@ int main() {
     auto& satisfaction = horizontal.get_subplot<plotlib::ScatterPlot>(0, 1);
     satisfaction.set_labels("Satisfaction", "Service", "Rating");
     
-    std::vector<plotlib::Point2D> ratings = {
-        {1, 4.2}, {2, 4.5}, {3, 4.1}, {4, 4.7}, {5, 4.3}, {6, 4.8}
-    };
-    satisfaction.add_data("Ratings", ratings, "orange");
+    std::vector<double> service_x = {1, 2, 3, 4, 5, 6};
+    std::vector<double> rating_y = {4.2, 4.5, 4.1, 4.7, 4.3, 4.8};
+    satisfaction.add_scatter("Ratings", service_x, rating_y, "orange");
     
     // Right plot: Response times
     auto& response = horizontal.get_subplot<plotlib::HistogramPlot>(0, 2);
@@ -161,6 +158,7 @@ int main() {
  * - How to access individual subplots using get_subplot<PlotType>(row, col)
  * - How to mix different plot types in the same figure
  * - How to set a main title for the entire figure
+ * - How to use the simplified API with separate X/Y vectors in subplots
  * - Subplots are perfect for dashboards and comparisons
  * 
  * 🚀 Try this:

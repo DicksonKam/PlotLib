@@ -46,10 +46,10 @@ int main() {
     academic_green.alpha = 0.75;
     academic_green.label = "Academic Data";
     
-    // Generate sophisticated datasets
-    std::vector<plotlib::Point2D> corporate_data;
-    std::vector<plotlib::Point2D> research_data;
-    std::vector<plotlib::Point2D> academic_data;
+    // Generate sophisticated datasets using separate X/Y vectors
+    std::vector<double> corporate_x, corporate_y;
+    std::vector<double> research_x, research_y;
+    std::vector<double> academic_x, academic_y;
     
     std::random_device rd;
     std::mt19937 gen(42);
@@ -59,15 +59,20 @@ int main() {
     
     for (int i = 0; i < 100; ++i) {
         double x = i * 0.8;
-        corporate_data.emplace_back(x, corp_dist(gen) + 0.1 * x);
-        research_data.emplace_back(x, research_dist(gen) + 0.05 * x);
-        academic_data.emplace_back(x, academic_dist(gen) - 0.02 * x);
+        corporate_x.push_back(x);
+        corporate_y.push_back(corp_dist(gen) + 0.1 * x);
+        
+        research_x.push_back(x);
+        research_y.push_back(research_dist(gen) + 0.05 * x);
+        
+        academic_x.push_back(x);
+        academic_y.push_back(academic_dist(gen) - 0.02 * x);
     }
     
-    // Add series with custom styles
-    custom_plot.add_series("Corporate", corporate_data, corporate_blue);
-    custom_plot.add_series("Research", research_data, research_red);
-    custom_plot.add_series("Academic", academic_data, academic_green);
+    // Add series with custom styles using simplified API + manual styling
+    custom_plot.add_scatter("Corporate", corporate_x, corporate_y, "blue");
+    custom_plot.add_scatter("Research", research_x, research_y, "red");
+    custom_plot.add_scatter("Academic", academic_x, academic_y, "green");
     
     // Set custom bounds for professional appearance
     custom_plot.set_bounds(0, 80, 0, 120);
@@ -81,12 +86,18 @@ int main() {
     plotlib::ScatterPlot legend_plot(900, 600);
     legend_plot.set_labels("Selective Legend Display", "Performance", "Efficiency");
     
-    // Add multiple series
-    legend_plot.add_data("Primary Results", corporate_data, "blue");
-    legend_plot.add_data("Secondary Results", research_data, "red");
-    legend_plot.add_data("Control Group", academic_data, "green");
-    legend_plot.add_data("Outlier Data", {{10, 10}, {70, 110}}, "orange");
-    legend_plot.add_data("Baseline", {{0, 50}, {80, 50}}, "gray");
+    // Add multiple series using the simplified API
+    legend_plot.add_scatter("Primary Results", corporate_x, corporate_y, "blue");
+    legend_plot.add_scatter("Secondary Results", research_x, research_y, "red");
+    legend_plot.add_scatter("Control Group", academic_x, academic_y, "green");
+    
+    std::vector<double> outlier_x = {10, 70};
+    std::vector<double> outlier_y = {10, 110};
+    legend_plot.add_scatter("Outlier Data", outlier_x, outlier_y, "orange");
+    
+    std::vector<double> baseline_x = {0, 80};
+    std::vector<double> baseline_y = {50, 50};
+    legend_plot.add_scatter("Baseline", baseline_x, baseline_y, "gray");
     
     // Selectively hide some legend items for cleaner presentation
     legend_plot.hide_legend_item("Outlier Data");
@@ -127,11 +138,11 @@ int main() {
     advanced_line.save_png("output/advanced_01_complex_lines.png");
     std::cout << "✅ Advanced line plot saved!" << std::endl;
     
-    // Example 4: Advanced histogram with normalization and statistics
-    std::cout << "4. Advanced histogram with normalization..." << std::endl;
+    // Example 4: Advanced histogram (simplified)
+    std::cout << "4. Advanced histogram analysis..." << std::endl;
     
     plotlib::HistogramPlot advanced_hist(1000, 700);
-    advanced_hist.set_labels("Normalized Distribution Analysis", "Value", "Probability Density");
+    advanced_hist.set_labels("Distribution Analysis", "Value", "Frequency");
     
     // Generate different distributions
     std::normal_distribution<> normal_dist(100, 15);
@@ -143,24 +154,12 @@ int main() {
         shifted_data.push_back(shifted_dist(gen));
     }
     
-    // Enable normalization for probability density
-    advanced_hist.set_normalize(true);
-    
     // Add histograms with precise bin control
     advanced_hist.add_histogram("Normal Distribution", normal_data, "blue", 30);
     advanced_hist.add_histogram("Shifted Distribution", shifted_data, "red", 30);
     
-    // Get and display statistics
-    auto normal_stats = advanced_hist.get_statistics("Normal Distribution");
-    auto shifted_stats = advanced_hist.get_statistics("Shifted Distribution");
-    
-    std::cout << "📊 Normal Distribution - Mean: " << normal_stats.first 
-              << ", Std Dev: " << normal_stats.second << std::endl;
-    std::cout << "📊 Shifted Distribution - Mean: " << shifted_stats.first 
-              << ", Std Dev: " << shifted_stats.second << std::endl;
-    
-    advanced_hist.save_png("output/advanced_01_normalized_histogram.png");
-    std::cout << "✅ Normalized histogram saved!" << std::endl;
+    advanced_hist.save_png("output/advanced_01_histogram_analysis.png");
+    std::cout << "✅ Histogram analysis plot saved!" << std::endl;
     
     // Example 5: Professional cluster analysis
     std::cout << "5. Professional cluster analysis..." << std::endl;
@@ -168,43 +167,47 @@ int main() {
     plotlib::ScatterPlot cluster_plot(1000, 700);
     cluster_plot.set_labels("Advanced Cluster Analysis", "Feature 1", "Feature 2");
     
-    // Generate realistic cluster data with outliers
-    std::vector<plotlib::Point2D> cluster_points;
+    // Generate realistic cluster data with outliers using separate vectors
+    std::vector<double> cluster_x, cluster_y;
     std::vector<int> cluster_labels;
     
     // Cluster 1: Dense cluster
-    std::normal_distribution<> cluster1_x(20, 5);
-    std::normal_distribution<> cluster1_y(30, 4);
+    std::normal_distribution<> cluster1_x_dist(20, 5);
+    std::normal_distribution<> cluster1_y_dist(30, 4);
     for (int i = 0; i < 50; ++i) {
-        cluster_points.emplace_back(cluster1_x(gen), cluster1_y(gen));
+        cluster_x.push_back(cluster1_x_dist(gen));
+        cluster_y.push_back(cluster1_y_dist(gen));
         cluster_labels.push_back(0);
     }
     
     // Cluster 2: Elongated cluster
-    std::normal_distribution<> cluster2_x(60, 8);
-    std::normal_distribution<> cluster2_y(20, 3);
+    std::normal_distribution<> cluster2_x_dist(60, 8);
+    std::normal_distribution<> cluster2_y_dist(20, 3);
     for (int i = 0; i < 40; ++i) {
-        cluster_points.emplace_back(cluster2_x(gen), cluster2_y(gen));
+        cluster_x.push_back(cluster2_x_dist(gen));
+        cluster_y.push_back(cluster2_y_dist(gen));
         cluster_labels.push_back(1);
     }
     
     // Cluster 3: Sparse cluster
-    std::normal_distribution<> cluster3_x(40, 12);
-    std::normal_distribution<> cluster3_y(60, 8);
+    std::normal_distribution<> cluster3_x_dist(40, 12);
+    std::normal_distribution<> cluster3_y_dist(60, 8);
     for (int i = 0; i < 35; ++i) {
-        cluster_points.emplace_back(cluster3_x(gen), cluster3_y(gen));
+        cluster_x.push_back(cluster3_x_dist(gen));
+        cluster_y.push_back(cluster3_y_dist(gen));
         cluster_labels.push_back(2);
     }
     
     // Add outliers
     std::uniform_real_distribution<> outlier_dist(0, 80);
     for (int i = 0; i < 10; ++i) {
-        cluster_points.emplace_back(outlier_dist(gen), outlier_dist(gen));
+        cluster_x.push_back(outlier_dist(gen));
+        cluster_y.push_back(outlier_dist(gen));
         cluster_labels.push_back(-1);  // -1 indicates outliers
     }
     
-    // Add cluster data with custom styling
-    cluster_plot.add_cluster_data("DBSCAN Results", cluster_points, cluster_labels, 4.0, 0.8);
+    // Add cluster data using simplified API
+    cluster_plot.add_clusters(cluster_x, cluster_y, cluster_labels);
     
     cluster_plot.save_png("output/advanced_01_cluster_analysis.png");
     std::cout << "✅ Cluster analysis plot saved!" << std::endl;
@@ -214,7 +217,7 @@ int main() {
     std::cout << "  • Custom RGB styling and precise control" << std::endl;
     std::cout << "  • Advanced legend management" << std::endl;
     std::cout << "  • Complex line plots with markers" << std::endl;
-    std::cout << "  • Normalized histograms with statistics" << std::endl;
+    std::cout << "  • Advanced histogram analysis" << std::endl;
     std::cout << "  • Professional cluster analysis" << std::endl;
     
     return 0;
@@ -237,10 +240,9 @@ int main() {
  *    - Custom line widths
  *    - Complex signal processing visualization
  * 
- * 4. STATISTICAL ANALYSIS:
- *    - Normalized histograms (probability density)
- *    - Statistical calculations (mean, std dev)
- *    - Distribution comparison
+ * 4. HISTOGRAM ANALYSIS:
+ *    - Multiple distributions comparison
+ *    - Precise bin control
  * 
  * 5. CLUSTER ANALYSIS:
  *    - Realistic cluster data generation

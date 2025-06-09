@@ -3,6 +3,7 @@
 #include <cmath>
 #include <numeric>
 #include <iostream>
+#include <stdexcept>
 
 namespace plotlib {
 
@@ -68,12 +69,52 @@ std::vector<int> HistogramPlot::calculate_cumulative(const std::vector<int>& cou
     return cumulative;
 }
 
+bool HistogramPlot::has_discrete_histograms() const {
+    for (const auto& hist_data : histogram_series) {
+        if (hist_data.is_discrete) {
+            return true;
+        }
+    }
+    return false;
+}
+
+void HistogramPlot::validate_histogram_type_compatibility(bool is_new_discrete) {
+    if (histogram_series.empty()) {
+        return; // First histogram, no conflict possible
+    }
+    
+    bool has_discrete = has_discrete_histograms();
+    bool has_continuous = false;
+    
+    for (const auto& hist_data : histogram_series) {
+        if (!hist_data.is_discrete) {
+            has_continuous = true;
+            break;
+        }
+    }
+    
+    if (is_new_discrete && has_continuous) {
+        throw std::invalid_argument("Error: Cannot mix discrete and continuous histograms in the same plot. "
+                                   "Discrete histograms use categorical X-axis while continuous histograms use numeric X-axis. "
+                                   "Please create separate plots for different histogram types.");
+    }
+    
+    if (!is_new_discrete && has_discrete) {
+        throw std::invalid_argument("Error: Cannot mix continuous and discrete histograms in the same plot. "
+                                   "Continuous histograms use numeric X-axis while discrete histograms use categorical X-axis. "
+                                   "Please create separate plots for different histogram types.");
+    }
+}
+
 void HistogramPlot::add_data(const std::string& name, const std::vector<double>& data, 
                             const PlotStyle& style, int bin_count) {
     if (data.empty()) {
         std::cerr << "Error: Empty data provided for histogram series '" << name << "'" << std::endl;
         return;
     }
+    
+    // Validate that we're not mixing histogram types
+    validate_histogram_type_compatibility(false); // false = continuous
     
     HistogramData hist_data(name);
     hist_data.values = data;
@@ -354,8 +395,9 @@ void HistogramPlot::draw_legend(cairo_t* cr) {
         for (const auto& hist_data : histogram_series) {
             if (hist_data.is_discrete && !hist_data.categories.empty()) {
                 for (size_t i = 0; i < hist_data.categories.size(); ++i) {
-                    if (i < hist_data.styles.size() && hist_data.counts[i] > 0) {
-                        // Only show categories that have data
+                    if (i < hist_data.styles.size() && hist_data.counts[i] > 0 && 
+                        hidden_legend_items.find(hist_data.categories[i]) == hidden_legend_items.end()) {
+                        // Only show categories that have data and are not hidden
                         legend_items.emplace_back(hist_data.categories[i], hist_data.styles[i]);
                     }
                 }
@@ -471,6 +513,9 @@ void HistogramPlot::add_discrete_data(const std::string& name, const std::vector
         return;
     }
     
+    // Validate that we're not mixing histogram types
+    validate_histogram_type_compatibility(true); // true = discrete
+    
     if (styles.size() != counts.size()) {
         std::cerr << "Error: Number of styles (" << styles.size() << ") must match number of categories (" << counts.size() << ")" << std::endl;
         return;
@@ -492,6 +537,24 @@ void HistogramPlot::add_discrete_data(const std::string& name, const std::vector
     
     histogram_series.push_back(hist_data);
     bounds_set = false;
+}
+
+void HistogramPlot::add_vertical_line(double x_value, const std::string& label, const PlotStyle& style) {
+    // Check if we have discrete histograms
+    if (has_discrete_histograms()) {
+        throw std::invalid_argument("Error: Vertical reference lines are not allowed for discrete histograms. "
+                                   "Discrete histograms use categorical X-axis where vertical lines between categories are meaningless. "
+                                   "Consider using horizontal reference lines to indicate frequency thresholds instead.");
+    }
+    
+    // Call parent implementation for continuous histograms
+    PlotManager::add_vertical_line(x_value, label, style);
+}
+
+void HistogramPlot::add_horizontal_line(double y_value, const std::string& label, const PlotStyle& style) {
+    // Horizontal lines are allowed for both discrete and continuous histograms
+    // They represent frequency thresholds which are meaningful for both types
+    PlotManager::add_horizontal_line(y_value, label, style);
 }
 
 } // namespace plotlib 

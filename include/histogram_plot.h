@@ -65,6 +65,19 @@ private:
     int default_bin_count = 20;                  ///< Default number of bins for auto-binning
     
     /**
+     * @brief Check if mixing histogram types is allowed
+     * @param is_new_discrete Whether the new histogram being added is discrete
+     * @throws std::invalid_argument if mixing continuous and discrete histograms
+     */
+    void validate_histogram_type_compatibility(bool is_new_discrete);
+    
+    /**
+     * @brief Check if we have any discrete histograms in the current series
+     * @return true if any discrete histograms exist
+     */
+    bool has_discrete_histograms() const;
+    
+    /**
      * @brief Calculate optimal bin edges using Sturges' rule or custom count
      * @param data Input data values
      * @param bin_count Number of bins (0 for automatic)
@@ -156,6 +169,23 @@ public:
      */
     void add_histogram(const std::string& name, const std::vector<int>& counts, 
                       const std::string& category_prefix, const std::vector<std::string>& color_names);
+    
+    /**
+     * @brief Add vertical reference line (restricted for discrete histograms)
+     * @param x_value X-axis value for the line
+     * @param label Label for the line in legend
+     * @param style Line style
+     * @throws std::invalid_argument if called on discrete histograms
+     */
+    void add_vertical_line(double x_value, const std::string& label = "", const PlotStyle& style = PlotStyle()) override;
+    
+    /**
+     * @brief Add horizontal reference line (allowed for all histogram types)
+     * @param y_value Y-axis value for the line
+     * @param label Label for the line in legend
+     * @param style Line style
+     */
+    void add_horizontal_line(double y_value, const std::string& label = "", const PlotStyle& style = PlotStyle()) override;
 
 protected:
     /**

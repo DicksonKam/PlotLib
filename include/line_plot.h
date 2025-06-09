@@ -99,10 +99,15 @@ protected:
 public:
     /**
      * @brief Constructor for LinePlot
-     * @param w Canvas width in pixels (default: 800)
-     * @param h Canvas height in pixels (default: 600)
+     * @param width Canvas width in pixels (default: 800)
+     * @param height Canvas height in pixels (default: 600)
      */
-    LinePlot(int w = 800, int h = 600);
+    LinePlot(int width = 800, int height = 600);
+    
+    /**
+     * @brief Virtual destructor for proper inheritance
+     */
+    virtual ~LinePlot() = default;
     
     /**
      * @brief Set the default line style for new series
@@ -117,10 +122,10 @@ public:
     void set_default_line_width(double width);
     
     /**
-     * @brief Enable or disable markers at data points
-     * @param enabled Whether to show markers
+     * @brief Enable or disable markers at data points by default
+     * @param enabled Whether to show markers by default
      */
-    void set_show_markers(bool enabled);
+    void set_default_show_markers(bool enabled);
     
     /**
      * @brief Set the default marker type when markers are enabled

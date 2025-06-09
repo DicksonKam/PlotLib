@@ -314,7 +314,7 @@ int main() {
         // Create real-time style plot
         plotlib::LinePlot realtime_plot(1400, 600);
         realtime_plot.set_labels("Real-time Sensor Data", "Time (s)", "Sensor Value");
-        realtime_plot.set_show_markers(false);  // Disable markers for performance
+        realtime_plot.set_default_show_markers(false);  // Disable markers for performance
         realtime_plot.add_line("Live Data", time_buffer, data_buffer, "blue");
         realtime_plot.save_png("output/advanced_03_realtime.png");
     }

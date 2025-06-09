@@ -6,7 +6,7 @@
 
 namespace plotlib {
 
-LinePlot::LinePlot(int w, int h) : PlotManager(w, h) {
+LinePlot::LinePlot(int width, int height) : PlotManager(width, height) {
     // Constructor delegates to PlotManager
 }
 
@@ -18,7 +18,7 @@ void LinePlot::set_default_line_width(double width) {
     default_line_width = width;
 }
 
-void LinePlot::set_show_markers(bool enabled) {
+void LinePlot::set_default_show_markers(bool enabled) {
     show_markers = enabled;
 }
 

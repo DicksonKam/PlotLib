@@ -13,8 +13,6 @@
 #define PLOTLIB_HISTOGRAM_PLOT_H
 
 #include "plot_manager.h"
-#include <vector>
-#include <string>
 
 namespace plotlib {
 
@@ -36,6 +34,24 @@ struct HistogramData {
  * 
  * The HistogramPlot class extends PlotManager to provide histogram-specific functionality
  * including automatic binning, custom bin specification, and multiple histogram series.
+ * 
+ * Features:
+ * - Automatic and manual binning using Sturges' rule or custom bin counts
+ * - Multiple histogram series with automatic coloring
+ * - Configurable bin width and frequency counting
+ * - Support for overlapping histograms and comparisons
+ * - All PlotManager features (axes, legends, titles, subplots)
+ * 
+ * @example
+ * @code
+ * HistogramPlot plot(800, 600);
+ * plot.set_labels("Data Distribution", "Values", "Frequency");
+ * 
+ * std::vector<double> data = {1.0, 2.1, 1.8, 3.2, 2.9, 1.5, 2.8, 3.1};
+ * plot.add_histogram("Dataset 1", data, 10); // 10 bins
+ * 
+ * plot.save_png("histogram.png");
+ * @endcode
  */
 class HistogramPlot : public PlotManager {
 private:
@@ -78,28 +94,33 @@ private:
 public:
     /**
      * @brief Constructor for HistogramPlot
-     * @param w Canvas width in pixels (default: 800)
-     * @param h Canvas height in pixels (default: 600)
+     * @param width Canvas width in pixels (default: 800)
+     * @param height Canvas height in pixels (default: 600)
      */
-    HistogramPlot(int w = 800, int h = 600);
+    HistogramPlot(int width = 800, int height = 600);
+    
+    /**
+     * @brief Virtual destructor for proper inheritance
+     */
+    virtual ~HistogramPlot() = default;
     
     /**
      * @brief Add histogram data with automatic styling (beginner-friendly)
      * @param name Series name for legend
      * @param values Raw data values for histogram
-     * @param bins Optional number of bins (0 for automatic)
+     * @param bin_count Optional number of bins (0 for automatic)
      */
-    void add_histogram(const std::string& name, const std::vector<double>& values, int bins = 0);
+    void add_histogram(const std::string& name, const std::vector<double>& values, int bin_count = 0);
     
     /**
      * @brief Add histogram data with custom color (beginner-friendly)
      * @param name Series name for legend
      * @param values Raw data values for histogram
      * @param color_name Color name ("red", "blue", "green", "orange", "purple", "cyan", "magenta", "yellow")
-     * @param bins Optional number of bins (0 for automatic)
+     * @param bin_count Optional number of bins (0 for automatic)
      */
     void add_histogram(const std::string& name, const std::vector<double>& values, 
-                      const std::string& color_name, int bins = 0);
+                      const std::string& color_name, int bin_count = 0);
 
 protected:
     /**

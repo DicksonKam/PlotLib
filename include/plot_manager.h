@@ -27,6 +27,8 @@ namespace plotlib {
 
 // Forward declarations
 class ScatterPlot;
+class LinePlot;
+class HistogramPlot;
 
 /**
  * @brief Represents a 2D point with x and y coordinates
@@ -252,10 +254,10 @@ protected:
 public:
     /**
      * @brief Constructor for PlotManager
-     * @param w Canvas width in pixels (default: 800)
-     * @param h Canvas height in pixels (default: 600)
+     * @param width Canvas width in pixels (default: 800)
+     * @param height Canvas height in pixels (default: 600)
      */
-    PlotManager(int w = 800, int h = 600);
+    PlotManager(int width = 800, int height = 600);
     
     /**
      * @brief Virtual destructor for proper inheritance

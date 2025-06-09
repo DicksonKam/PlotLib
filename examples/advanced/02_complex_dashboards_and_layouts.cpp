@@ -192,7 +192,7 @@ int main() {
     // (0,0) - Time Series Experiment
     auto& time_series = research_dashboard.get_subplot<plotlib::LinePlot>(0, 0);
     time_series.set_labels("Temporal Analysis", "Time (s)", "Signal (mV)");
-    time_series.set_show_markers(true);
+    time_series.set_default_show_markers(true);
     
     std::vector<double> time_points;
     std::vector<double> control_signal, treatment_signal;

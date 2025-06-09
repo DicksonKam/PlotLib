@@ -113,7 +113,7 @@ int main() {
     advanced_line.set_labels("Advanced Line Plot Features", "Time (hours)", "Signal Strength (dB)");
     
     // Enable markers on lines
-    advanced_line.set_show_markers(true);
+    advanced_line.set_default_show_markers(true);
     advanced_line.set_default_line_width(2.5);
     
     // Generate complex signal data

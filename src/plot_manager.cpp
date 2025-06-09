@@ -1,4 +1,5 @@
 #include "plot_manager.h"
+#include "scatter_plot.h"
 #include <algorithm>
 #include <cmath>
 #include <iostream>
@@ -13,7 +14,7 @@ namespace plotlib {
 // Static member initialization
 std::vector<std::string> PlotManager::auto_colors = {"blue", "red", "green", "orange", "purple", "cyan", "magenta", "yellow"};
 
-PlotManager::PlotManager(int w, int h) : width(w), height(h) {
+PlotManager::PlotManager(int width, int height) : width(width), height(height) {
     initialize_cluster_colors();
 }
 
@@ -747,7 +748,9 @@ SubplotManager::SubplotManager(int rows, int cols, int width, int height, double
     }
 }
 
-
+ScatterPlot& SubplotManager::get_subplot(int row, int col) {
+    return get_subplot<ScatterPlot>(row, col);
+}
 
 void SubplotManager::set_main_title(const std::string& title) {
     main_title = title;

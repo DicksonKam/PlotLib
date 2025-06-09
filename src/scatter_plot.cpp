@@ -5,7 +5,7 @@
 
 namespace plotlib {
 
-ScatterPlot::ScatterPlot(int w, int h) : PlotManager(w, h) {
+ScatterPlot::ScatterPlot(int width, int height) : PlotManager(width, height) {
     // Constructor delegates to PlotManager
 }
 

@@ -6,7 +6,7 @@
 
 namespace plotlib {
 
-HistogramPlot::HistogramPlot(int w, int h) : PlotManager(w, h) {
+HistogramPlot::HistogramPlot(int width, int height) : PlotManager(width, height) {
     // Set default Y label for histograms
     y_label = "Frequency";
 }
@@ -71,7 +71,7 @@ std::vector<int> HistogramPlot::calculate_cumulative(const std::vector<int>& cou
 void HistogramPlot::add_data(const std::string& name, const std::vector<double>& data, 
                             const PlotStyle& style, int bin_count) {
     if (data.empty()) {
-        std::cerr << "Warning: Empty data provided for histogram series '" << name << "'" << std::endl;
+        std::cerr << "Error: Empty data provided for histogram series '" << name << "'" << std::endl;
         return;
     }
     
@@ -177,15 +177,15 @@ void HistogramPlot::clear() {
 }
 
 // Beginner-friendly convenience methods
-void HistogramPlot::add_histogram(const std::string& name, const std::vector<double>& data, int bins) {
+void HistogramPlot::add_histogram(const std::string& name, const std::vector<double>& data, int bin_count) {
     // Use automatic color based on series count
     std::string color = get_auto_color(histogram_series.size());
-    add_data(name, data, color_to_style(color, 3.0, 2.0), bins);
+    add_data(name, data, color_to_style(color, 3.0, 2.0), bin_count);
 }
 
 void HistogramPlot::add_histogram(const std::string& name, const std::vector<double>& data, 
-                                 const std::string& color_name, int bins) {
-    add_data(name, data, color_to_style(color_name, 3.0, 2.0), bins);
+                                 const std::string& color_name, int bin_count) {
+    add_data(name, data, color_to_style(color_name, 3.0, 2.0), bin_count);
 }
 
 } // namespace plotlib 

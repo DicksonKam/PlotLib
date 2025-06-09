@@ -70,10 +70,15 @@ protected:
 public:
     /**
      * @brief Constructor for ScatterPlot
-     * @param w Canvas width in pixels (default: 800)
-     * @param h Canvas height in pixels (default: 600)
+     * @param width Canvas width in pixels (default: 800)
+     * @param height Canvas height in pixels (default: 600)
      */
-    ScatterPlot(int w = 800, int h = 600);
+    ScatterPlot(int width = 800, int height = 600);
+    
+    /**
+     * @brief Virtual destructor for proper inheritance
+     */
+    virtual ~ScatterPlot() = default;
     
     /**
      * @brief Set the default marker type for new series

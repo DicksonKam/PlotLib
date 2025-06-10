@@ -16,12 +16,12 @@ ScatterPlot(int width = 800, int height = 600)
 #### Methods
 ```cpp
 // Add scatter data with automatic coloring
-void add_scatter(const std::string& name, const std::vector<double>& x_values, 
-                 const std::vector<double>& y_values);
+void add_scatter(const std::vector<double>& x_values, const std::vector<double>& y_values, 
+                 const std::string& name);
 
 // Add scatter data with custom color
-void add_scatter(const std::string& name, const std::vector<double>& x_values, 
-                 const std::vector<double>& y_values, const std::string& color_name);
+void add_scatter(const std::vector<double>& x_values, const std::vector<double>& y_values, 
+                 const std::string& name, const std::string& color_name);
 
 // Add cluster data with automatic coloring by cluster label
 void add_clusters(const std::vector<double>& x_values, const std::vector<double>& y_values, 
@@ -32,7 +32,7 @@ void add_clusters(const std::vector<double>& x_values, const std::vector<double>
 ```cpp
 std::vector<double> x = {1, 2, 3, 4};
 std::vector<double> y = {2, 4, 6, 8};
-plot.add_scatter("My Data", x, y, "blue");
+plot.add_scatter(x, y, "My Data", "blue");
 ```
 
 ### LinePlot
@@ -47,12 +47,12 @@ LinePlot(int width = 800, int height = 600)
 #### Methods
 ```cpp
 // Add line with automatic coloring
-void add_line(const std::string& name, const std::vector<double>& x_values, 
-              const std::vector<double>& y_values);
+void add_line(const std::vector<double>& x_values, const std::vector<double>& y_values, 
+              const std::string& name);
 
 // Add line with custom color
-void add_line(const std::string& name, const std::vector<double>& x_values, 
-              const std::vector<double>& y_values, const std::string& color_name);
+void add_line(const std::vector<double>& x_values, const std::vector<double>& y_values, 
+              const std::string& name, const std::string& color_name);
 ```
 
 #### Line Configuration
@@ -76,7 +76,7 @@ enum class LineStyle {
 ```cpp
 std::vector<double> time = {0, 1, 2, 3, 4};
 std::vector<double> values = {10, 15, 12, 18, 20};
-plot.add_line("Trend", time, values, "red");
+plot.add_line(time, values, "Trend", "red");
 ```
 
 ### HistogramPlot
@@ -91,21 +91,21 @@ HistogramPlot(int width = 800, int height = 600)
 #### Methods
 ```cpp
 // Add histogram with automatic bin count
-void add_histogram(const std::string& name, const std::vector<double>& data);
+void add_histogram(const std::vector<double>& data, const std::string& name);
 
 // Add histogram with custom color
-void add_histogram(const std::string& name, const std::vector<double>& data, 
+void add_histogram(const std::vector<double>& data, const std::string& name, 
                    const std::string& color_name);
 
 // Add histogram with custom color and bin count
-void add_histogram(const std::string& name, const std::vector<double>& data, 
+void add_histogram(const std::vector<double>& data, const std::string& name, 
                    const std::string& color_name, int bins);
 ```
 
 **Example:**
 ```cpp
 std::vector<double> scores = {85, 92, 78, 88, 95, 82, 90};
-plot.add_histogram("Test Scores", scores, "green", 10);
+plot.add_histogram(scores, "Test Scores", "green", 10);
 ```
 
 ### SubplotManager
@@ -165,9 +165,9 @@ When you don't specify a color, the library automatically assigns colors in this
 
 **Example:**
 ```cpp
-plot.add_scatter("Series 1", x1, y1);        // Automatically blue
-plot.add_scatter("Series 2", x2, y2);        // Automatically red
-plot.add_scatter("Series 3", x3, y3, "green"); // Explicitly green
+plot.add_scatter(x1, y1, "Series 1");        // Automatically blue
+plot.add_scatter(x2, y2, "Series 2");        // Automatically red
+plot.add_scatter(x3, y3, "Series 3", "green"); // Explicitly green
 ```
 
 ## 📐 Marker Types
@@ -253,7 +253,7 @@ plot.add_clusters(x, y, labels);
 ```cpp
 plotlib::ScatterPlot plot(800, 600);
 plot.set_labels("My Analysis", "X Variable", "Y Variable");
-plot.add_scatter("Data Points", x_values, y_values, "blue");
+plot.add_scatter(x_values, y_values, "Data Points", "blue");
 plot.save_png("scatter.png");
 ```
 
@@ -261,9 +261,9 @@ plot.save_png("scatter.png");
 ```cpp
 plotlib::LinePlot plot(1000, 600);
 plot.set_labels("Performance Over Time", "Time", "Score");
-plot.add_line("Algorithm A", time, scores_a, "blue");
-plot.add_line("Algorithm B", time, scores_b, "red");
-plot.add_line("Target", time, target_scores, "green");
+plot.add_line(time, scores_a, "Algorithm A", "blue");
+plot.add_line(time, scores_b, "Algorithm B", "red");
+plot.add_line(time, target_scores, "Target", "green");
 plot.save_png("comparison.png");
 ```
 
@@ -271,8 +271,8 @@ plot.save_png("comparison.png");
 ```cpp
 plotlib::HistogramPlot plot(800, 600);
 plot.set_labels("Score Distribution", "Score", "Frequency");
-plot.add_histogram("Before Training", before_scores, "red", 20);
-plot.add_histogram("After Training", after_scores, "green", 20);
+plot.add_histogram(before_scores, "Before Training", "red", 20);
+plot.add_histogram(after_scores, "After Training", "green", 20);
 plot.save_png("distributions.png");
 ```
 
@@ -284,17 +284,17 @@ dashboard.set_main_title("Data Analysis Dashboard");
 // Top-left: Scatter plot
 auto& scatter = dashboard.get_subplot<plotlib::ScatterPlot>(0, 0);
 scatter.set_labels("Correlation", "Variable X", "Variable Y");
-scatter.add_scatter("Data", x_data, y_data);
+scatter.add_scatter(x_data, y_data, "Data");
 
 // Top-right: Line plot
 auto& line = dashboard.get_subplot<plotlib::LinePlot>(0, 1);
 line.set_labels("Trend", "Time", "Value");
-line.add_line("Measurements", time_data, value_data);
+line.add_line(time_data, value_data, "Measurements");
 
 // Bottom-left: Histogram
 auto& hist = dashboard.get_subplot<plotlib::HistogramPlot>(1, 0);
 hist.set_labels("Distribution", "Value", "Count");
-hist.add_histogram("Sample", sample_data);
+hist.add_histogram(sample_data, "Sample");
 
 // Bottom-right: Clusters
 auto& clusters = dashboard.get_subplot<plotlib::ScatterPlot>(1, 1);

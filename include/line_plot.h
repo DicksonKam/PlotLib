@@ -36,9 +36,9 @@ namespace plotlib {
  * LinePlot plot(800, 600);
  * plot.set_labels("My Line Plot", "X Values", "Y Values");
  * 
- * std::vector<Point2D> data = {{1, 2}, {2, 4}, {3, 6}};
- * PlotStyle style = {2.0, 1.0, 0.0, 0.0, 0.8}; // Red line
- * plot.add_series("Data", data, style);
+ * std::vector<double> x_values = {1, 2, 3};
+ * std::vector<double> y_values = {2, 4, 6};
+ * plot.add_line(x_values, y_values, "Data", "red");
  * 
  * plot.save_png("line.png");
  * @endcode

@@ -38,7 +38,7 @@ int main() {
     plot.set_labels("My First Plot", "X Values", "Y Values");
     
     // Step 4: Add your data
-    plot.add_scatter("My Data", x_values, y_values);
+    plot.add_scatter(x_values, y_values, "My Data");
     
     // Step 5: Save it
     plot.save_png("my_first_plot.png");
@@ -63,12 +63,12 @@ plotlib::ScatterPlot plot(800, 600);
 plot.set_labels("Colorful Plot", "X", "Y");
 
 // Method 1: Let the library choose colors automatically
-plot.add_scatter("Series 1", x1_values, y1_values);  // Automatically blue
-plot.add_scatter("Series 2", x2_values, y2_values);  // Automatically red
+plot.add_scatter(x1_values, y1_values, "Series 1");  // Automatically blue
+plot.add_scatter(x2_values, y2_values, "Series 2");  // Automatically red
 
 // Method 2: Choose your own colors
-plot.add_scatter("Series 3", x3_values, y3_values, "green");
-plot.add_scatter("Series 4", x4_values, y4_values, "purple");
+plot.add_scatter(x3_values, y3_values, "Series 3", "green");
+plot.add_scatter(x4_values, y4_values, "Series 4", "purple");
 ```
 
 **Available colors:**
@@ -89,7 +89,7 @@ std::vector<double> temperature = {20, 22, 25, 28, 26, 24};
 
 plotlib::LinePlot plot(800, 600);
 plot.set_labels("Temperature Over Time", "Hours", "Temperature (°C)");
-plot.add_line("Temperature", time, temperature, "red");
+plot.add_line(time, temperature, "Temperature", "red");
 plot.save_png("temperature.png");
 ```
 
@@ -115,10 +115,10 @@ plotlib::HistogramPlot plot(800, 600);
 plot.set_labels("Test Score Distribution", "Score", "Number of Students");
 
 // Automatic bin count
-plot.add_histogram("Scores", scores, "blue");
+plot.add_histogram(scores, "Scores", "blue");
 
 // Or specify number of bins
-plot.add_histogram("Scores", scores, "blue", 10);  // 10 bins
+plot.add_histogram(scores, "Scores", "blue", 10);  // 10 bins
 
 plot.save_png("test_scores.png");
 ```
@@ -142,17 +142,17 @@ manager.set_main_title("My Dashboard");
 // Top-left (row 0, column 0): Scatter plot
 auto& scatter = manager.get_subplot<plotlib::ScatterPlot>(0, 0);
 scatter.set_labels("Scatter", "X", "Y");
-scatter.add_scatter("Data", scatter_x, scatter_y, "blue");
+scatter.add_scatter(scatter_x, scatter_y, "Data", "blue");
 
 // Top-right (row 0, column 1): Line plot
 auto& line = manager.get_subplot<plotlib::LinePlot>(0, 1);
 line.set_labels("Line", "Time", "Value");
-line.add_line("Trend", time_data, value_data, "red");
+line.add_line(time_data, value_data, "Trend", "red");
 
 // Bottom-left (row 1, column 0): Histogram
 auto& hist = manager.get_subplot<plotlib::HistogramPlot>(1, 0);
 hist.set_labels("Distribution", "Value", "Count");
-hist.add_histogram("Data", hist_data, "green");
+hist.add_histogram(hist_data, "Data", "green");
 
 // Bottom-right (row 1, column 1): Another plot
 auto& scatter2 = manager.get_subplot<plotlib::ScatterPlot>(1, 1);
@@ -193,9 +193,9 @@ manager.save_png("dashboard.png");
 plotlib::ScatterPlot plot(800, 600);
 plot.set_labels("Group Comparison", "X", "Y");
 
-plot.add_scatter("Group A", group_a_x, group_a_y, "blue");
-plot.add_scatter("Group B", group_b_x, group_b_y, "red");
-plot.add_scatter("Group C", group_c_x, group_c_y, "green");
+plot.add_scatter(group_a_x, group_a_y, "Group A", "blue");
+plot.add_scatter(group_b_x, group_b_y, "Group B", "red");
+plot.add_scatter(group_c_x, group_c_y, "Group C", "green");
 ```
 
 ### Pattern 2: Time Series Analysis
@@ -203,8 +203,8 @@ plot.add_scatter("Group C", group_c_x, group_c_y, "green");
 plotlib::LinePlot plot(800, 600);
 plot.set_labels("Sales Over Time", "Month", "Sales ($)");
 
-plot.add_line("2023", months, sales_2023, "blue");
-plot.add_line("2024", months, sales_2024, "red");
+plot.add_line(months, sales_2023, "2023", "blue");
+plot.add_line(months, sales_2024, "2024", "red");
 ```
 
 ### Pattern 3: Distribution Analysis
@@ -212,8 +212,8 @@ plot.add_line("2024", months, sales_2024, "red");
 plotlib::HistogramPlot plot(800, 600);
 plot.set_labels("Response Time Distribution", "Time (ms)", "Frequency");
 
-plot.add_histogram("Before Optimization", before_data, "red", 20);
-plot.add_histogram("After Optimization", after_data, "green", 20);
+plot.add_histogram(before_data, "Before Optimization", "red", 20);
+plot.add_histogram(after_data, "After Optimization", "green", 20);
 ```
 
 ## 🚨 Common Mistakes to Avoid

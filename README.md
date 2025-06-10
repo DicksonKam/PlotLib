@@ -101,12 +101,13 @@ cd PlotLib
 
 int main() {
     // Create some data
-    std::vector<plotlib::Point2D> data = {{1, 2}, {2, 4}, {3, 6}, {4, 8}};
+    std::vector<double> x_values = {1, 2, 3, 4};
+    std::vector<double> y_values = {2, 4, 6, 8};
     
     // Create a scatter plot
     plotlib::ScatterPlot plot(800, 600);
     plot.set_labels("My First Plot", "X Values", "Y Values");
-    plot.add_data("My Data", data);
+    plot.add_scatter(x_values, y_values, "My Data");
     
     // Save the plot
     plot.save_png("my_first_plot.png");
@@ -122,8 +123,8 @@ Perfect for showing relationships between two variables or displaying clusters.
 
 ```cpp
 plotlib::ScatterPlot plot(800, 600);
-plot.add_data("Series 1", data1, "blue");
-plot.add_data("Series 2", data2, "red");
+plot.add_scatter(x_values1, y_values1, "Series 1", "blue");
+plot.add_scatter(x_values2, y_values2, "Series 2", "red");
 plot.save_png("scatter.png");
 ```
 
@@ -132,7 +133,7 @@ Ideal for time series data or continuous functions.
 
 ```cpp
 plotlib::LinePlot plot(800, 600);
-plot.add_line("Function", x_values, y_values, "green");
+plot.add_line(x_values, y_values, "Function", "green");
 plot.save_png("line.png");
 ```
 
@@ -141,11 +142,12 @@ Great for showing data distributions.
 
 ```cpp
 plotlib::HistogramPlot plot(800, 600);
-plot.add_histogram("Distribution", data, "purple", 20); // 20 bins
+plot.add_histogram(data, "Distribution", "purple", 20); // 20 bins
 
 // Or create discrete histograms for categorical data
 std::vector<int> counts = {10, 20, 15};
-plot.add_histogram("Categories", counts, "type"); // Creates "type 1", "type 2", "type 3"
+std::vector<std::string> names = {"Type A", "Type B", "Type C"};
+plot.add_histogram(counts, names); // Discrete histogram
 plot.save_png("histogram.png");
 ```
 
@@ -161,18 +163,18 @@ Use simple color names:
 Don't specify colors and the library will choose them automatically:
 
 ```cpp
-plot.add_data("Series 1", data1);  // Automatically blue
-plot.add_data("Series 2", data2);  // Automatically red
-plot.add_data("Series 3", data3);  // Automatically green
+plot.add_scatter(x_values1, y_values1, "Series 1");  // Automatically blue
+plot.add_scatter(x_values2, y_values2, "Series 2");  // Automatically red
+plot.add_scatter(x_values3, y_values3, "Series 3");  // Automatically green
 ```
 
 ### Histogram Bins
 Control the number of bins in histograms:
 
 ```cpp
-plot.add_histogram("Data", values);        // Automatic bin count
-plot.add_histogram("Data", values, 15);    // 15 bins
-plot.add_histogram("Data", values, "red", 25); // 25 red bins
+plot.add_histogram(values);                  // Automatic bin count
+plot.add_histogram(values, "Data", 15);      // 15 bins
+plot.add_histogram(values, "Data", "red", 25); // 25 red bins
 ```
 
 ## 📈 Subplots
@@ -186,17 +188,17 @@ manager.set_main_title("My Dashboard");
 // Top-left: Scatter plot
 auto& scatter = manager.get_subplot<plotlib::ScatterPlot>(0, 0);
 scatter.set_labels("Scatter", "X", "Y");
-scatter.add_data("Data", scatter_data, "blue");
+scatter.add_scatter(scatter_x, scatter_y, "Data", "blue");
 
 // Top-right: Line plot
 auto& line = manager.get_subplot<plotlib::LinePlot>(0, 1);
 line.set_labels("Line", "X", "Y");
-line.add_line("Function", line_data, "red");
+line.add_line(line_x, line_y, "Function", "red");
 
 // Bottom-left: Histogram
 auto& hist = manager.get_subplot<plotlib::HistogramPlot>(1, 0);
 hist.set_labels("Distribution", "Value", "Frequency");
-hist.add_histogram("Data", hist_data, "green");
+hist.add_histogram(hist_data, "Data", "green");
 
 manager.save_png("dashboard.png");
 ```
@@ -225,9 +227,10 @@ line.set_default_line_width(3.0);       // Thicker lines
 
 ### Cluster Analysis
 ```cpp
-std::vector<plotlib::Point2D> points = {{1,1}, {2,2}, {5,5}, {6,6}};
+std::vector<double> x_values = {1, 2, 5, 6};
+std::vector<double> y_values = {1, 2, 5, 6};
 std::vector<int> labels = {0, 0, 1, 1};  // Cluster labels
-plot.add_clusters(points, labels);       // Automatic cluster coloring
+plot.add_clusters(x_values, y_values, labels);  // Automatic cluster coloring
 ```
 
 ## ⚡ Performance & Features

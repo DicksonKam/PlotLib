@@ -29,7 +29,7 @@ int main() {
     // Create plot
     plotlib::ScatterPlot plot(800, 600);
     plot.set_labels("My Plot", "X", "Y");
-    plot.add_scatter("Data", x_values, y_values);
+    plot.add_scatter(x_values, y_values, "Data");
     
     // Save
     plot.save_png("my_plot.png");
@@ -48,8 +48,8 @@ g++ -std=c++17 -I./include my_plot.cpp -L./build -lplotlib `pkg-config --cflags 
 ### Scatter Plot with Colors
 ```cpp
 plotlib::ScatterPlot plot(800, 600);
-plot.add_scatter("Series 1", x1_values, y1_values, "blue");
-plot.add_scatter("Series 2", x2_values, y2_values, "red");
+plot.add_scatter(x1_values, y1_values, "Series 1", "blue");
+plot.add_scatter(x2_values, y2_values, "Series 2", "red");
 plot.save_png("scatter.png");
 ```
 
@@ -58,14 +58,14 @@ plot.save_png("scatter.png");
 plotlib::LinePlot plot(800, 600);
 std::vector<double> x = {1, 2, 3, 4};
 std::vector<double> y = {2, 4, 6, 8};
-plot.add_line("Trend", x, y, "green");
+plot.add_line(x, y, "Trend", "green");
 plot.save_png("line.png");
 ```
 
 ### Histogram with Custom Bins
 ```cpp
 plotlib::HistogramPlot plot(800, 600);
-plot.add_histogram("Data", values, "purple", 20);  // 20 bins
+plot.add_histogram(values, "Data", "purple", 20);  // 20 bins
 plot.save_png("histogram.png");
 ```
 

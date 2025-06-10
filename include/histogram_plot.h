@@ -54,7 +54,7 @@ struct HistogramData {
  * plot.set_labels("Data Distribution", "Values", "Frequency");
  * 
  * std::vector<double> data = {1.0, 2.1, 1.8, 3.2, 2.9, 1.5, 2.8, 3.1};
- * plot.add_histogram("Dataset 1", data, 10); // 10 bins
+ * plot.add_histogram(data, "Dataset 1", "blue", 10); // 10 bins
  * 
  * plot.save_png("histogram.png");
  * @endcode

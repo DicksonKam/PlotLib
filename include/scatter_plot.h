@@ -74,9 +74,9 @@ struct ClusterSeries {
  * ScatterPlot plot(800, 600);
  * plot.set_labels("My Scatter Plot", "X Values", "Y Values");
  * 
- * std::vector<Point2D> data = {{1, 2}, {2, 4}, {3, 6}};
- * PlotStyle style = {3.0, 1.0, 0.0, 0.0, 0.8}; // Red circles
- * plot.add_series("Data", data, style);
+ * std::vector<double> x_values = {1, 2, 3};
+ * std::vector<double> y_values = {2, 4, 6};
+ * plot.add_scatter(x_values, y_values, "Data", "red");
  * 
  * plot.save_png("scatter.png");
  * @endcode

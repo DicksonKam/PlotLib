@@ -129,6 +129,11 @@ protected:
     void calculate_bounds() override;
     
     /**
+     * @brief Check if scatter plot is empty (no data series and no cluster series)
+     */
+    bool is_plot_empty() const override;
+    
+    /**
      * @brief Draw legend including cluster legend entries
      * @param cr Cairo context for rendering
      */

@@ -596,6 +596,21 @@ void HistogramPlot::add_discrete_data_simplified(const std::string& name, const 
     bounds_set = false;
 }
 
-
+bool HistogramPlot::is_plot_empty() const {
+    // HistogramPlot is empty if the histogram_series collection is empty
+    // OR if all histogram series contain no data points
+    if (histogram_series.empty()) {
+        return true;
+    }
+    
+    // Check if all histogram series have empty data
+    for (const auto& hist : histogram_series) {
+        if (!hist.bins.empty() || !hist.counts.empty()) {
+            return false;  // Found non-empty histogram data
+        }
+    }
+    
+    return true;  // All histograms are empty
+}
 
 } // namespace plotlib 

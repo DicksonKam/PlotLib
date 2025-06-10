@@ -438,4 +438,32 @@ void ScatterPlot::add_clusters(const std::vector<double>& x_values, const std::v
     add_cluster_data(x_values, y_values, labels, names, colors);
 }
 
+bool ScatterPlot::is_plot_empty() const {
+    // ScatterPlot is empty if both regular data series and cluster series are empty
+    // OR if all series contain no data points
+    if (data_series.empty() && cluster_series.empty()) {
+        return true;
+    }
+    
+    // Check if all regular data series have empty points
+    bool has_regular_data = false;
+    for (const auto& series : data_series) {
+        if (!series.points.empty()) {
+            has_regular_data = true;
+            break;
+        }
+    }
+    
+    // Check if all cluster series have empty data
+    bool has_cluster_data = false;
+    for (const auto& cluster : cluster_series) {
+        if (!cluster.points.empty()) {
+            has_cluster_data = true;
+            break;
+        }
+    }
+    
+    return !has_regular_data && !has_cluster_data;
+}
+
 } // namespace plotlib

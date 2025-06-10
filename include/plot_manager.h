@@ -194,9 +194,13 @@ protected:
     virtual void draw_title(cairo_t* cr);
     virtual void draw_marker(cairo_t* cr, double x, double y, MarkerType type, double size, 
                            double r, double g, double b, double alpha);
+    virtual void draw_empty_plot_text(cairo_t* cr);
     
     // Plot-specific rendering (to be implemented by derived classes)
     virtual void draw_data(cairo_t* cr) = 0;
+    
+    // Empty Plot detection
+    virtual bool is_plot_empty() const;
     
     // Plot type detection for conditional behavior
     virtual bool is_histogram_plot() const { return false; }

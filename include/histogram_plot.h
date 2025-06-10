@@ -209,6 +209,11 @@ protected:
     void calculate_bounds() override;
     
     /**
+     * @brief Check if histogram plot is empty (no histogram series)
+     */
+    bool is_plot_empty() const override;
+    
+    /**
      * @brief Draw custom axis labels for discrete histograms
      * @param cr Cairo context
      */

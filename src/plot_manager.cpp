@@ -454,9 +454,15 @@ void PlotManager::render_to_context(cairo_t* cr) {
         draw_axis_ticks(cr);
         draw_axis_labels(cr);
         draw_title(cr);
-        draw_data(cr);  // This will be implemented by derived classes
-        draw_reference_lines(cr);  // Draw reference lines over data
-        draw_legend(cr);
+        
+        // Check if plot is empty and draw appropriate content
+        if (is_plot_empty()) {
+            draw_empty_plot_text(cr);
+        } else {
+            draw_data(cr);  // This will be implemented by derived classes
+            draw_reference_lines(cr);  // Draw reference lines over data
+            draw_legend(cr);
+        }
         
         // Restore the transformation matrix
         cairo_restore(cr);
@@ -467,9 +473,15 @@ void PlotManager::render_to_context(cairo_t* cr) {
         draw_axis_ticks(cr);
         draw_axis_labels(cr);
         draw_title(cr);
-        draw_data(cr);  // This will be implemented by derived classes
-        draw_reference_lines(cr);  // Draw reference lines over data
-        draw_legend(cr);
+        
+        // Check if plot is empty and draw appropriate content
+        if (is_plot_empty()) {
+            draw_empty_plot_text(cr);
+        } else {
+            draw_data(cr);  // This will be implemented by derived classes
+            draw_reference_lines(cr);  // Draw reference lines over data
+            draw_legend(cr);
+        }
     }
 }
 
@@ -516,6 +528,48 @@ void PlotManager::clear() {
     bounds_set = false;
     hidden_legend_items.clear();
     show_legend = true;
+}
+
+bool PlotManager::is_plot_empty() const {
+    // A plot is considered empty if it has no data series
+    // OR if all data series contain no points
+    // Reference lines alone don't constitute plot content
+    if (data_series.empty()) {
+        return true;
+    }
+    
+    // Check if all data series have empty points
+    for (const auto& series : data_series) {
+        if (!series.points.empty()) {
+            return false;  // Found non-empty series
+        }
+    }
+    
+    return true;  // All series are empty
+}
+
+void PlotManager::draw_empty_plot_text(cairo_t* cr) {
+    // Set text properties
+    cairo_set_source_rgb(cr, 0.6, 0.6, 0.6);  // Gray color
+    cairo_select_font_face(cr, "Arial", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
+    cairo_set_font_size(cr, 24);
+    
+    // Calculate center position of the plot area (excluding margins)
+    double plot_center_x = margin_left + (width - margin_left - margin_right) / 2.0;
+    double plot_center_y = margin_top + (height - margin_top - margin_bottom) / 2.0;
+    
+    // Get text extents for centering
+    std::string empty_text = "Empty Plot";
+    cairo_text_extents_t extents;
+    cairo_text_extents(cr, empty_text.c_str(), &extents);
+    
+    // Center the text precisely
+    double text_x = plot_center_x - extents.width / 2.0;
+    double text_y = plot_center_y + extents.height / 2.0;
+    
+    // Draw the text
+    cairo_move_to(cr, text_x, text_y);
+    cairo_show_text(cr, empty_text.c_str());
 }
 
 // Legend management methods

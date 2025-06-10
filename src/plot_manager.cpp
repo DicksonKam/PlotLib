@@ -15,67 +15,9 @@ namespace plotlib {
 std::vector<std::string> PlotManager::auto_colors = {"blue", "red", "green", "orange", "purple", "cyan", "magenta", "yellow"};
 
 PlotManager::PlotManager(int width, int height) : width(width), height(height) {
-    initialize_cluster_colors();
-}
-
-void PlotManager::initialize_cluster_colors() {
-    // Define a nice color palette for clusters (excluding red which is reserved for outliers)
-    cluster_colors = {
-        {0.0, 0.4, 0.8},   // Blue
-        {0.0, 0.7, 0.3},   // Green
-        {0.6, 0.2, 0.8},   // Purple
-        {1.0, 0.5, 0.0},   // Orange
-        {0.8, 0.8, 0.0},   // Yellow
-        {0.0, 0.8, 0.8},   // Cyan
-        {0.8, 0.0, 0.8},   // Magenta
-        {0.5, 0.3, 0.1},   // Brown
-        {0.7, 0.7, 0.7},   // Gray
-        {0.0, 0.5, 0.5},   // Teal
-        {0.5, 0.0, 0.5},   // Dark Purple
-        {0.0, 0.3, 0.6},   // Dark Blue
-        {0.3, 0.5, 0.0},   // Olive
-        {0.6, 0.3, 0.0},   // Dark Orange
-        {0.4, 0.0, 0.4}    // Dark Magenta
-    };
-}
-
-std::vector<double> PlotManager::get_cluster_color(int cluster_label) {
-    if (cluster_label == -1) {
-        return {1.0, 0.0, 0.0}; // Red for outliers
-    }
-    
-    // Use modulo to cycle through colors if we have more clusters than colors
-    int color_index = cluster_label % cluster_colors.size();
-    return cluster_colors[color_index];
-}
-
-void PlotManager::add_series(const std::string& name, const std::vector<Point2D>& points, const PlotStyle& style) {
-    DataSeries series(name);
-    series.points = points;
-    series.style = style;
-    data_series.push_back(series);
-    bounds_set = false;
 }
 
 
-void PlotManager::add_cluster_data(const std::string& name, const std::vector<Point2D>& points, 
-                                  const std::vector<int>& cluster_labels, double point_size, double alpha) {
-    if (points.size() != cluster_labels.size()) {
-        std::cerr << "Error: Number of points (" << points.size() << ") must match number of cluster labels (" << cluster_labels.size() << ")" << std::endl;
-        return;
-    }
-    
-    ClusterSeries series(name);
-    series.point_size = point_size;
-    series.alpha = alpha;
-    
-    for (size_t i = 0; i < points.size(); ++i) {
-        series.points.emplace_back(points[i], cluster_labels[i]);
-    }
-    
-    cluster_series.push_back(series);
-    bounds_set = false;
-}
 
 
 void PlotManager::set_title(const std::string& plot_title) {
@@ -97,30 +39,13 @@ void PlotManager::set_labels(const std::string& plot_title, const std::string& x
 }
 
 void PlotManager::calculate_bounds() {
-    if (data_series.empty() && cluster_series.empty()) return;
+    if (data_series.empty()) return;
     
     bool first = true;
     
     // Calculate bounds from regular data series
     for (const auto& series : data_series) {
         for (const auto& pt : series.points) {
-            if (first) {
-                min_x = max_x = pt.x;
-                min_y = max_y = pt.y;
-                first = false;
-            } else {
-                min_x = std::min(min_x, pt.x);
-                max_x = std::max(max_x, pt.x);
-                min_y = std::min(min_y, pt.y);
-                max_y = std::max(max_y, pt.y);
-            }
-        }
-    }
-    
-    // Calculate bounds from cluster series
-    for (const auto& series : cluster_series) {
-        for (const auto& cluster_pt : series.points) {
-            const auto& pt = cluster_pt.point;
             if (first) {
                 min_x = max_x = pt.x;
                 min_y = max_y = pt.y;
@@ -427,35 +352,6 @@ void PlotManager::draw_legend(cairo_t* cr) {
         }
     }
     
-    // Add cluster series
-    std::set<int> cluster_labels_seen;
-    for (const auto& series : cluster_series) {
-        if (!series.name.empty()) {
-            // Add cluster labels
-            for (const auto& cluster_pt : series.points) {
-                if (cluster_labels_seen.find(cluster_pt.cluster_label) == cluster_labels_seen.end()) {
-                    cluster_labels_seen.insert(cluster_pt.cluster_label);
-                    
-                    std::string label = (cluster_pt.cluster_label == -1) ? "Outliers" : 
-                                       ("Cluster " + std::to_string(cluster_pt.cluster_label));
-                    
-                    // Check if this legend item should be hidden
-                    if (hidden_legend_items.find(label) == hidden_legend_items.end()) {
-                        PlotStyle cluster_style;
-                        auto color = get_cluster_color(cluster_pt.cluster_label);
-                        cluster_style.r = color[0];
-                        cluster_style.g = color[1];
-                        cluster_style.b = color[2];
-                        cluster_style.point_size = series.point_size;
-                        cluster_style.alpha = series.alpha;
-                        
-                        legend_items.emplace_back(label, cluster_style);
-                        legend_markers.push_back(cluster_pt.cluster_label == -1 ? MarkerType::CROSS : MarkerType::CIRCLE);
-                    }
-                }
-            }
-        }
-    }
     
     // Add reference lines
     for (const auto& ref_line : reference_lines) {
@@ -492,16 +388,7 @@ void PlotManager::draw_legend(cairo_t* cr) {
         ref_line_offset = 0;
     }
     
-    // Calculate cluster series count for legend
-    std::set<int> cluster_labels_for_legend;
-    for (const auto& series : cluster_series) {
-        if (!series.name.empty()) {
-            for (const auto& cluster_pt : series.points) {
-                cluster_labels_for_legend.insert(cluster_pt.cluster_label);
-            }
-        }
-    }
-    ref_line_offset += cluster_labels_for_legend.size();
+    // No cluster series in PlotManager anymore
     
     for (size_t i = 0; i < legend_items.size(); ++i) {
         double y_pos = legend_y + i * line_height;
@@ -622,7 +509,6 @@ bool PlotManager::save_svg(const std::string& filename) {
 
 void PlotManager::clear() {
     data_series.clear();
-    cluster_series.clear();
     reference_lines.clear();
     title = "";
     x_label = "";
@@ -651,6 +537,12 @@ void PlotManager::show_all_legend_items() {
 
 // Reference line management methods
 void PlotManager::add_vertical_line(double x_value, const std::string& label, const std::string& color_name) {
+    // Check if this is a discrete histogram (vertical lines not allowed)
+    if (is_discrete_histogram()) {
+        throw std::invalid_argument("Error: Vertical reference lines are not allowed for discrete histograms. "
+                                  "Discrete histograms use categorical X-axis where vertical lines between categories are meaningless. "
+                                  "Consider using horizontal reference lines to indicate frequency thresholds instead.");
+    }
     PlotStyle style = color_to_style(color_name, 2.0, 2.0);
     add_reference_line(true, x_value, label, style);
 }
@@ -661,6 +553,12 @@ void PlotManager::add_horizontal_line(double y_value, const std::string& label, 
 }
 
 void PlotManager::add_vertical_line(double x_value, const std::string& label) {
+    // Check if this is a discrete histogram (vertical lines not allowed)
+    if (is_discrete_histogram()) {
+        throw std::invalid_argument("Error: Vertical reference lines are not allowed for discrete histograms. "
+                                  "Discrete histograms use categorical X-axis where vertical lines between categories are meaningless. "
+                                  "Consider using horizontal reference lines to indicate frequency thresholds instead.");
+    }
     std::string auto_color = get_reference_line_auto_color();
     PlotStyle style = color_to_style(auto_color, 2.0, 2.0);
     add_reference_line(true, x_value, label, style);

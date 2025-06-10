@@ -191,50 +191,9 @@ public:
     void add_histogram(const std::vector<int>& counts);
     
     
-    /**
-     * @brief Add vertical reference line with color name (restricted for discrete histograms)
-     * @param x_value X-axis value for the line
-     * @param label Label for the line in legend
-     * @param color_name Color name ("red", "blue", "green", etc.)
-     * @throws std::invalid_argument if called on discrete histograms
-     */
-    void add_vertical_line(double x_value, const std::string& label, const std::string& color_name) override;
-    
-    /**
-     * @brief Add horizontal reference line with color name (allowed for all histogram types)
-     * @param y_value Y-axis value for the line
-     * @param label Label for the line in legend
-     * @param color_name Color name ("red", "blue", "green", etc.)
-     */
-    void add_horizontal_line(double y_value, const std::string& label, const std::string& color_name) override;
-    
-    /**
-     * @brief Add vertical reference line with custom label (restricted for discrete histograms)
-     * @param x_value X-axis value for the line
-     * @param label Label for the line in legend
-     * @throws std::invalid_argument if called on discrete histograms
-     */
-    void add_vertical_line(double x_value, const std::string& label) override;
-    
-    /**
-     * @brief Add vertical reference line with auto-generated label (restricted for discrete histograms)
-     * @param x_value X-axis value for the line
-     * @throws std::invalid_argument if called on discrete histograms
-     */
-    void add_vertical_line(double x_value) override;
-    
-    /**
-     * @brief Add horizontal reference line with custom label (allowed for all histogram types)
-     * @param y_value Y-axis value for the line
-     * @param label Label for the line in legend
-     */
-    void add_horizontal_line(double y_value, const std::string& label) override;
-    
-    /**
-     * @brief Add horizontal reference line with auto-generated label (allowed for all histogram types)
-     * @param y_value Y-axis value for the line
-     */
-    void add_horizontal_line(double y_value) override;
+    // Plot type detection for conditional behavior in PlotManager
+    bool is_histogram_plot() const override { return true; }
+    bool is_discrete_histogram() const override { return has_discrete_histograms(); }
     
 
 protected:

@@ -82,11 +82,6 @@ protected:
      */
     void draw_markers(cairo_t* cr);
     
-    /**
-     * @brief Draw cluster-based line data
-     * @param cr Cairo context for rendering
-     */
-    void draw_cluster_lines(cairo_t* cr);
     
     /**
      * @brief Set line style for Cairo context

@@ -82,45 +82,6 @@ struct DataSeries {
 };
 
 /**
- * @brief Represents a data point with cluster label information
- */
-struct ClusterPoint {
-    Point2D point;        ///< 2D coordinates of the point
-    int cluster_label;    ///< Cluster ID (0, 1, 2, ...) or -1 for outliers
-    
-    /**
-     * @brief Constructor from coordinates and label
-     * @param x X coordinate
-     * @param y Y coordinate  
-     * @param label Cluster label (-1 for outliers, 0+ for clusters)
-     */
-    ClusterPoint(double x, double y, int label) : point(x, y), cluster_label(label) {}
-    
-    /**
-     * @brief Constructor from Point2D and label
-     * @param pt 2D point coordinates
-     * @param label Cluster label (-1 for outliers, 0+ for clusters)
-     */
-    ClusterPoint(const Point2D& pt, int label) : point(pt), cluster_label(label) {}
-};
-
-/**
- * @brief Represents a cluster-based data series for clustering visualization
- */
-struct ClusterSeries {
-    std::vector<ClusterPoint> points; ///< Collection of cluster-labeled points
-    std::string name;                 ///< Series name for legend
-    double point_size = 3.0;          ///< Size of cluster points
-    double alpha = 0.8;               ///< Transparency of cluster points
-    
-    /**
-     * @brief Constructor for ClusterSeries
-     * @param series_name Name of the cluster series (default: empty)
-     */
-    ClusterSeries(const std::string& series_name = "") : name(series_name) {}
-};
-
-/**
  * @brief Represents a reference line (vertical or horizontal) with styling
  */
 struct ReferenceLine {
@@ -193,7 +154,6 @@ protected:
     
     // Data storage
     std::vector<DataSeries> data_series;      ///< Collection of regular data series
-    std::vector<ClusterSeries> cluster_series; ///< Collection of cluster-based series
     std::vector<ReferenceLine> reference_lines; ///< Collection of reference lines
     
     // Data bounds and transformation
@@ -205,8 +165,6 @@ protected:
     std::string x_label = "";                 ///< X-axis label
     std::string y_label = "";                 ///< Y-axis label
     
-    // Cluster color management
-    std::vector<std::vector<double>> cluster_colors; ///< RGB colors for cluster visualization
     
     // Auto color management for series
     static std::vector<std::string> auto_colors; ///< Centralized auto colors for all plot types
@@ -252,8 +210,6 @@ protected:
     // Utility methods
     std::string format_number(double value, int precision = 2);
     std::vector<double> generate_nice_ticks(double min_val, double max_val, int target_ticks = 5);
-    void initialize_cluster_colors();
-    std::vector<double> get_cluster_color(int cluster_label);
     
 public:
     /**
@@ -449,11 +405,6 @@ public:
      */
     size_t get_series_count() const { return data_series.size(); }
     
-    /**
-     * @brief Get the number of cluster series
-     * @return Number of cluster series
-     */
-    size_t get_cluster_series_count() const { return cluster_series.size(); }
     
     // Friend classes for subplot management
     friend class SubplotManager;

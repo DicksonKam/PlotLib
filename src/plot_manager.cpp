@@ -57,20 +57,6 @@ void PlotManager::add_series(const std::string& name, const std::vector<Point2D>
     bounds_set = false;
 }
 
-void PlotManager::add_series_point(const std::string& series_name, double x, double y) {
-    // Find existing series or create new one
-    auto it = std::find_if(data_series.begin(), data_series.end(),
-                          [&series_name](const DataSeries& s) { return s.name == series_name; });
-    
-    if (it != data_series.end()) {
-        it->points.emplace_back(x, y);
-    } else {
-        DataSeries new_series(series_name);
-        new_series.points.emplace_back(x, y);
-        data_series.push_back(new_series);
-    }
-    bounds_set = false;
-}
 
 void PlotManager::add_cluster_data(const std::string& name, const std::vector<Point2D>& points, 
                                   const std::vector<int>& cluster_labels, double point_size, double alpha) {
@@ -91,20 +77,6 @@ void PlotManager::add_cluster_data(const std::string& name, const std::vector<Po
     bounds_set = false;
 }
 
-void PlotManager::add_cluster_point(const std::string& series_name, double x, double y, int cluster_label) {
-    // Find existing cluster series or create new one
-    auto it = std::find_if(cluster_series.begin(), cluster_series.end(),
-                          [&series_name](const ClusterSeries& s) { return s.name == series_name; });
-    
-    if (it != cluster_series.end()) {
-        it->points.emplace_back(x, y, cluster_label);
-    } else {
-        ClusterSeries new_series(series_name);
-        new_series.points.emplace_back(x, y, cluster_label);
-        cluster_series.push_back(new_series);
-    }
-    bounds_set = false;
-}
 
 void PlotManager::set_title(const std::string& plot_title) {
     title = plot_title;
@@ -689,26 +661,27 @@ void PlotManager::add_horizontal_line(double y_value, const std::string& label, 
 }
 
 void PlotManager::add_vertical_line(double x_value, const std::string& label) {
-    std::string final_label = label.empty() ? ("Ref Line " + std::to_string(reference_lines.size() + 1)) : label;
     std::string auto_color = get_reference_line_auto_color();
     PlotStyle style = color_to_style(auto_color, 2.0, 2.0);
-    add_reference_line(true, x_value, final_label, style);
+    add_reference_line(true, x_value, label, style);
 }
 
 void PlotManager::add_horizontal_line(double y_value, const std::string& label) {
-    std::string final_label = label.empty() ? ("Ref Line " + std::to_string(reference_lines.size() + 1)) : label;
     std::string auto_color = get_reference_line_auto_color();
     PlotStyle style = color_to_style(auto_color, 2.0, 2.0);
-    add_reference_line(false, y_value, final_label, style);
+    add_reference_line(false, y_value, label, style);
 }
 
 void PlotManager::add_vertical_line(double x_value) {
-    add_vertical_line(x_value, "");
+    std::string auto_label = "Ref Line " + std::to_string(reference_lines.size() + 1);
+    add_vertical_line(x_value, auto_label);
 }
 
 void PlotManager::add_horizontal_line(double y_value) {
-    add_horizontal_line(y_value, "");
+    std::string auto_label = "Ref Line " + std::to_string(reference_lines.size() + 1);
+    add_horizontal_line(y_value, auto_label);
 }
+
 
 void PlotManager::add_reference_line(bool is_vertical, double value, const std::string& label, const PlotStyle& style) {
     ReferenceLine ref_line(is_vertical, value, label, style);

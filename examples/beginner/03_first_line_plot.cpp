@@ -26,7 +26,7 @@ int main() {
     // Add the line using X and Y vectors - super easy!
     plot.add_line(time, temperature, "Temperature", "red");
     
-    bool success = plot.save_png("output/03_temperature_line.png");
+    bool success = plot.save_png("output/beginner_03_temperature_line.png");
     
     if (success) {
         std::cout << "✅ Temperature plot saved!" << std::endl;
@@ -55,7 +55,7 @@ int main() {
     math_plot.add_line(x_values, sine_values, "sin(x)", "blue");
     math_plot.add_line(x_values, cosine_values, "cos(x)", "green");
     
-    bool math_success = math_plot.save_png("output/03_math_functions.png");
+    bool math_success = math_plot.save_png("output/beginner_03_math_functions.png");
     
     if (math_success) {
         std::cout << "✅ Math functions plot saved!" << std::endl;
@@ -74,7 +74,7 @@ int main() {
     // Use automatic color selection
     growth_plot.add_line(years, revenue, "Revenue");
     
-    bool growth_success = growth_plot.save_png("output/03_growth_trend.png");
+    bool growth_success = growth_plot.save_png("output/beginner_03_growth_trend.png");
     
     if (growth_success) {
         std::cout << "✅ Growth trend plot saved!" << std::endl;

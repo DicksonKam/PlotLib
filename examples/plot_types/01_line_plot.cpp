@@ -57,7 +57,7 @@ int main() {
     std::cout << "2. Testing all add_vertical_line() overloads..." << std::endl;
     
     // Overload 1: value only (auto-label, auto-color avoiding data colors)
-    plot.add_vertical_line(M_PI, "");  // "Ref Line 1", auto-color
+    plot.add_vertical_line(M_PI);  // "Ref Line 1", auto-color
     
     // Overload 2: value + label (auto-color avoiding data colors)
     plot.add_vertical_line(2 * M_PI, "2π");  // auto-color
@@ -72,7 +72,7 @@ int main() {
     std::cout << "3. Testing all add_horizontal_line() overloads..." << std::endl;
     
     // Overload 1: value only (auto-label, auto-color avoiding data colors)
-    plot.add_horizontal_line(0.0, "");  // "Ref Line 4", auto-color
+    plot.add_horizontal_line(0.0);  // "Ref Line 4", auto-color
     
     // Overload 2: value + label (auto-color avoiding data colors)
     plot.add_horizontal_line(0.5, "Upper Threshold");  // auto-color
@@ -104,7 +104,7 @@ int main() {
     // SAVE AND REPORT
     // =====================================================================
     
-    bool success = plot.save_png("output/01_line_plot_comprehensive.png");
+    bool success = plot.save_png("output/plot_types_01_line_plot.png");
     
     if (success) {
         std::cout << "✅ Comprehensive LinePlot demonstration saved!" << std::endl;

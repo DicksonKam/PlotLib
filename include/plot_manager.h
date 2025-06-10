@@ -240,6 +240,10 @@ protected:
     // Plot-specific rendering (to be implemented by derived classes)
     virtual void draw_data(cairo_t* cr) = 0;
     
+    // Plot type detection for conditional behavior
+    virtual bool is_histogram_plot() const { return false; }
+    virtual bool is_discrete_histogram() const { return false; }
+    
     // Subplot support methods
     virtual void set_subplot_transform(double x_offset, double y_offset, 
                                      double width_scale, double height_scale);
@@ -263,46 +267,6 @@ public:
      * @brief Virtual destructor for proper inheritance
      */
     virtual ~PlotManager() = default;
-    
-    // Data management methods
-    
-    /**
-     * @brief Add a data series to the plot
-     * @param name Series name for legend
-     * @param points Vector of 2D data points
-     * @param style Visual styling for the series
-     */
-    virtual void add_series(const std::string& name, const std::vector<Point2D>& points, 
-                           const PlotStyle& style);
-    
-    /**
-     * @brief Add a single point to an existing or new series
-     * @param series_name Name of the series
-     * @param x X coordinate
-     * @param y Y coordinate
-     */
-    virtual void add_series_point(const std::string& series_name, double x, double y);
-    
-    /**
-     * @brief Add cluster-based data for clustering visualization
-     * @param name Series name for legend
-     * @param points Vector of 2D data points
-     * @param cluster_labels Vector of cluster labels (same size as points)
-     * @param point_size Size of cluster points (default: 3.0)
-     * @param alpha Transparency of cluster points (default: 0.8)
-     */
-    virtual void add_cluster_data(const std::string& name, const std::vector<Point2D>& points, 
-                                 const std::vector<int>& cluster_labels, 
-                                 double point_size = 3.0, double alpha = 0.8);
-    
-    /**
-     * @brief Add a single cluster point to an existing or new cluster series
-     * @param series_name Name of the cluster series
-     * @param x X coordinate
-     * @param y Y coordinate
-     * @param cluster_label Cluster label (-1 for outliers, 0+ for clusters)
-     */
-    virtual void add_cluster_point(const std::string& series_name, double x, double y, int cluster_label);
     
     // Label and title management
     
@@ -411,27 +375,27 @@ public:
     virtual void add_horizontal_line(double y_value, const std::string& label, const std::string& color_name);
     
     /**
-     * @brief Add a vertical reference line with auto-generated label
+     * @brief Add a vertical reference line with custom label
      * @param x_value X coordinate where the vertical line should be drawn
-     * @param label Label for the legend (optional)
+     * @param label Label for the legend
      */
-    virtual void add_vertical_line(double x_value, const std::string& label = "");
+    virtual void add_vertical_line(double x_value, const std::string& label);
     
     /**
-     * @brief Add a horizontal reference line with auto-generated label
+     * @brief Add a horizontal reference line with custom label
      * @param y_value Y coordinate where the horizontal line should be drawn
-     * @param label Label for the legend (optional)
+     * @param label Label for the legend
      */
-    virtual void add_horizontal_line(double y_value, const std::string& label = "");
+    virtual void add_horizontal_line(double y_value, const std::string& label);
     
     /**
-     * @brief Add a vertical reference line (value only)
+     * @brief Add a vertical reference line with auto-generated label
      * @param x_value X coordinate where the vertical line should be drawn
      */
     virtual void add_vertical_line(double x_value);
     
     /**
-     * @brief Add a horizontal reference line (value only)
+     * @brief Add a horizontal reference line with auto-generated label
      * @param y_value Y coordinate where the horizontal line should be drawn
      */
     virtual void add_horizontal_line(double y_value);

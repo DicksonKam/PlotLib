@@ -30,10 +30,10 @@ int main() {
     plot.add_scatter(x_values, y_values, "My Data");
     
     // Step 5: Save the plot as a PNG image
-    bool success = plot.save_png("output/01_first_scatter_plot.png");
+    bool success = plot.save_png("output/beginner_01_first_scatter_plot.png");
     
     if (success) {
-        std::cout << "✅ Success! Your plot was saved as '01_first_scatter_plot.png'" << std::endl;
+        std::cout << "✅ Success! Your plot was saved as 'beginner_01_first_scatter_plot.png'" << std::endl;
         std::cout << "📁 Look in the output/ folder to see your plot!" << std::endl;
     } else {
         std::cout << "❌ Something went wrong. Make sure the output/ folder exists." << std::endl;

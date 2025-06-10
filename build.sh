@@ -31,6 +31,7 @@ make plotlib -j$(nproc 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null || echo 2)
 echo "📊 Building examples..."
 make beginner_examples -j$(nproc 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null || echo 2)
 make advanced_examples -j$(nproc 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null || echo 2)
+make plot_types_examples -j$(nproc 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null || echo 2)
 
 # Build and run tests
 echo "🧪 Building and running tests..."
@@ -47,6 +48,9 @@ echo ""
 echo "  # Run all advanced examples:"
 echo "  make run_advanced_examples"
 echo ""
+echo "  # Run all plot_types examples (comprehensive API demos):"
+echo "  make run_plot_types_examples"
+echo ""
 echo "  # Run everything:"
 echo "  make run_all_examples"
 echo ""
@@ -61,6 +65,12 @@ if [ -d "examples" ]; then
     done
     # List advanced examples  
     for example in examples/advanced_*; do
+        if [ -x "$example" ]; then
+            echo "  ./$example"
+        fi
+    done
+    # List plot_types examples
+    for example in examples/plot_types_*; do
         if [ -x "$example" ]; then
             echo "  ./$example"
         fi

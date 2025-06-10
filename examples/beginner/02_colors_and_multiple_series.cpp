@@ -39,7 +39,7 @@ int main() {
     plot.add_scatter(x_c, y_c, "Dataset C", "green");  // Explicitly green
     
     // Save the plot
-    bool success = plot.save_png("output/02_colors_and_multiple_series.png");
+    bool success = plot.save_png("output/beginner_02_colors_and_multiple_series.png");
     
     if (success) {
         std::cout << "✅ Success! Check out your colorful plot!" << std::endl;
@@ -63,7 +63,7 @@ int main() {
         color_demo.add_scatter(x_color, y_color, colors[i], colors[i]);
     }
     
-    bool color_success = color_demo.save_png("output/02_color_showcase.png");
+    bool color_success = color_demo.save_png("output/beginner_02_color_showcase.png");
     
     if (color_success) {
         std::cout << "✅ Color showcase saved! See all available colors." << std::endl;

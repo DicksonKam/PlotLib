@@ -209,30 +209,33 @@ public:
     void add_horizontal_line(double y_value, const std::string& label, const std::string& color_name) override;
     
     /**
-     * @brief Add vertical reference line with auto-label (restricted for discrete histograms)
+     * @brief Add vertical reference line with custom label (restricted for discrete histograms)
      * @param x_value X-axis value for the line
+     * @param label Label for the line in legend
      * @throws std::invalid_argument if called on discrete histograms
      */
-    void add_vertical_line(double x_value, const std::string& label = "") override;
+    void add_vertical_line(double x_value, const std::string& label) override;
     
     /**
-     * @brief Add horizontal reference line with auto-label (allowed for all histogram types)
-     * @param y_value Y-axis value for the line
-     */
-    void add_horizontal_line(double y_value, const std::string& label = "") override;
-    
-    /**
-     * @brief Add vertical reference line with auto-label and auto-name (restricted for discrete histograms)
+     * @brief Add vertical reference line with auto-generated label (restricted for discrete histograms)
      * @param x_value X-axis value for the line
      * @throws std::invalid_argument if called on discrete histograms
      */
     void add_vertical_line(double x_value) override;
     
     /**
-     * @brief Add horizontal reference line with auto-label and auto-name (allowed for all histogram types)
+     * @brief Add horizontal reference line with custom label (allowed for all histogram types)
+     * @param y_value Y-axis value for the line
+     * @param label Label for the line in legend
+     */
+    void add_horizontal_line(double y_value, const std::string& label) override;
+    
+    /**
+     * @brief Add horizontal reference line with auto-generated label (allowed for all histogram types)
      * @param y_value Y-axis value for the line
      */
     void add_horizontal_line(double y_value) override;
+    
 
 protected:
     /**

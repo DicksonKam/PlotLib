@@ -29,7 +29,7 @@ int main() {
     // Add histogram with automatic bin count and custom color
     plot.add_histogram(test_scores, "Test Scores", "blue");
     
-    bool success = plot.save_png("output/04_test_scores.png");
+    bool success = plot.save_png("output/beginner_04_test_scores.png");
     
     if (success) {
         std::cout << "✅ Test scores histogram saved!" << std::endl;
@@ -53,13 +53,13 @@ int main() {
     plotlib::HistogramPlot hist_10(800, 600);
     hist_10.set_labels("IQ Scores (10 bins)", "IQ Score", "Frequency");
     hist_10.add_histogram(iq_scores, "IQ Scores", "green", 10);
-    hist_10.save_png("output/04_iq_10_bins.png");
+    hist_10.save_png("output/beginner_04_iq_10_bins.png");
     
     // Create histogram with 30 bins
     plotlib::HistogramPlot hist_30(800, 600);
     hist_30.set_labels("IQ Scores (30 bins)", "IQ Score", "Frequency");
     hist_30.add_histogram(iq_scores, "IQ Scores", "red", 30);
-    hist_30.save_png("output/04_iq_30_bins.png");
+    hist_30.save_png("output/beginner_04_iq_30_bins.png");
     
     std::cout << "✅ Different bin count histograms saved!" << std::endl;
     std::cout << "🔍 Compare how different bin counts show different levels of detail!" << std::endl;
@@ -86,7 +86,7 @@ int main() {
     comparison.add_histogram(group_a_scores, "Group A", "blue", 20);
     comparison.add_histogram(group_b_scores, "Group B", "orange", 20);
     
-    bool comp_success = comparison.save_png("output/04_group_comparison.png");
+    bool comp_success = comparison.save_png("output/beginner_04_group_comparison.png");
     
     if (comp_success) {
         std::cout << "✅ Group comparison histogram saved!" << std::endl;
@@ -107,7 +107,7 @@ int main() {
     loading_plot.set_labels("Website Loading Times", "Loading Time (seconds)", "Number of Requests");
     loading_plot.add_histogram(loading_times, "Loading Times", "purple", 15);
     
-    bool loading_success = loading_plot.save_png("output/04_loading_times.png");
+    bool loading_success = loading_plot.save_png("output/beginner_04_loading_times.png");
     
     if (loading_success) {
         std::cout << "✅ Loading times histogram saved!" << std::endl;

@@ -56,7 +56,7 @@ int main() {
     scatter.add_clusters(cluster_x, cluster_y, cluster_labels);  // clusters
     
     // All reference line overloads
-    scatter.add_vertical_line(3.0, "");  // auto-label, auto-color (explicit empty string)
+    scatter.add_vertical_line(3.0);  // auto-label, auto-color
     scatter.add_horizontal_line(3.5, "Threshold");  // auto-color
     
     // =====================================================================
@@ -87,7 +87,7 @@ int main() {
     
     // All reference line overloads
     line.add_vertical_line(M_PI, "π");  // auto-color
-    line.add_horizontal_line(0.0, "");  // auto-label, auto-color (explicit empty string)
+    line.add_horizontal_line(0.0);  // auto-label, auto-color
     
     // =====================================================================
     // SUBPLOT 3: CONTINUOUS HISTOGRAM (top-right)
@@ -118,7 +118,7 @@ int main() {
     
     // Reference lines (both types allowed for continuous)
     continuous_hist.add_vertical_line(60.0, "Mean");  // auto-color
-    continuous_hist.add_horizontal_line(10.0, "");  // auto-label, auto-color (explicit empty string)
+    continuous_hist.add_horizontal_line(10.0);  // auto-label, auto-color
     
     // =====================================================================
     // SUBPLOT 4: DISCRETE HISTOGRAM (bottom-left)
@@ -144,7 +144,7 @@ int main() {
     discrete_hist.add_histogram(counts2, names2, colors2);  // full spec
     
     // Reference lines (only horizontal allowed for discrete)
-    discrete_hist.add_horizontal_line(12.0, "");  // auto-label, auto-color (explicit empty string)
+    discrete_hist.add_horizontal_line(12.0);  // auto-label, auto-color
     discrete_hist.add_horizontal_line(8.0, "Threshold", "purple");  // full spec
     
     // =====================================================================
@@ -163,10 +163,10 @@ int main() {
     mixed.add_scatter(mixed_x, mixed_y, "Main Data", "blue");
     
     // Multiple reference lines with different overloads
-    mixed.add_vertical_line(3.5, "");  // auto-label, auto-color (explicit empty string)
+    mixed.add_vertical_line(3.5);  // auto-label, auto-color
     mixed.add_vertical_line(6.5, "Boundary");  // auto-color
     mixed.add_horizontal_line(4.0, "Mid Line", "red");  // full spec
-    mixed.add_horizontal_line(7.0, "");  // auto-label, auto-color (explicit empty string)
+    mixed.add_horizontal_line(7.0);  // auto-label, auto-color
     
     // =====================================================================
     // SUBPLOT 6: LEGEND MANAGEMENT (bottom-right)
@@ -188,7 +188,7 @@ int main() {
     legend_demo.add_line(legend_x, y3, "Random", "green");
     
     // Add reference lines with various overloads
-    legend_demo.add_vertical_line(2.5, "");  // auto-label, auto-color (explicit empty string)
+    legend_demo.add_vertical_line(2.5);  // auto-label, auto-color
     legend_demo.add_horizontal_line(3.0, "Center", "orange");  // explicit
     
     // Demonstrate legend hiding (hide one series)
@@ -200,7 +200,7 @@ int main() {
     
     std::cout << "7. Saving comprehensive demonstration..." << std::endl;
     
-    bool success = manager.save_png("output/04_comprehensive_plot_dashboard.png");
+    bool success = manager.save_png("output/plot_types_04_comprehensive_dashboard.png");
     
     if (success) {
         std::cout << "✅ Comprehensive PlotLib demonstration saved!" << std::endl;

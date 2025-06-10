@@ -615,7 +615,7 @@ void HistogramPlot::add_horizontal_line(double y_value, const std::string& label
     PlotManager::add_horizontal_line(y_value, label, color_name);
 }
 
-// Additional overloads to match parent class signatures
+// Clean overloads without default parameters
 void HistogramPlot::add_vertical_line(double x_value, const std::string& label) {
     // Check if we have discrete histograms
     if (has_discrete_histograms()) {
@@ -628,12 +628,6 @@ void HistogramPlot::add_vertical_line(double x_value, const std::string& label) 
     PlotManager::add_vertical_line(x_value, label);
 }
 
-void HistogramPlot::add_horizontal_line(double y_value, const std::string& label) {
-    // Horizontal lines are allowed for both discrete and continuous histograms
-    // They represent frequency thresholds which are meaningful for both types
-    PlotManager::add_horizontal_line(y_value, label);
-}
-
 void HistogramPlot::add_vertical_line(double x_value) {
     // Check if we have discrete histograms
     if (has_discrete_histograms()) {
@@ -642,18 +636,21 @@ void HistogramPlot::add_vertical_line(double x_value) {
                                    "Consider using horizontal reference lines to indicate frequency thresholds instead.");
     }
     
-    // Call parent implementation for continuous histograms - use auto-color to avoid conflicts
-    std::string auto_label = "Ref Line " + std::to_string(reference_lines.size() + 1);
-    std::string auto_color = get_reference_line_auto_color();
-    PlotManager::add_vertical_line(x_value, auto_label, auto_color);
+    // Call parent implementation for continuous histograms
+    PlotManager::add_vertical_line(x_value);
+}
+
+void HistogramPlot::add_horizontal_line(double y_value, const std::string& label) {
+    // Horizontal lines are allowed for both discrete and continuous histograms
+    // They represent frequency thresholds which are meaningful for both types
+    PlotManager::add_horizontal_line(y_value, label);
 }
 
 void HistogramPlot::add_horizontal_line(double y_value) {
     // Horizontal lines are allowed for both discrete and continuous histograms
     // They represent frequency thresholds which are meaningful for both types
-    std::string auto_label = "Ref Line " + std::to_string(reference_lines.size() + 1);
-    std::string auto_color = get_reference_line_auto_color();
-    PlotManager::add_horizontal_line(y_value, auto_label, auto_color);
+    PlotManager::add_horizontal_line(y_value);
 }
+
 
 } // namespace plotlib 

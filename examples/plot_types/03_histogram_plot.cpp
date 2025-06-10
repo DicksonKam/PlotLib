@@ -60,17 +60,17 @@ int main() {
     // DEMONSTRATE reference lines for continuous histograms
     
     // All vertical line overloads (allowed for continuous)
-    continuous_plot.add_vertical_line(100.0, "");  // auto-label, auto-color
+    continuous_plot.add_vertical_line(100.0);  // auto-label, auto-color
     continuous_plot.add_vertical_line(120.0, "Upper Threshold");  // auto-color
     continuous_plot.add_vertical_line(80.0, "Lower Threshold", "orange");  // full spec
     
     // All horizontal line overloads
-    continuous_plot.add_horizontal_line(10.0, "");  // auto-label, auto-color
+    continuous_plot.add_horizontal_line(10.0);  // auto-label, auto-color
     continuous_plot.add_horizontal_line(20.0, "High Frequency");  // auto-color
     continuous_plot.add_horizontal_line(5.0, "Low Frequency", "green");  // full spec
     
     // Save continuous histogram
-    bool continuous_success = continuous_plot.save_png("output/03_histogram_continuous_comprehensive.png");
+    bool continuous_success = continuous_plot.save_png("output/plot_types_03_histogram_continuous.png");
     
     // =====================================================================
     // DISCRETE HISTOGRAM DEMONSTRATION
@@ -107,7 +107,7 @@ int main() {
     // DEMONSTRATE reference lines for discrete histograms
     
     // Horizontal lines (allowed for discrete)
-    discrete_plot.add_horizontal_line(15.0, "");  // auto-label, auto-color
+    discrete_plot.add_horizontal_line(15.0);  // auto-label, auto-color
     discrete_plot.add_horizontal_line(10.0, "Target Count");  // auto-color
     discrete_plot.add_horizontal_line(20.0, "High Count", "red");  // full spec
     
@@ -121,7 +121,7 @@ int main() {
     }
     
     // Save discrete histogram
-    bool discrete_success = discrete_plot.save_png("output/03_histogram_discrete_comprehensive.png");
+    bool discrete_success = discrete_plot.save_png("output/plot_types_03_histogram_discrete.png");
     
     // =====================================================================
     // REPORT RESULTS

@@ -61,7 +61,7 @@ int main() {
     std::vector<int> labels = {0, 0, 0, 1, 1, 1};
     scatter2.add_clusters(cluster_x, cluster_y, labels);
     
-    bool success = manager.save_png("output/05_first_dashboard.png");
+    bool success = manager.save_png("output/beginner_05_first_dashboard.png");
     
     if (success) {
         std::cout << "✅ 2x2 dashboard saved!" << std::endl;
@@ -104,7 +104,7 @@ int main() {
     }
     response.add_histogram(times, "Response Times", "purple", 15);
     
-    bool horizontal_success = horizontal.save_png("output/05_horizontal_layout.png");
+    bool horizontal_success = horizontal.save_png("output/beginner_05_horizontal_layout.png");
     
     if (horizontal_success) {
         std::cout << "✅ Horizontal layout saved!" << std::endl;
@@ -142,7 +142,7 @@ int main() {
     };
     wind.add_histogram(wind_speeds, "Wind Speed", "green", 10);
     
-    bool vertical_success = vertical.save_png("output/05_vertical_layout.png");
+    bool vertical_success = vertical.save_png("output/beginner_05_vertical_layout.png");
     
     if (vertical_success) {
         std::cout << "✅ Vertical layout saved!" << std::endl;

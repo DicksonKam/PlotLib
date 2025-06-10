@@ -34,7 +34,7 @@ int main() {
         // Add horizontal reference line to show target threshold
         plot1.add_horizontal_line(18.0, "Target Threshold", "red");
         
-        if (plot1.save_png("output/06_discrete_with_horizontal_line.png")) {
+        if (plot1.save_png("output/beginner_06_discrete_with_horizontal_line.png")) {
             std::cout << "✅ Discrete histogram with horizontal reference line saved!" << std::endl;
         }
     } catch (const std::exception& e) {
@@ -145,7 +145,7 @@ int main() {
         plot5.hide_legend_item("Very Poor"); // Hide "Very Poor"
         plot5.hide_legend_item("Poor"); // Hide "Poor"
         
-        if (plot5.save_png("output/06_discrete_hidden_legend.png")) {
+        if (plot5.save_png("output/beginner_06_discrete_hidden_legend.png")) {
             std::cout << "✅ Survey analysis with hidden legend items saved!" << std::endl;
         }
     } catch (const std::exception& e) {
@@ -174,7 +174,7 @@ int main() {
         // Hide some specific items
         plot6.hide_legend_item("Experimental A"); // Hide experimental research from legend
         
-        if (plot6.save_png("output/06_discrete_multiple_series.png")) {
+        if (plot6.save_png("output/beginner_06_discrete_multiple_series.png")) {
             std::cout << "✅ Multiple discrete series with legend management saved!" << std::endl;
         }
     } catch (const std::exception& e) {
@@ -199,7 +199,7 @@ int main() {
         plot7.add_vertical_line(2.5, "Mean", "red");
         plot7.add_horizontal_line(3.0, "Threshold", "green");
         
-        if (plot7.save_png("output/06_continuous_with_lines.png")) {
+        if (plot7.save_png("output/beginner_06_continuous_with_lines.png")) {
             std::cout << "✅ Continuous histogram with reference lines saved!" << std::endl;
         }
     } catch (const std::exception& e) {

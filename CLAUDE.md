@@ -78,6 +78,7 @@ make run_all_examples          # Run everything
 - ✅ **DO**: Run from project root: `./build/examples/example_name`
 - ❌ **DON'T**: Run from build directory: `cd build && ./examples/example_name`
 - 📁 All output files are saved to `output/` directory
+- 🚨 **CRITICAL**: ALWAYS execute all binaries from the project root directory, never from within the build directory
 
 ### Docker Commands
 ```bash

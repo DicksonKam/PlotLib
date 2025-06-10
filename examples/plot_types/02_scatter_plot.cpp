@@ -67,7 +67,7 @@ int main() {
     std::cout << "3. Testing all add_vertical_line() overloads..." << std::endl;
     
     // Overload 1: value only (auto-label, auto-color avoiding data colors)
-    plot.add_vertical_line(2.5, "");  // "Ref Line 1", auto-color
+    plot.add_vertical_line(2.5);  // "Ref Line 1", auto-color
     
     // Overload 2: value + label (auto-color avoiding data colors)
     plot.add_vertical_line(4.0, "Mid Point");  // auto-color
@@ -82,7 +82,7 @@ int main() {
     std::cout << "4. Testing all add_horizontal_line() overloads..." << std::endl;
     
     // Overload 1: value only (auto-label, auto-color avoiding data colors)
-    plot.add_horizontal_line(3.0, "");  // "Ref Line 4", auto-color
+    plot.add_horizontal_line(3.0);  // "Ref Line 4", auto-color
     
     // Overload 2: value + label (auto-color avoiding data colors)
     plot.add_horizontal_line(2.0, "Lower Bound");  // auto-color
@@ -111,7 +111,7 @@ int main() {
     // SAVE AND REPORT
     // =====================================================================
     
-    bool success = plot.save_png("output/02_scatter_plot_comprehensive.png");
+    bool success = plot.save_png("output/plot_types_02_scatter_plot.png");
     
     if (success) {
         std::cout << "✅ Comprehensive ScatterPlot demonstration saved!" << std::endl;

@@ -482,9 +482,9 @@ void HistogramPlot::add_histogram(const std::vector<double>& values, int bin_cou
     add_histogram(values, auto_name, bin_count);
 }
 
-// Discrete histogram methods with simplified API (no category_prefix)
+// Discrete histogram methods with simplified API (counts and names only)
 void HistogramPlot::add_histogram(const std::vector<int>& counts, const std::vector<std::string>& names,
-                                 const std::string& name, const std::vector<std::string>& color_names) {
+                                 const std::vector<std::string>& color_names) {
     if (color_names.size() != counts.size()) {
         std::cerr << "Error: Number of colors (" << color_names.size() << ") must match number of categories (" << counts.size() << ")" << std::endl;
         return;
@@ -501,11 +501,10 @@ void HistogramPlot::add_histogram(const std::vector<int>& counts, const std::vec
         styles.push_back(color_to_style(color_name, 3.0, 2.0));
     }
     
-    add_discrete_data_simplified(name, counts, names, styles);
+    add_discrete_data_simplified("Discrete", counts, names, styles);
 }
 
-void HistogramPlot::add_histogram(const std::vector<int>& counts, const std::vector<std::string>& names,
-                                 const std::string& name) {
+void HistogramPlot::add_histogram(const std::vector<int>& counts, const std::vector<std::string>& names) {
     if (names.size() != counts.size()) {
         std::cerr << "Error: Number of names (" << names.size() << ") must match number of categories (" << counts.size() << ")" << std::endl;
         return;
@@ -518,12 +517,17 @@ void HistogramPlot::add_histogram(const std::vector<int>& counts, const std::vec
         styles.push_back(color_to_style(color, 3.0, 2.0));
     }
     
-    add_discrete_data_simplified(name, counts, names, styles);
+    add_discrete_data_simplified("Discrete", counts, names, styles);
 }
 
-void HistogramPlot::add_histogram(const std::vector<int>& counts, const std::vector<std::string>& names) {
-    std::string auto_name = "Histogram " + std::to_string(histogram_series.size() + 1);
-    add_histogram(counts, names, auto_name);
+void HistogramPlot::add_histogram(const std::vector<int>& counts) {
+    // Generate automatic names: idx 1, idx 2, idx 3, ...
+    std::vector<std::string> auto_names;
+    for (size_t i = 0; i < counts.size(); ++i) {
+        auto_names.push_back("idx " + std::to_string(i + 1));
+    }
+    
+    add_histogram(counts, auto_names);
 }
 
 void HistogramPlot::add_discrete_data(const std::string& name, const std::vector<int>& counts, 
@@ -638,16 +642,18 @@ void HistogramPlot::add_vertical_line(double x_value) {
                                    "Consider using horizontal reference lines to indicate frequency thresholds instead.");
     }
     
-    // Call parent implementation for continuous histograms - use explicit signature to avoid ambiguity
-    std::string auto_label = "Vertical " + std::to_string(reference_lines.size() + 1);
-    PlotManager::add_vertical_line(x_value, auto_label, "black");
+    // Call parent implementation for continuous histograms - use auto-color to avoid conflicts
+    std::string auto_label = "Ref Line " + std::to_string(reference_lines.size() + 1);
+    std::string auto_color = get_reference_line_auto_color();
+    PlotManager::add_vertical_line(x_value, auto_label, auto_color);
 }
 
 void HistogramPlot::add_horizontal_line(double y_value) {
     // Horizontal lines are allowed for both discrete and continuous histograms
     // They represent frequency thresholds which are meaningful for both types
-    std::string auto_label = "Horizontal " + std::to_string(reference_lines.size() + 1);
-    PlotManager::add_horizontal_line(y_value, auto_label, "black");
+    std::string auto_label = "Ref Line " + std::to_string(reference_lines.size() + 1);
+    std::string auto_color = get_reference_line_auto_color();
+    PlotManager::add_horizontal_line(y_value, auto_label, auto_color);
 }
 
 } // namespace plotlib 

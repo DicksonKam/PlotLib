@@ -474,6 +474,12 @@ public:
     static std::string get_auto_color(size_t series_index);
     
     /**
+     * @brief Get auto color for reference lines that avoids conflicts with data colors
+     * @return Color name that doesn't conflict with existing data series
+     */
+    std::string get_reference_line_auto_color() const;
+    
+    /**
      * @brief Get the number of data series
      * @return Number of regular data series
      */

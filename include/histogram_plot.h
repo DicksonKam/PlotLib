@@ -172,27 +172,23 @@ public:
      * @brief Add discrete histogram data with custom colors
      * @param counts Frequency counts for each discrete category
      * @param names Category names for X-axis labels and legend
-     * @param name Series name for legend
      * @param color_names Vector of color names for each category
      */
     void add_histogram(const std::vector<int>& counts, const std::vector<std::string>& names,
-                      const std::string& name, const std::vector<std::string>& color_names);
+                      const std::vector<std::string>& color_names);
     
     /**
      * @brief Add discrete histogram data with automatic styling
      * @param counts Frequency counts for each discrete category
      * @param names Category names for X-axis labels and legend
-     * @param name Series name for legend
-     */
-    void add_histogram(const std::vector<int>& counts, const std::vector<std::string>& names,
-                      const std::string& name);
-    
-    /**
-     * @brief Add discrete histogram data with auto-generated name
-     * @param counts Frequency counts for each discrete category
-     * @param names Category names for X-axis labels and legend
      */
     void add_histogram(const std::vector<int>& counts, const std::vector<std::string>& names);
+    
+    /**
+     * @brief Add discrete histogram data with auto-generated names (idx 1, idx 2, ...)
+     * @param counts Frequency counts for each discrete category
+     */
+    void add_histogram(const std::vector<int>& counts);
     
     
     /**

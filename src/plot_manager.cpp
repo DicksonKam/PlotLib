@@ -689,14 +689,16 @@ void PlotManager::add_horizontal_line(double y_value, const std::string& label, 
 }
 
 void PlotManager::add_vertical_line(double x_value, const std::string& label) {
-    std::string final_label = label.empty() ? ("Vertical " + std::to_string(reference_lines.size() + 1)) : label;
-    PlotStyle style = color_to_style("black", 2.0, 2.0);
+    std::string final_label = label.empty() ? ("Ref Line " + std::to_string(reference_lines.size() + 1)) : label;
+    std::string auto_color = get_reference_line_auto_color();
+    PlotStyle style = color_to_style(auto_color, 2.0, 2.0);
     add_reference_line(true, x_value, final_label, style);
 }
 
 void PlotManager::add_horizontal_line(double y_value, const std::string& label) {
-    std::string final_label = label.empty() ? ("Horizontal " + std::to_string(reference_lines.size() + 1)) : label;
-    PlotStyle style = color_to_style("black", 2.0, 2.0);
+    std::string final_label = label.empty() ? ("Ref Line " + std::to_string(reference_lines.size() + 1)) : label;
+    std::string auto_color = get_reference_line_auto_color();
+    PlotStyle style = color_to_style(auto_color, 2.0, 2.0);
     add_reference_line(false, y_value, final_label, style);
 }
 
@@ -756,6 +758,27 @@ PlotStyle PlotManager::color_to_style(const std::string& color_name, double poin
 
 std::string PlotManager::get_auto_color(size_t series_index) {
     return auto_colors[series_index % auto_colors.size()];
+}
+
+std::string PlotManager::get_reference_line_auto_color() const {
+    // Reference line colors to use when no color specified - avoid data colors
+    static const std::vector<std::string> ref_colors = {"black", "gray", "darkred", "darkblue", "darkgreen"};
+    
+    // Get set of colors used by data series
+    std::set<std::string> used_colors;
+    for (size_t i = 0; i < data_series.size(); ++i) {
+        used_colors.insert(get_auto_color(i));
+    }
+    
+    // Find first reference color not used by data series
+    for (const auto& color : ref_colors) {
+        if (used_colors.find(color) == used_colors.end()) {
+            return color;
+        }
+    }
+    
+    // Fallback: cycle through reference colors if all are used
+    return ref_colors[reference_lines.size() % ref_colors.size()];
 }
 
 // SubplotManager implementation

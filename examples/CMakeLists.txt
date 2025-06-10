@@ -46,11 +46,25 @@ foreach(source_file ${ADVANCED_SOURCES})
     list(APPEND ADVANCED_TARGETS ${example_name})
 endforeach()
 
+# Dynamically discover and build plot_types examples
+file(GLOB PLOT_TYPES_SOURCES "plot_types/[0-9][0-9]_*.cpp")
+set(PLOT_TYPES_TARGETS "")
+foreach(source_file ${PLOT_TYPES_SOURCES})
+    get_filename_component(base_name ${source_file} NAME_WE)
+    # Create consistent naming: 01_file_name -> plot_types_01_file_name
+    string(REGEX REPLACE "^([0-9]+)_(.+)" "plot_types_\\1_\\2" example_name ${base_name})
+    add_example(${example_name} ${source_file})
+    list(APPEND PLOT_TYPES_TARGETS ${example_name})
+endforeach()
+
 # Create a target to build all beginner examples
 add_custom_target(beginner_examples DEPENDS ${BEGINNER_TARGETS})
 
 # Create a target to build all advanced examples
 add_custom_target(advanced_examples DEPENDS ${ADVANCED_TARGETS})
+
+# Create a target to build all plot_types examples
+add_custom_target(plot_types_examples DEPENDS ${PLOT_TYPES_TARGETS})
 
 # Function to generate run commands for a list of targets
 function(generate_run_commands target_list output_commands)
@@ -66,6 +80,9 @@ generate_run_commands("${BEGINNER_TARGETS}" BEGINNER_RUN_COMMANDS)
 
 # Generate run commands for advanced examples  
 generate_run_commands("${ADVANCED_TARGETS}" ADVANCED_RUN_COMMANDS)
+
+# Generate run commands for plot_types examples
+generate_run_commands("${PLOT_TYPES_TARGETS}" PLOT_TYPES_RUN_COMMANDS)
 
 # Create a target to run all beginner examples
 add_custom_target(run_beginner_examples
@@ -87,10 +104,20 @@ add_custom_target(run_advanced_examples
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
 )
 
+# Create a target to run all plot_types examples
+add_custom_target(run_plot_types_examples
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_SOURCE_DIR}/output
+    COMMAND echo "Running plot_types examples..."
+    ${PLOT_TYPES_RUN_COMMANDS}
+    COMMAND echo "All plot_types examples completed!"
+    DEPENDS plot_types_examples
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+)
+
 # Create a target to run all examples
 add_custom_target(run_all_examples
     COMMAND echo "Running all examples..."
-    DEPENDS run_beginner_examples run_advanced_examples
+    DEPENDS run_beginner_examples run_advanced_examples run_plot_types_examples
     COMMAND echo "All examples completed successfully!"
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
 )

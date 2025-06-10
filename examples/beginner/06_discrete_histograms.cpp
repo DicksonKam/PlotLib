@@ -29,7 +29,7 @@ int main() {
         // Data: [10, 20, 15] means 10 of structure 1, 20 of structure 2, 15 of structure 3
         std::vector<int> structure_counts = {10, 20, 15};
         std::vector<std::string> structure_names = {"Structure 1", "Structure 2", "Structure 3"};
-        plot1.add_histogram(structure_counts, structure_names, "Structures");
+        plot1.add_histogram(structure_counts, structure_names);
         
         // Add horizontal reference line to show target threshold
         plot1.add_horizontal_line(18.0, "Target Threshold", "red");
@@ -53,7 +53,7 @@ int main() {
         std::vector<int> material_counts = {15, 8, 25, 12};
         std::vector<std::string> material_names = {"Material A", "Material B", "Material C", "Material D"};
         std::vector<std::string> colors = {"red", "blue", "green", "orange"};
-        plot2.add_histogram(material_counts, material_names, "Materials", colors);
+        plot2.add_histogram(material_counts, material_names, colors);
         
         // This should throw an error for discrete histograms
         std::cout << "   Attempting to add vertical line (should fail)..." << std::endl;
@@ -79,7 +79,7 @@ int main() {
         // First add a discrete histogram
         std::vector<int> discrete_counts = {5, 10, 8};
         std::vector<std::string> category_names = {"Category A", "Category B", "Category C"};
-        plot3.add_histogram(discrete_counts, category_names, "Discrete");
+        plot3.add_histogram(discrete_counts, category_names);
         std::cout << "   Added discrete histogram successfully" << std::endl;
         
         // Now try to add a continuous histogram (should fail)
@@ -113,7 +113,7 @@ int main() {
         std::vector<int> discrete_counts = {5, 10, 8};
         std::vector<std::string> category_names = {"Category A", "Category B", "Category C"};
         std::cout << "   Attempting to add discrete histogram (should fail)..." << std::endl;
-        plot4.add_histogram(discrete_counts, category_names, "Discrete");
+        plot4.add_histogram(discrete_counts, category_names);
         
         std::cout << "❌ UNEXPECTED: Mixed histogram types were allowed (this should not happen)" << std::endl;
         
@@ -136,7 +136,7 @@ int main() {
         std::vector<int> survey_responses = {3, 8, 15, 42, 32};
         std::vector<std::string> rating_names = {"Very Poor", "Poor", "Fair", "Good", "Excellent"};
         std::vector<std::string> satisfaction_colors = {"red", "orange", "yellow", "green", "blue"};
-        plot5.add_histogram(survey_responses, rating_names, "Satisfaction", satisfaction_colors);
+        plot5.add_histogram(survey_responses, rating_names, satisfaction_colors);
         
         // Add horizontal reference line for average
         plot5.add_horizontal_line(20.0, "Average Response", "purple");
@@ -166,7 +166,7 @@ int main() {
         std::vector<int> group_a_pubs = {5, 10, 8};  // 3 research categories
         std::vector<std::string> group_a_categories = {"Theory A", "Experimental A", "Computational A"};
         
-        plot6.add_histogram(group_a_pubs, group_a_categories, "Group A");
+        plot6.add_histogram(group_a_pubs, group_a_categories);
         
         // Add horizontal reference lines
         plot6.add_horizontal_line(15.0, "Excellence", "green");

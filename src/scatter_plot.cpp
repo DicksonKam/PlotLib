@@ -76,31 +76,51 @@ void ScatterPlot::draw_cluster_points(cairo_t* cr) {
             clusters_by_label[cluster_pt.cluster_label].push_back(cluster_pt);
         }
         
-        // Draw outliers first (background) - Always red cross
+        // Draw outliers first (background) - Red cross (customizable if custom colors provided)
         if (clusters_by_label.count(-1) > 0) {
             for (const auto& cluster_pt : clusters_by_label[-1]) {
                 double screen_x, screen_y;
                 transform_point(cluster_pt.x, cluster_pt.y, screen_x, screen_y);
                 
-                // Fixed color for outliers: red
+                // Get outlier color (red by default, or custom if provided)
+                std::vector<double> outlier_color;
+                if (!series.use_auto_coloring && series.cluster_colors.count(-1) > 0) {
+                    // Use custom color if provided
+                    PlotStyle custom_style = color_to_style(series.cluster_colors.at(-1), 3.0, 2.0);
+                    outlier_color = {custom_style.r, custom_style.g, custom_style.b};
+                } else {
+                    // Default red for outliers
+                    outlier_color = {1.0, 0.0, 0.0};
+                }
+                
                 draw_marker(cr, screen_x, screen_y, MarkerType::CROSS, 
-                           series.point_size, 1.0, 0.0, 0.0, series.alpha);
+                           series.point_size, outlier_color[0], outlier_color[1], outlier_color[2], series.alpha);
             }
         }
         
-        // Draw cluster points on top - Auto-colors, circles
+        // Draw cluster points on top - Auto-colors or custom colors, circles
         for (const auto& cluster_pair : clusters_by_label) {
             int cluster_label = cluster_pair.first;
             if (cluster_label == -1) continue; // Skip outliers (already drawn)
             
-            auto color = get_cluster_color(cluster_label);
+            // Get cluster color (auto or custom)
+            std::vector<double> cluster_color;
+            if (!series.use_auto_coloring && series.cluster_colors.count(cluster_label) > 0) {
+                // Use custom color if provided
+                PlotStyle custom_style = color_to_style(series.cluster_colors.at(cluster_label), 3.0, 2.0);
+                cluster_color = {custom_style.r, custom_style.g, custom_style.b};
+            } else {
+                // Use automatic coloring
+                cluster_color = get_cluster_color(cluster_label);
+            }
+            
             for (const auto& cluster_pt : cluster_pair.second) {
                 double screen_x, screen_y;
                 transform_point(cluster_pt.x, cluster_pt.y, screen_x, screen_y);
                 
                 // Fixed marker type for clusters: circle
                 draw_marker(cr, screen_x, screen_y, MarkerType::CIRCLE, 
-                           series.point_size, color[0], color[1], color[2], series.alpha);
+                           series.point_size, cluster_color[0], cluster_color[1], cluster_color[2], series.alpha);
             }
         }
     }
@@ -178,29 +198,52 @@ void ScatterPlot::draw_legend(cairo_t* cr) {
             }
             
             if (hidden_legend_items.find(outlier_name) == hidden_legend_items.end()) {
-                PlotStyle outlier_style = {3.0, 1.0, 0.0, 0.0, 0.8}; // Red color for outliers
+                // Use same color logic as drawing
+                PlotStyle outlier_style;
+                if (!series.use_auto_coloring && series.cluster_colors.count(-1) > 0) {
+                    // Use custom color if provided
+                    outlier_style = color_to_style(series.cluster_colors.at(-1), 3.0, 2.0);
+                } else {
+                    // Default red for outliers
+                    outlier_style.point_size = 3.0;
+                    outlier_style.r = 1.0;
+                    outlier_style.g = 0.0;
+                    outlier_style.b = 0.0;
+                    outlier_style.alpha = 0.8;
+                }
                 legend_items.emplace_back(outlier_name, outlier_style);
                 legend_markers.push_back(MarkerType::CROSS);
             }
         }
         
-        // Create legend entries for clusters (in order: 0, 1, 2, ...)
-        int cluster_counter = 1;
+        // Create legend entries for clusters (using actual cluster labels for consistency)
         for (int label : unique_labels) {
             if (label == -1) continue; // Skip outliers (already handled)
             
-            std::string cluster_name = "Cluster " + std::to_string(cluster_counter);
+            // Use actual cluster label + 1 for naming to match user expectation (Cluster 1, Cluster 2, etc.)
+            std::string cluster_name = "Cluster " + std::to_string(label + 1);
             if (!series.use_auto_naming && series.cluster_names.count(label) > 0) {
                 cluster_name = series.cluster_names.at(label);
             }
             
             if (hidden_legend_items.find(cluster_name) == hidden_legend_items.end()) {
-                auto color = get_cluster_color(label);
-                PlotStyle cluster_style = {3.0, color[0], color[1], color[2], 0.8};
+                // Use same color logic as drawing
+                PlotStyle cluster_style;
+                if (!series.use_auto_coloring && series.cluster_colors.count(label) > 0) {
+                    // Use custom color if provided
+                    cluster_style = color_to_style(series.cluster_colors.at(label), 3.0, 2.0);
+                } else {
+                    // Use automatic coloring - use actual label for color consistency
+                    auto color = get_cluster_color(label);
+                    cluster_style.point_size = 3.0;
+                    cluster_style.r = color[0];
+                    cluster_style.g = color[1]; 
+                    cluster_style.b = color[2];
+                    cluster_style.alpha = 0.8;
+                }
                 legend_items.emplace_back(cluster_name, cluster_style);
                 legend_markers.push_back(MarkerType::CIRCLE);
             }
-            cluster_counter++;
         }
     }
     

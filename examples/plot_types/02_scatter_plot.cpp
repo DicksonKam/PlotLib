@@ -89,11 +89,22 @@ int main() {
                                            2, 2, 2, 2, 2,               // Cluster 2
                                            -1, -1};                     // Outliers
     
-    // Add clusters to right plot
+    // Add first cluster series to right plot
     right_plot.add_clusters(comp_cluster_x, comp_cluster_y, comp_cluster_labels);
     
     // Hide the middle cluster (Cluster 2 = label 1) in the right plot too
     right_plot.hide_legend_item("Cluster 2");
+    
+    // Add a second cluster series to test multiple add_clusters functionality with custom colors
+    std::cout << "   Adding second cluster series with custom colors..." << std::endl;
+    std::vector<double> extra_cluster_x = {5.5, 5.7, 5.6, 6.0};      // Extra cluster (different location)
+    std::vector<double> extra_cluster_y = {3.5, 3.6, 3.4, 3.8};      // Extra cluster
+    std::vector<int> extra_cluster_labels = {0, 0, 1, -1};           // Mix of cluster 0, 1, and outlier
+    
+    // Custom names and colors for the second cluster series
+    std::vector<std::string> extra_names = {"Extra Outliers", "Extra Group A", "Extra Group B"};
+    std::vector<std::string> extra_colors = {"yellow", "magenta", "cyan"};
+    right_plot.add_clusters(extra_cluster_x, extra_cluster_y, extra_cluster_labels, extra_names, extra_colors);
     
     // Add some reference lines to right plot for completeness
     right_plot.add_vertical_line(3.0, "Mid Line", "gray");
@@ -116,8 +127,9 @@ int main() {
         std::cout << "      • Cluster 3 (label=2): Purple circles - visible in plot & legend" << std::endl;
         std::cout << "      • Outliers: Red crosses - visible in plot & legend" << std::endl;
         std::cout << "   📍 RIGHT PLOT (Comprehensive):" << std::endl;
-        std::cout << "      • Mixed scatter series and clusters with same hiding pattern" << std::endl;
-        std::cout << "      • Cluster 2 also hidden to test consistency" << std::endl;
+        std::cout << "      • Mixed scatter series and TWO cluster series" << std::endl;
+        std::cout << "      • First cluster series: Cluster 2 hidden from legend" << std::endl;
+        std::cout << "      • Second cluster series: Custom names + colors (yellow, magenta, cyan)" << std::endl;
         std::cout << "   🎯 EXPECTED COLOR VERIFICATION:" << std::endl;
         std::cout << "      • Both plots should show same colors for same cluster labels" << std::endl;
         std::cout << "      • Legend colors should exactly match plot marker colors" << std::endl;

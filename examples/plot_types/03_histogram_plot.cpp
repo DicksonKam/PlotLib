@@ -6,10 +6,12 @@
  * - All continuous histogram overloads
  * - All discrete histogram overloads  
  * - Reference line capabilities
+ * - Combined continuous and discrete in side-by-side subplots
  * - Complete API coverage for precise code review
  */
 
 #include "histogram_plot.h"
+#include "plot_manager.h"
 #include <vector>
 #include <iostream>
 #include <random>
@@ -17,11 +19,15 @@
 int main() {
     std::cout << "=== Comprehensive HistogramPlot Functionality ===" << std::endl;
     
+    // Create a 1x2 subplot layout for side-by-side comparison
+    plotlib::SubplotManager subplots(1, 2, 1400, 700);
+    subplots.set_main_title("Histogram Types Comparison: Continuous (Left) vs Discrete (Right)");
+    
     // =====================================================================
-    // CONTINUOUS HISTOGRAM DEMONSTRATION
+    // LEFT SUBPLOT: CONTINUOUS HISTOGRAM DEMONSTRATION
     // =====================================================================
     
-    std::cout << "1. Testing continuous histogram functionality..." << std::endl;
+    std::cout << "1. Testing continuous histogram functionality (left subplot)..." << std::endl;
     
     // Generate sample continuous data
     std::random_device rd;
@@ -35,9 +41,9 @@ int main() {
         data3.push_back(dist(gen) - 10); // Another shifted distribution
     }
     
-    // Create continuous histogram plot
-    plotlib::HistogramPlot continuous_plot(1000, 700);
-    continuous_plot.set_labels("Continuous Histogram API Demonstration", "Value", "Frequency");
+    // Get left subplot for continuous histogram
+    auto& continuous_plot = subplots.get_subplot<plotlib::HistogramPlot>(0, 0);
+    continuous_plot.set_labels("Continuous Histograms", "Value", "Frequency");
     
     // DEMONSTRATE ALL continuous add_histogram() OVERLOADS
     
@@ -69,28 +75,22 @@ int main() {
     continuous_plot.add_horizontal_line(20.0, "High Frequency");  // auto-color
     continuous_plot.add_horizontal_line(5.0, "Low Frequency", "green");  // full spec
     
-    // Save continuous histogram
-    bool continuous_success = continuous_plot.save_png("output/plot_types_03_histogram_continuous.png");
-    
     // =====================================================================
-    // DISCRETE HISTOGRAM DEMONSTRATION
+    // RIGHT SUBPLOT: DISCRETE HISTOGRAM DEMONSTRATION
     // =====================================================================
     
-    std::cout << "2. Testing discrete histogram functionality..." << std::endl;
+    std::cout << "2. Testing discrete histogram functionality (right subplot)..." << std::endl;
     
-    // Create discrete histogram plot
-    plotlib::HistogramPlot discrete_plot(1000, 700);
-    discrete_plot.set_labels("Discrete Histogram API Demonstration", "Categories", "Count");
+    // Get right subplot for discrete histogram
+    auto& discrete_plot = subplots.get_subplot<plotlib::HistogramPlot>(0, 1);
+    discrete_plot.set_labels("Discrete Histograms", "Categories", "Count");
     
-    // Sample discrete data
+    // Sample discrete data (reduced categories)
     std::vector<int> counts1 = {10, 20, 15};
-    std::vector<int> counts2 = {5, 15, 25, 12};
     
     std::vector<std::string> names1 = {"Alpha", "Beta", "Gamma"};
-    std::vector<std::string> names2 = {"Type A", "Type B", "Type C", "Type D"};
     
     std::vector<std::string> colors1 = {"red", "blue", "green"};
-    std::vector<std::string> colors2 = {"orange", "purple", "cyan", "magenta"};
     
     // DEMONSTRATE ALL discrete add_histogram() OVERLOADS
     
@@ -98,11 +98,12 @@ int main() {
     std::vector<int> counts_auto = {8, 12, 6};
     discrete_plot.add_histogram(counts_auto);  // auto-names, auto-colors
     
-    // Overload 2: counts + names (auto-colors)
-    discrete_plot.add_histogram(counts1, names1);  // auto-colors
+    // Overload 2: counts + names + colors (full specification)
+    discrete_plot.add_histogram(counts1, names1, colors1);  // full spec
     
-    // Overload 3: counts + names + colors (full specification)
-    discrete_plot.add_histogram(counts2, names2, colors2);  // full spec
+    // Test legend hiding for the red category (idx 2 from the first histogram)
+    std::cout << "   Testing legend hiding for 'idx 2'..." << std::endl;
+    discrete_plot.hide_legend_item("idx 2");
     
     // DEMONSTRATE reference lines for discrete histograms
     
@@ -120,34 +121,40 @@ int main() {
         std::cout << "   ✅ Expected restriction caught: " << e.what() << std::endl;
     }
     
-    // Save discrete histogram
-    bool discrete_success = discrete_plot.save_png("output/plot_types_03_histogram_discrete.png");
-    
     // =====================================================================
-    // REPORT RESULTS
+    // SAVE COMBINED SUBPLOT AND REPORT RESULTS
     // =====================================================================
     
-    if (continuous_success && discrete_success) {
-        std::cout << "✅ Comprehensive HistogramPlot demonstration saved!" << std::endl;
-        std::cout << "📊 Features demonstrated:" << std::endl;
-        std::cout << "   📈 CONTINUOUS HISTOGRAMS:" << std::endl;
+    std::cout << "3. Saving combined histogram subplot comparison..." << std::endl;
+    
+    bool subplot_success = subplots.save_png("output/plot_types_03_histogram_combined.png");
+    
+    if (subplot_success) {
+        std::cout << "✅ Combined HistogramPlot demonstration saved!" << std::endl;
+        std::cout << "📊 Features demonstrated in side-by-side subplots:" << std::endl;
+        std::cout << "   📈 LEFT SUBPLOT (Continuous Histograms):" << std::endl;
         std::cout << "      • 4 histogram series with different overloads" << std::endl;
         std::cout << "      • data only, data+name, data+name+color, full specification" << std::endl;
         std::cout << "      • 6 reference lines (3 vertical, 3 horizontal)" << std::endl;
-        std::cout << "   📊 DISCRETE HISTOGRAMS:" << std::endl;
-        std::cout << "      • 3 histogram series with different overloads" << std::endl;
-        std::cout << "      • counts only, counts+names, counts+names+colors" << std::endl;
+        std::cout << "   📊 RIGHT SUBPLOT (Discrete Histograms):" << std::endl;
+        std::cout << "      • 2 histogram series with different overloads" << std::endl;
+        std::cout << "      • counts only (auto-names), counts+names+colors" << std::endl;
+        std::cout << "      • Legend hiding test: 'idx 2' hidden from legend" << std::endl;
         std::cout << "      • 3 horizontal reference lines" << std::endl;
         std::cout << "      • Vertical line restriction demonstration" << std::endl;
+        std::cout << "   🎯 COMBINED BENEFITS:" << std::endl;
+        std::cout << "      • Direct visual comparison of histogram types" << std::endl;
+        std::cout << "      • Unified subplot management and shared title" << std::endl;
+        std::cout << "      • Complete API coverage in single image" << std::endl;
         std::cout << "   ⚙️ All HistogramPlot-specific methods tested" << std::endl;
         std::cout << "   🎨 Auto-color conflict avoidance for reference lines" << std::endl;
         std::cout << "   🏷️ Auto-naming for both histograms and reference lines" << std::endl;
         std::cout << "   🛡️ Type validation and error handling" << std::endl;
     } else {
-        std::cout << "❌ Failed to save one or more plots" << std::endl;
+        std::cout << "❌ Failed to save combined subplot comparison" << std::endl;
     }
     
-    return (continuous_success && discrete_success) ? 0 : 1;
+    return subplot_success ? 0 : 1;
 }
 
 /*
@@ -159,10 +166,10 @@ int main() {
  * ✅ add_histogram(values, name, color) - auto-bins
  * ✅ add_histogram(values, name, color, bin_count) - full specification
  * 
- * DISCRETE HISTOGRAM METHODS (3 overloads):
+ * DISCRETE HISTOGRAM METHODS (2 demonstrated):
  * ✅ add_histogram(counts) - auto-names ("idx 1", "idx 2"...), auto-colors
- * ✅ add_histogram(counts, names) - auto-colors
  * ✅ add_histogram(counts, names, colors) - full specification
+ * ✅ hide_legend_item("idx 2") - legend hiding test for discrete categories
  * 
  * VERTICAL REFERENCE LINES (continuous only):
  * ✅ add_vertical_line(x_value) - auto-label, auto-color

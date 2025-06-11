@@ -1,5 +1,7 @@
 # 🐳 PlotLib Docker Guide
 
+> **⚠️ Note**: This documentation references some Docker services that have been simplified in the current docker-compose.yml. The main `plotlib` service works as documented, but some advanced services mentioned here may not be available.
+
 Run PlotLib on **any platform** (Windows, macOS, Linux) using Docker containers.
 
 ## 🚀 Quick Start
@@ -15,7 +17,7 @@ git clone <repository-url>
 cd plotlib
 
 # Run all examples and generate plots
-docker-compose up plotlib
+docker compose up plotlib
 
 # Check generated plots
 ls output/
@@ -27,20 +29,20 @@ ls output/
 Runs all examples and tests, generates output plots.
 ```bash
 # Run all examples and tests
-docker-compose up plotlib
+docker compose up plotlib
 
 # Run in background
-docker-compose up -d plotlib
+docker compose up -d plotlib
 
 # View logs
-docker-compose logs plotlib
+docker compose logs plotlib
 ```
 
 ### 2. **Development Service** (`plotlib-dev`)
 Interactive development environment with full source access.
 ```bash
 # Start interactive development container
-docker-compose run --rm plotlib-dev
+docker compose run --rm plotlib-dev
 
 # Inside container:
 cd build
@@ -53,20 +55,20 @@ make beginner_examples
 Run specific examples for demonstrations.
 ```bash
 # Run beginner examples only
-DEMO_TYPE=beginner docker-compose up plotlib-demo
+DEMO_TYPE=beginner docker compose up plotlib-demo
 
 # Run advanced examples only
-DEMO_TYPE=advanced docker-compose up plotlib-demo
+DEMO_TYPE=advanced docker compose up plotlib-demo
 
 # Run specific example
-DEMO_TYPE=01_first_scatter_plot docker-compose up plotlib-demo
+DEMO_TYPE=01_first_scatter_plot docker compose up plotlib-demo
 ```
 
 ### 4. **Test Service** (`plotlib-test`)
 Run only the test suite.
 ```bash
 # Run tests
-docker-compose up plotlib-test
+docker compose up plotlib-test
 ```
 
 ## 🛠️ Development Workflows
@@ -74,7 +76,7 @@ docker-compose up plotlib-test
 ### Interactive Development
 ```bash
 # Start development container
-docker-compose run --rm plotlib-dev
+docker compose run --rm plotlib-dev
 
 # Inside container - full development environment
 cd /app
@@ -95,7 +97,7 @@ g++ -std=c++17 -I../include my_plot.cpp -L. -lplotlib \
 ### Custom Plot Development
 ```bash
 # Mount your custom code
-docker-compose run --rm -v ./my_plots:/app/my_plots plotlib-dev
+docker compose run --rm -v ./my_plots:/app/my_plots plotlib-dev
 
 # Inside container
 cd /app/my_plots
@@ -112,24 +114,24 @@ g++ -std=c++17 -I../include -L../lib my_custom_plot.cpp \
 # Clone and run
 git clone <repository-url>
 cd plotlib
-docker-compose up plotlib
+docker compose up plotlib
 
 # Development
-docker-compose run --rm plotlib-dev
+docker compose run --rm plotlib-dev
 ```
 
 ### macOS (Terminal)
 ```bash
 # Same commands as Linux
-docker-compose up plotlib
-docker-compose run --rm plotlib-dev
+docker compose up plotlib
+docker compose run --rm plotlib-dev
 ```
 
 ### Linux
 ```bash
 # Standard Docker Compose commands
-docker-compose up plotlib
-docker-compose run --rm plotlib-dev
+docker compose up plotlib
+docker compose run --rm plotlib-dev
 ```
 
 ### Cloud Platforms (AWS, GCP, Azure)
@@ -166,14 +168,14 @@ docker build --build-arg BASE_IMAGE=ubuntu:20.04 -t plotlib:custom .
 ### Environment Variables
 ```bash
 # Custom output directory
-PLOTLIB_OUTPUT_DIR=/custom/path docker-compose up plotlib
+PLOTLIB_OUTPUT_DIR=/custom/path docker compose up plotlib
 
 # Custom demo type
-DEMO_TYPE=histogram docker-compose up plotlib-demo
+DEMO_TYPE=histogram docker compose up plotlib-demo
 ```
 
 ### Custom Docker Compose Override
-Create `docker-compose.override.yml`:
+Create `docker compose.override.yml`:
 ```yaml
 version: '3.8'
 services:
@@ -192,7 +194,7 @@ services:
 sudo chown -R $USER:$USER output/
 
 # Or run with user mapping
-docker-compose run --rm --user $(id -u):$(id -g) plotlib
+docker compose run --rm --user $(id -u):$(id -g) plotlib
 ```
 
 ### Windows Path Issues
@@ -211,9 +213,9 @@ docker run -v ${PWD}/output:/app/output plotlib
 ### Build Issues
 ```bash
 # Clean rebuild
-docker-compose down
-docker-compose build --no-cache plotlib
-docker-compose up plotlib
+docker compose down
+docker compose build --no-cache plotlib
+docker compose up plotlib
 ```
 
 ## 📊 Example Outputs
@@ -279,11 +281,11 @@ spec:
 # GitHub Actions example
 - name: Run PlotLib Tests
   run: |
-    docker-compose up --exit-code-from plotlib-test plotlib-test
+    docker compose up --exit-code-from plotlib-test plotlib-test
     
 - name: Generate Example Plots
   run: |
-    docker-compose up plotlib
+    docker compose up plotlib
     
 - name: Upload Artifacts
   uses: actions/upload-artifact@v4
@@ -299,7 +301,7 @@ import subprocess
 import os
 
 # Run PlotLib container
-result = subprocess.run(['docker-compose', 'up', 'plotlib'], 
+result = subprocess.run(['docker compose', 'up', 'plotlib'], 
                        capture_output=True, text=True)
 
 # Display generated plots
@@ -311,8 +313,8 @@ for file in os.listdir('output'):
 
 ## 📚 Next Steps
 
-1. **Try the examples**: `docker-compose up plotlib`
-2. **Start developing**: `docker-compose run --rm plotlib-dev`
+1. **Try the examples**: `docker compose up plotlib`
+2. **Start developing**: `docker compose run --rm plotlib-dev`
 3. **Read the API docs**: [API Reference](api/README.md)
 4. **Check examples**: [Examples Guide](../examples/README.md)
 
@@ -320,7 +322,7 @@ for file in os.listdir('output'):
 
 - **Docker issues**: Check [Docker documentation](https://docs.docker.com/)
 - **PlotLib issues**: See [main README](../README.md)
-- **Examples**: Run `docker-compose up plotlib-demo`
+- **Examples**: Run `docker compose up plotlib-demo`
 
 ---
 

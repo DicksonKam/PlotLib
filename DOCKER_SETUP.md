@@ -25,7 +25,7 @@ brew install --cask docker
 sudo apt-get update
 
 # Install Docker
-sudo apt-get install -y docker.io docker-compose
+sudo apt-get install -y docker.io docker-compose-plugin
 
 # Add user to docker group
 sudo usermod -aG docker $USER
@@ -42,7 +42,7 @@ After installing Docker, restart your terminal and run:
 docker --version
 
 # Check Docker Compose version
-docker-compose --version
+docker compose version
 
 # Test Docker is working
 docker run hello-world
@@ -69,7 +69,7 @@ Once Docker is installed, test our PlotLib Docker setup:
 cd PlotLib
 
 # Run all examples and generate plots
-docker-compose up plotlib
+docker compose up plotlib
 
 # Check generated plots
 ls -la output/     # Linux/macOS

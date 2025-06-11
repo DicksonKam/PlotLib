@@ -127,9 +127,9 @@ jobs:
         rm -rf output/*
         chmod 777 output
         
-        # Test that direct docker-compose also works
-        echo "🧪 Testing docker-compose up plotlib equivalence..."
-        docker-compose up --exit-code-from plotlib plotlib
+        # Test that direct docker compose also works (using new syntax)
+        echo "🧪 Testing docker compose up plotlib equivalence..."
+        docker compose up --exit-code-from plotlib plotlib
         
         echo "✅ Docker Compose tests passed!"
 

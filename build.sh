@@ -4,7 +4,7 @@
 # Convenience script for building the library and examples
 # 
 # Windows users: Use Docker instead
-#   docker-compose up plotlib
+#   docker compose up plotlib
 
 set -e
 

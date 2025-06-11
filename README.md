@@ -76,8 +76,8 @@ docker run --rm -v ./output:/app/output plotlib /app/build/examples/01_first_sca
 # Run advanced examples
 docker run --rm -v ./output:/app/output plotlib /app/build/examples/05_simple_subplots
 
-# Or use docker-compose for conveniently building and running all examples
-docker-compose up plotlib
+# Or use docker compose for conveniently building and running all examples
+docker compose up plotlib
 ```
 
 ### 🔧 Native Build
@@ -99,7 +99,7 @@ git clone https://github.com/DicksonKam/PlotLib
 cd PlotLib
 
 # Use Docker (recommended for Windows)
-docker-compose up plotlib
+docker compose up plotlib
 
 # OR manual CMake build (requires Cairo setup)
 mkdir build && cd build

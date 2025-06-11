@@ -43,7 +43,7 @@ This ordering ensures intuitive, consistent API usage across all plot types and 
 **Windows:**
 ```powershell
 # Use Docker (recommended)
-docker-compose up plotlib
+docker compose up plotlib
 
 # OR manual CMake (if Cairo is installed)
 mkdir build && cd build
@@ -104,7 +104,7 @@ make run_all_examples          # Run everything
 ```bash
 docker build -t plotlib .
 docker run --rm -v ./output:/app/output plotlib /app/build/examples/01_first_scatter_plot
-docker-compose up plotlib      # Run all examples (simplest approach)
+docker compose up plotlib      # Run all examples (simplest approach)
 ```
 
 ### Testing

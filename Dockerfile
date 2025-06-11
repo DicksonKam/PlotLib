@@ -64,5 +64,5 @@ CMD ["/bin/sh", "-c", "echo '🐳 PlotLib Optimized Container Ready!' && echo 'B
 # Labels for documentation
 LABEL org.opencontainers.image.title="PlotLib"
 LABEL org.opencontainers.image.description="Cross-platform C++ plotting library with Cairo graphics (Optimized)"
-LABEL org.opencontainers.image.version="1.0.1"
+LABEL org.opencontainers.image.version="1.0.0"
 LABEL org.opencontainers.image.authors="PlotLib Contributors" 

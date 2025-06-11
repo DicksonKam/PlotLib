@@ -270,7 +270,7 @@ int main() {
         auto& accuracy_perf = perf_dashboard.get_subplot<plotlib::ScatterPlot>(1, 0);
         accuracy_perf.set_labels("Accuracy vs Performance", "Rendering Speed (fps)", "Data Accuracy (%)");
         
-        // Convert Point2D data to separate x/y vectors
+        // Generate separate x/y vectors
         std::vector<double> method_x = {1.0, 15.0, 30.0, 25.0};
         std::vector<double> method_y = {100.0, 95.0, 85.0, 90.0};
         accuracy_perf.add_scatter(method_x, method_y, "Optimization Methods", "purple");

@@ -51,7 +51,7 @@ For experienced developers who want professional-quality visualizations, perform
 ## 🎨 What Each Example Demonstrates
 
 ### 01 - First Scatter Plot
-- Creating Point2D data
+- Creating separate X/Y vectors (current API)
 - Basic plot setup (dimensions, labels)
 - Adding data with automatic styling
 - Saving plots as PNG
@@ -208,15 +208,16 @@ Use this template to create your own examples:
 int main() {
     std::cout << "Creating my custom plot..." << std::endl;
     
-    // 1. Create your data
-    std::vector<plotlib::Point2D> data = {{1, 2}, {3, 4}};
+    // 1. Create your data (separate X/Y vectors)
+    std::vector<double> x_values = {1, 3, 5, 7};
+    std::vector<double> y_values = {2, 4, 6, 8};
     
     // 2. Create plot
     plotlib::ScatterPlot plot(800, 600);
     plot.set_labels("My Plot", "X Axis", "Y Axis");
     
-    // 3. Add data
-    plot.add_data("My Data", data, "blue");
+    // 3. Add data (data→naming→colors)
+    plot.add_scatter(x_values, y_values, "My Data", "blue");
     
     // 4. Save
     bool success = plot.save_png("output/my_plot.png");

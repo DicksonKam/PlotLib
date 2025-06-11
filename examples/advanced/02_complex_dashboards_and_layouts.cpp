@@ -63,7 +63,7 @@ int main() {
     auto& regional_perf = executive_dashboard.get_subplot<plotlib::ScatterPlot>(0, 2);
     regional_perf.set_labels("Regional Performance", "Market Size", "Revenue");
     
-    // Convert Point2D data to separate x/y vectors
+    // Generate separate x/y vectors for regional data
     std::vector<double> north_x, north_y, south_x, south_y, west_x, west_y, east_x, east_y;
     for (int i = 0; i < 15; ++i) {
         north_x.push_back(gen() % 100 + 50);
@@ -117,7 +117,7 @@ int main() {
     auto& product_perf = executive_dashboard.get_subplot<plotlib::ScatterPlot>(1, 2);
     product_perf.set_labels("Product Performance", "Units Sold", "Profit Margin %");
     
-    // Convert Point2D data to separate x/y vectors
+    // Generate separate x/y vectors for regional data
     std::vector<double> product_a_x, product_a_y, product_b_x, product_b_y, product_c_x, product_c_y;
     std::uniform_real_distribution<> units_dist(100, 1000);
     std::uniform_real_distribution<> margin_dist(10, 40);
@@ -165,7 +165,7 @@ int main() {
     auto& strategic_pos = executive_dashboard.get_subplot<plotlib::ScatterPlot>(2, 2);
     strategic_pos.set_labels("Strategic Positioning", "Innovation Index", "Market Position");
     
-    // Convert Point2D data to separate x/y vectors
+    // Generate separate x/y vectors for regional data
     std::vector<double> current_x = {75}, current_y = {68};
     std::vector<double> target_x = {85}, target_y = {80};
     std::vector<double> competitors_x, competitors_y;
@@ -221,7 +221,7 @@ int main() {
     auto& correlation = research_dashboard.get_subplot<plotlib::ScatterPlot>(1, 0);
     correlation.set_labels("Variable Correlation", "Variable X", "Variable Y");
     
-    // Convert Point2D data to separate x/y vectors
+    // Generate separate x/y vectors for regional data
     std::vector<double> corr_x, corr_y;
     for (int i = 0; i < 200; ++i) {
         double x = measurement_dist(gen);
@@ -261,7 +261,7 @@ int main() {
     auto& quality_control = research_dashboard.get_subplot<plotlib::ScatterPlot>(2, 1);
     quality_control.set_labels("Quality Control", "Batch", "Purity (%)");
     
-    // Convert Point2D data to separate x/y vectors
+    // Generate separate x/y vectors for regional data
     std::vector<double> qc_x, qc_y;
     std::normal_distribution<> purity_dist(98, 1);
     for (int i = 1; i <= 50; ++i) {

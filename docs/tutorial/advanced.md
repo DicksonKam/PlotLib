@@ -20,13 +20,13 @@ The simplified API provides an elegant color system with automatic color assignm
 
 ```cpp
 // Automatic color assignment (recommended for beginners)
-plot.add_scatter("Series 1", x1, y1);  // Auto-assigned blue
-plot.add_scatter("Series 2", x2, y2);  // Auto-assigned red
-plot.add_scatter("Series 3", x3, y3);  // Auto-assigned green
+plot.add_scatter(x1, y1, "Series 1");  // Auto-assigned blue
+plot.add_scatter(x2, y2, "Series 2");  // Auto-assigned red
+plot.add_scatter(x3, y3, "Series 3");  // Auto-assigned green
 
 // Manual color specification (for precise control)
-plot.add_scatter("Treatment", x_treat, y_treat, "red");
-plot.add_scatter("Control", x_control, y_control, "blue");
+plot.add_scatter(x_treat, y_treat, "Treatment", "red");
+plot.add_scatter(x_control, y_control, "Control", "blue");
 ```
 
 ### Advanced Legend Management
@@ -78,7 +78,7 @@ std::vector<T> sample_data(const std::vector<T>& data, size_t target_size) {
 // Usage with separate x/y vectors
 auto sampled_x = sample_data(large_x_data, 5000);
 auto sampled_y = sample_data(large_y_data, 5000);
-plot.add_scatter("Sampled", sampled_x, sampled_y, "blue");
+plot.add_scatter(sampled_x, sampled_y, "Sampled", "blue");
 ```
 
 #### 2. Data Aggregation
@@ -142,7 +142,7 @@ public:
 // Usage
 {
     PerformanceTimer timer("Large dataset plotting");
-    plot.add_scatter("Large Dataset", huge_x_data, huge_y_data, "blue");
+    plot.add_scatter(huge_x_data, huge_y_data, "Large Dataset", "blue");
     plot.save_png("output.png");
 }
 ```
@@ -171,8 +171,8 @@ const std::string EFFICIENCY_COLOR = "blue";
 const std::string RISK_COLOR = "orange";
 
 // Apply consistently across related plots
-revenue_plot.add_line("Revenue", time_data, revenue_data, REVENUE_COLOR);
-cost_plot.add_histogram("Costs", cost_data, COST_COLOR);
+revenue_plot.add_line(time_data, revenue_data, "Revenue", REVENUE_COLOR);
+cost_plot.add_histogram(cost_data, "Costs", COST_COLOR);
 ```
 
 #### 3. Logical Grouping
@@ -202,19 +202,19 @@ auto& correlation = research.get_subplot<plotlib::ScatterPlot>(0, 0);
 correlation.set_labels("Variable Correlation", "X", "Y");
 std::vector<double> corr_x, corr_y;
 // ... generate correlation data
-correlation.add_scatter("Experimental Data", corr_x, corr_y, "purple");
+correlation.add_scatter(corr_x, corr_y, "Experimental Data", "purple");
 
 // Time series
 auto& timeseries = research.get_subplot<plotlib::LinePlot>(0, 1);
 timeseries.set_labels("Signal Over Time", "Time", "Amplitude");
-timeseries.add_line("Control", time_data, control_signal, "blue");
-timeseries.add_line("Treatment", time_data, treatment_signal, "red");
+timeseries.add_line(time_data, control_signal, "Control", "blue");
+timeseries.add_line(time_data, treatment_signal, "Treatment", "red");
 
 // Distribution comparison
 auto& distributions = research.get_subplot<plotlib::HistogramPlot>(0, 2);
 distributions.set_labels("Response Distribution", "Value", "Frequency");
-distributions.add_histogram("Before", before_data, "red", 30);
-distributions.add_histogram("After", after_data, "green", 30);
+distributions.add_histogram(before_data, "Before", "red", 30);
+distributions.add_histogram(after_data, "After", "green", 30);
 ```
 
 ## Memory Management
@@ -247,7 +247,7 @@ for (size_t start = 0; start < total_data_size; start += CHUNK_SIZE) {
     std::vector<double> chunk_x(x_data.begin() + start, x_data.begin() + end);
     std::vector<double> chunk_y(y_data.begin() + start, y_data.begin() + end);
     
-    plot.add_scatter("Chunk " + std::to_string(start/CHUNK_SIZE), chunk_x, chunk_y);
+    plot.add_scatter(chunk_x, chunk_y, "Chunk " + std::to_string(start/CHUNK_SIZE));
 }
 ```
 
@@ -274,10 +274,10 @@ plotlib::LinePlot comparison(1000, 600);
 comparison.set_labels("Performance Comparison", "Time", "Metric");
 
 // Add multiple series with descriptive names
-comparison.add_line("Baseline", time_data, baseline_data, "black");
-comparison.add_line("Optimized v1", time_data, opt_v1_data, "blue");
-comparison.add_line("Optimized v2", time_data, opt_v2_data, "red");
-comparison.add_line("Target", time_data, target_data, "green");
+comparison.add_line(time_data, baseline_data, "Baseline", "black");
+comparison.add_line(time_data, opt_v1_data, "Optimized v1", "blue");
+comparison.add_line(time_data, opt_v2_data, "Optimized v2", "red");
+comparison.add_line(time_data, target_data, "Target", "green");
 ```
 
 ## Integration Patterns
@@ -294,8 +294,8 @@ void create_comparison_plot(const DataContainer& data1, const DataContainer& dat
     std::vector<double> x1, y1, x2, y2;
     // ... extract data from containers
     
-    plot.add_scatter("Dataset 1", x1, y1, "blue");
-    plot.add_scatter("Dataset 2", x2, y2, "red");
+    plot.add_scatter(x1, y1, "Dataset 1", "blue");
+    plot.add_scatter(x2, y2, "Dataset 2", "red");
     plot.save_png(title + ".png");
 }
 ```
@@ -327,12 +327,12 @@ public:
 1. **Large datasets without sampling**
    ```cpp
    // Problem: Direct plotting of 100K+ points
-   plot.add_scatter("Raw", huge_x, huge_y);  // Slow!
+   plot.add_scatter(huge_x, huge_y, "Raw");  // Slow!
    
    // Solution: Sample or aggregate
    auto sampled_x = sample_data(huge_x, 5000);
    auto sampled_y = sample_data(huge_y, 5000);
-   plot.add_scatter("Sampled", sampled_x, sampled_y);
+   plot.add_scatter(sampled_x, sampled_y, "Sampled");
    ```
 
 2. **Memory inefficient data handling**

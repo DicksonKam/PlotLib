@@ -61,7 +61,7 @@ Once Docker is installed, test our PlotLib Docker setup:
 ### Quick Test (Run all examples):
 ```bash
 # From the PlotLib directory
-cd /Users/dicksonkam/Mphil/new_image_recog/PlotLib
+cd PlotLib
 
 # Run all examples and generate plots
 docker-compose up plotlib

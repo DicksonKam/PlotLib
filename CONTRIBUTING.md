@@ -34,7 +34,7 @@ make -j$(nproc)
 - **Line length**: Maximum 100 characters
 - **Naming**: 
   - Classes: `PascalCase` (e.g., `ScatterPlot`)
-  - Functions/variables: `snake_case` (e.g., `add_data`)
+  - Functions/variables: `snake_case` (e.g., `add_scatter`)
   - Constants: `UPPER_SNAKE_CASE`
 - **Braces**: K&R style (opening brace on same line)
 
@@ -62,7 +62,7 @@ make -j$(nproc)
  * @example
  * @code
  * ScatterPlot plot(800, 600);
- * plot.add_data("My Data", points);
+ * plot.add_scatter(x_values, y_values, "My Data", "blue");
  * @endcode
  */
 ```

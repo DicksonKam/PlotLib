@@ -18,7 +18,7 @@ To become the **go-to C++ plotting library** that combines simplicity for beginn
 
 ## 📋 Version Roadmap
 
-### 🔄 v1.1.0 - Enhanced Functionality (Q1 2025)
+### 🔄 v1.1.0 - Enhanced Functionality (Q2 2025)
 
 **Theme: Expanding Core Capabilities**
 
@@ -46,7 +46,7 @@ To become the **go-to C++ plotting library** that combines simplicity for beginn
 - **Grid Customization** - Advanced grid styling options
 - **Annotation System** - Text and arrow annotations
 
-### 🔄 v1.2.0 - Advanced Analytics (Q4 2024)
+### 🔄 v1.2.0 - Advanced Analytics (Q4 2025)
 
 **Theme: Smart Data Analysis**
 
@@ -68,7 +68,7 @@ To become the **go-to C++ plotting library** that combines simplicity for beginn
 - **API Integration** - REST API data fetching
 - **Database Support** - SQL query result plotting
 
-### 🔄 v1.3.0 - Interactive Features (Q1 2025)
+### 🔄 v1.3.0 - Interactive Features (Q1 2026)
 
 **Theme: Dynamic Visualization**
 
@@ -90,7 +90,7 @@ To become the **go-to C++ plotting library** that combines simplicity for beginn
 - **Responsive Design** - Adaptive plot layouts
 - **Accessibility** - Screen reader support
 
-### 🔄 v2.0.0 - Next Generation (Q2 2025)
+### 🔄 v2.0.0 - Next Generation (Q2 2026)
 
 **Theme: Revolutionary Capabilities**
 

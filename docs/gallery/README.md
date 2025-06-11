@@ -11,16 +11,16 @@ Perfect for showing relationships between variables and cluster analysis.
 ```cpp
 plotlib::ScatterPlot plot(800, 600);
 plot.set_labels("My First Plot", "X Values", "Y Values");
-plot.add_scatter("Data", x_values, y_values, "blue");
+plot.add_scatter(x_values, y_values, "Data", "blue");
 plot.save_png("scatter.png");
 ```
 *Shows individual data points with automatic styling*
 
 #### Multiple Series with Colors
 ```cpp
-plot.add_scatter("Series A", x_a, y_a, "blue");
-plot.add_scatter("Series B", x_b, y_b, "red");
-plot.add_scatter("Series C", x_c, y_c, "green");
+plot.add_scatter(x_a, y_a, "Series A", "blue");
+plot.add_scatter(x_b, y_b, "Series B", "red");
+plot.add_scatter(x_c, y_c, "Series C", "green");
 ```
 *Multiple datasets with different colors and automatic legend*
 
@@ -36,20 +36,20 @@ Ideal for time series data and mathematical functions.
 #### Temperature Over Time
 ```cpp
 plotlib::LinePlot plot(800, 600);
-plot.add_line("Temperature", time, temperature, "red");
+plot.add_line(time, temperature, "Temperature", "red");
 ```
 *Simple time series visualization*
 
 #### Mathematical Functions
 ```cpp
-plot.add_line("sin(x)", x_values, sine_values, "blue");
-plot.add_line("cos(x)", x_values, cosine_values, "green");
+plot.add_line(x_values, sine_values, "sin(x)", "blue");
+plot.add_line(x_values, cosine_values, "cos(x)", "green");
 ```
 *Multiple mathematical functions on the same plot*
 
 #### Growth Trends
 ```cpp
-plot.add_line("Revenue", years, revenue, "purple");
+plot.add_line(years, revenue, "Revenue", "purple");
 ```
 *Business data visualization with clear trends*
 
@@ -59,24 +59,24 @@ Great for understanding data distributions.
 #### Test Score Distribution
 ```cpp
 plotlib::HistogramPlot plot(800, 600);
-plot.add_histogram("Scores", test_scores, "blue");
+plot.add_histogram(test_scores, "Scores", "blue");
 ```
 *Shows how data is distributed across ranges*
 
 #### Comparing Groups
 ```cpp
-plot.add_histogram("Group A", group_a_data, "blue", 20);
-plot.add_histogram("Group B", group_b_data, "orange", 20);
+plot.add_histogram(group_a_data, "Group A", "blue", 20);
+plot.add_histogram(group_b_data, "Group B", "orange", 20);
 ```
 *Side-by-side comparison of two distributions*
 
 #### Different Bin Counts
 ```cpp
 // Fewer bins - general pattern
-plot.add_histogram("Data", values, "green", 10);
+plot.add_histogram(values, "Data", "green", 10);
 
 // More bins - detailed distribution  
-plot.add_histogram("Data", values, "red", 30);
+plot.add_histogram(values, "Data", "red", 30);
 ```
 *Same data with different levels of detail*
 
@@ -127,9 +127,9 @@ PlotLib supports these color names:
 
 ### Automatic Color Assignment
 ```cpp
-plot.add_scatter("Series 1", x1, y1);  // Automatically blue
-plot.add_scatter("Series 2", x2, y2);  // Automatically red
-plot.add_scatter("Series 3", x3, y3);  // Automatically green
+plot.add_scatter(x1, y1, "Series 1");  // Automatically blue
+plot.add_scatter(x2, y2, "Series 2");  // Automatically red
+plot.add_scatter(x3, y3, "Series 3");  // Automatically green
 ```
 *Library automatically chooses contrasting colors*
 
@@ -160,8 +160,8 @@ plot.add_scatter("Series 3", x3, y3);  // Automatically green
 plot.set_labels("Quarterly Revenue Analysis", 
                 "Quarter", 
                 "Revenue ($ millions)");
-plot.add_line("2023", q2023, revenue_2023, "blue");
-plot.add_line("2024", q2024, revenue_2024, "red");
+plot.add_line(q2023, revenue_2023, "2023", "blue");
+plot.add_line(q2024, revenue_2024, "2024", "red");
 ```
 
 ### Scientific Plots
@@ -169,8 +169,8 @@ plot.add_line("2024", q2024, revenue_2024, "red");
 plot.set_labels("Experimental Results", 
                 "Time (seconds)", 
                 "Amplitude (mV)");
-plot.add_scatter("Control", control_x, control_y, "black");
-plot.add_scatter("Treatment", treatment_x, treatment_y, "red");
+plot.add_scatter(control_x, control_y, "Control", "black");
+plot.add_scatter(treatment_x, treatment_y, "Treatment", "red");
 ```
 
 ### Educational Dashboards
@@ -220,7 +220,7 @@ manager.set_main_title("Student Performance Analysis");
 #include "scatter_plot.h"
 plotlib::ScatterPlot plot(800, 600);
 plot.set_labels("Title", "X", "Y");
-plot.add_scatter("Data", x_values, y_values, "blue");
+plot.add_scatter(x_values, y_values, "Data", "blue");
 plot.save_png("output.png");
 ```
 
@@ -229,7 +229,7 @@ plot.save_png("output.png");
 #include "line_plot.h"
 plotlib::LinePlot plot(800, 600);
 plot.set_labels("Title", "X", "Y");
-plot.add_line("Data", x_vals, y_vals, "red");
+plot.add_line(x_vals, y_vals, "Data", "red");
 plot.save_png("output.png");
 ```
 
@@ -238,7 +238,7 @@ plot.save_png("output.png");
 #include "histogram_plot.h"
 plotlib::HistogramPlot plot(800, 600);
 plot.set_labels("Title", "Value", "Frequency");
-plot.add_histogram("Data", values, "green", 20);
+plot.add_histogram(values, "Data", "green", 20);
 plot.save_png("output.png");
 ```
 

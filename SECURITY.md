@@ -13,9 +13,8 @@ If you discover a security vulnerability in PlotLib, please report it responsibl
 
 ### How to Report
 
-1. **Email**: Send details to [security@plotlib.dev](mailto:security@plotlib.dev)
-2. **GitHub**: Create a private security advisory on GitHub
-3. **Include**: 
+1. **GitHub**: Create a private security advisory on GitHub
+2. **Include**: 
    - Description of the vulnerability
    - Steps to reproduce
    - Potential impact

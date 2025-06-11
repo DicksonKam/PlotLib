@@ -1,0 +1,2 @@
+# This file ensures the output directory is preserved in git
+# All generated plot files (*.png, *.svg) are ignored by .gitignore

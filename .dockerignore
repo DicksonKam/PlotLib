@@ -7,6 +7,34 @@ cmake-build-*/
 memory-bank/
 .git/
 .github/
+.gitignore
+.dockerignore
+
+# CMake artifacts
+CMakeCache.txt
+CMakeFiles/
+CMakeScripts/
+Testing/
+Makefile
+cmake_install.cmake
+install_manifest.txt
+compile_commands.json
+CTestTestfile.cmake
+_deps
+
+# Compiled files
+*.o
+*.obj
+*.gch
+*.pch
+*.so
+*.dylib
+*.dll
+*.a
+*.lib
+*.exe
+*.out
+*.app
 
 # IDE files
 .vscode/
@@ -25,12 +53,12 @@ ehthumbs.db
 Thumbs.db
 
 # Output files (will be created inside container)
-output/*.png
-output/*.svg
+output/
 
 # Documentation build artifacts
 docs/html/
 docs/latex/
+docs/Doxyfile.bak
 
 # Temporary files
 *.tmp
@@ -39,4 +67,7 @@ docs/latex/
 
 # Package files
 *.tar.gz
-*.zip 
+*.zip
+
+# Docker
+docker-compose.override.yml 

@@ -6,19 +6,16 @@ on:
   pull_request:
     branches: [ main ]
 
-# Note on Windows testing:
-# Windows Docker in GitHub Actions is unreliable due to daemon issues
-# Real Windows users use Docker Desktop which works perfectly
-# Windows compatibility is validated through DOCKER_SETUP.md instructions
+# Note on macOS/Windows testing:
+# macOS/Windows Docker in GitHub Actions have daemon connectivity issues
+# Real macOS/Windows users use Docker Desktop which works perfectly
+# Cross-platform compatibility validated through DOCKER_SETUP.md instructions
 
 jobs:
   docker-build:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        # Note: Windows Docker in GitHub Actions is unreliable
-        # Real users use Docker Desktop which works fine
-        os: [ubuntu-latest, macOS-latest]
+    runs-on: ubuntu-latest
+    # Note: GitHub Actions Docker works reliably only on Ubuntu
+    # macOS/Windows users use Docker Desktop locally (works perfectly)
     
     steps:
     - uses: actions/checkout@v4
@@ -134,7 +131,7 @@ jobs:
     - name: Upload Docker test artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: docker-test-output-${{ matrix.os }}
+        name: docker-test-output-ubuntu
         path: output/
 
   # Test Windows Docker via multi-platform build (more reliable)

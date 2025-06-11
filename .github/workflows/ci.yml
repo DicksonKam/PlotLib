@@ -78,8 +78,7 @@ jobs:
 
     - name: Test example execution
       run: |
-        cd build
-        ./examples/01_first_scatter_plot
+        ./build/examples/01_first_scatter_plot
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v4

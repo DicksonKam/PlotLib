@@ -32,7 +32,7 @@ jobs:
         
         # Run example to test plotting functionality
         echo "📊 Running example plot generation..."
-        docker run --rm -v $(pwd)/output:/app/output:Z plotlib:latest /bin/sh -c "cd /app && /app/build/examples/01_first_scatter_plot"
+        docker run --rm -v $(pwd)/output:/app/output:Z plotlib:latest /app/build/examples/01_first_scatter_plot
         
         # Debug: Show directory structure and permissions
         echo "📁 Output directory info:"
@@ -41,16 +41,16 @@ jobs:
         find output/ -name "*.png" -o -name "*.svg" 2>/dev/null || echo "No image files found"
         
         # Check if the expected file exists
-        if [ -f output/01_first_scatter_plot.png ]; then
+        if [ -f output/beginner_01_first_scatter_plot.png ]; then
           # Check file size to ensure it's a real image
-          file_size=$(stat -c%s output/01_first_scatter_plot.png 2>/dev/null || stat -f%z output/01_first_scatter_plot.png)
+          file_size=$(stat -c%s output/beginner_01_first_scatter_plot.png 2>/dev/null || stat -f%z output/beginner_01_first_scatter_plot.png)
           if [ "$file_size" -lt 1000 ]; then
             echo "❌ Error: Generated file is too small (${file_size} bytes)"
             exit 1
           fi
           echo "✅ Docker container test passed! Generated ${file_size} byte PNG file."
         else
-          echo "❌ Error: Expected output file was not generated at output/01_first_scatter_plot.png"
+          echo "❌ Error: Expected output file was not generated at output/beginner_01_first_scatter_plot.png"
           
           # Additional debugging
           echo "🔍 Directory permissions:"
@@ -61,7 +61,6 @@ jobs:
           # Try running the container with debug info
           echo "🐛 Debug: Re-running with verbose output..."
           docker run --rm -v $(pwd)/output:/app/output:Z plotlib:latest /bin/sh -c "
-            cd /app && 
             echo 'Working directory:' && pwd &&
             echo 'Output directory exists?' && ls -la /app/output &&
             echo 'Running example...' &&

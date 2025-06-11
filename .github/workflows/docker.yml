@@ -32,8 +32,9 @@ jobs:
     - name: Test Docker container (following docker-compose.yml)
       shell: bash
       run: |
-        # Create output directory (cross-platform)
+        # Create output directory with proper permissions (cross-platform)
         mkdir -p output
+        chmod 777 output  # Ensure container can write to mounted volume
         
         # Run the exact same command as docker-compose.yml (cross-platform volume syntax)
         echo "🐳 Running PlotLib Container (following docker-compose.yml logic)..."
@@ -122,6 +123,10 @@ jobs:
     - name: Test Docker Compose equivalence
       shell: bash
       run: |
+        # Clean up any existing output and ensure proper permissions
+        rm -rf output/*
+        chmod 777 output
+        
         # Test that direct docker-compose also works
         echo "🧪 Testing docker-compose up plotlib equivalence..."
         docker-compose up --exit-code-from plotlib plotlib

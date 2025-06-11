@@ -41,13 +41,15 @@ RUN adduser -D -u 1000 plotlib
 
 # Create working directory and output directory
 WORKDIR /app
-RUN mkdir -p output
+RUN mkdir -p output && chmod 755 output
 
 # Copy only the built artifacts from builder stage
 COPY --from=builder /app/build /app/build
 
-# Set proper ownership
-RUN chown -R plotlib:plotlib /app
+# Set proper ownership and permissions
+RUN chown -R plotlib:plotlib /app && \
+    chmod -R 755 /app && \
+    chmod 777 /app/output
 
 # Switch to non-root user
 USER plotlib

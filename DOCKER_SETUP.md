@@ -16,6 +16,7 @@ brew install --cask docker
 ```powershell
 # Download Docker Desktop for Windows
 # Visit: https://docs.docker.com/desktop/install/windows/
+# IMPORTANT: Ensure "Use WSL 2 based engine" is enabled (default)
 ```
 
 ### For Linux (Ubuntu/Debian):
@@ -58,6 +59,10 @@ Hello from Docker! (and additional success message)
 
 Once Docker is installed, test our PlotLib Docker setup:
 
+### Platform-Specific Notes:
+- **Windows**: Use PowerShell or Command Prompt (Docker Desktop handles Linux containers)
+- **macOS/Linux**: Use Terminal
+
 ### Quick Test (Run all examples):
 ```bash
 # From the PlotLib directory
@@ -67,34 +72,22 @@ cd PlotLib
 docker-compose up plotlib
 
 # Check generated plots
-ls -la output/
+ls -la output/     # Linux/macOS
+dir output\        # Windows (alternative)
 ```
 
-### Development Test:
-```bash
-# Start interactive development container
-docker-compose run --rm plotlib-dev
-
-# Inside the container, you can now:
-cd build
-make plotlib
-make beginner_examples
-./examples/01_first_scatter_plot
+### Alternative for Windows (if volume mounting issues):
+```powershell
+# Windows PowerShell alternative
+docker build -t plotlib .
+docker run --rm plotlib
+# Note: Plots stay inside container (for testing only)
 ```
 
-### Demo Test:
+### Individual Example Test:
 ```bash
-# Run just beginner examples
-DEMO_TYPE=beginner docker-compose up plotlib-demo
-
-# Run just advanced examples  
-DEMO_TYPE=advanced docker-compose up plotlib-demo
-
-# Run just plot_types examples
-DEMO_TYPE=plot_types docker-compose up plotlib-demo
-
-# Run specific example
-DEMO_TYPE=01_first_scatter_plot docker-compose up plotlib-demo
+# Run individual examples directly
+docker run --rm -v ./output:/app/output plotlib /app/build/examples/01_first_scatter_plot
 ```
 
 ## Step 4: Verify Everything Works

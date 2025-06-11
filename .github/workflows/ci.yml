@@ -41,50 +41,66 @@ jobs:
           echo "CXX=clang++" >> $GITHUB_ENV
         fi
 
-    - name: Create build directory
-      run: mkdir build
-
-    - name: Configure CMake
+    # Replicate build.sh logic exactly
+    - name: Build PlotLib (following build.sh)
       run: |
+        echo "🔨 PlotLib Build Script (GitHub CI)"
+        echo "=================================="
+        
+        # Check if build directory exists (from build.sh line 12-15)
+        if [ -d "build" ]; then
+            echo "🧹 Removing existing build directory..."
+            rm -rf build
+        fi
+        
+        # Create build directory (from build.sh line 17-20)
+        echo "📁 Creating build directory..."
+        mkdir build
         cd build
-        pkg-config --exists cairo && echo "Cairo found" || echo "Cairo not found"
-        pkg-config --cflags cairo
-        pkg-config --libs cairo
+        
+        # Configure with CMake (from build.sh line 22-24)
+        echo "⚙️  Configuring with CMake..."
         cmake .. -DCMAKE_BUILD_TYPE=Release
-
-    - name: Build library
-      run: |
-        cd build
-        make plotlib -j$(nproc 2>/dev/null || echo 2)
-
-    - name: Build tests
-      run: |
-        cd build
+        
+        # Build library (from build.sh line 26-28)
+        echo "📚 Building library..."
+        make plotlib -j$(nproc 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null || echo 2)
+        
+        # Build examples (from build.sh line 30-34)
+        echo "📊 Building examples..."
+        make beginner_examples -j$(nproc 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null || echo 2)
+        make advanced_examples -j$(nproc 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null || echo 2)
+        make plot_types_examples -j$(nproc 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null || echo 2)
+        
+        # Build and run tests (from build.sh line 36-39)
+        echo "🧪 Building and running tests..."
         make basic_tests
-
-    - name: Run tests
-      run: |
-        cd build
         ./tests/basic_tests
+        
+        echo ""
+        echo "✅ Build completed successfully!"
 
-    - name: Build examples
+    - name: Test example execution (verify build.sh works)
       run: |
-        cd build
-        make beginner_examples
-        make advanced_examples
-
-    - name: Create output directory
-      run: mkdir -p output
-
-    - name: Test example execution
-      run: |
+        # Create output directory
+        mkdir -p output
+        
+        # Test individual example (matches build.sh output)
+        echo "🧪 Testing example execution..."
         ./build/examples/01_first_scatter_plot
+        
+        # Verify output was created
+        if [ -f "output/beginner_01_first_scatter_plot.png" ]; then
+          echo "✅ Example execution successful!"
+        else
+          echo "❌ Example execution failed - no output generated"
+          exit 1
+        fi
 
-    - name: Upload artifacts
+    - name: Upload build artifacts
       uses: actions/upload-artifact@v4
       with:
         name: build-artifacts-${{ matrix.os }}-${{ matrix.compiler }}
         path: |
-          build/plotlib
-          build/examples/
-          output/ 
+          build/
+          output/

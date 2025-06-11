@@ -34,10 +34,24 @@ This ordering ensures intuitive, consistent API usage across all plot types and 
 ## Build Commands
 
 ### Quick Build and Test
+
+**Linux/macOS:**
 ```bash
 ./build.sh
 ```
-This script automatically:
+
+**Windows:**
+```powershell
+# Use Docker (recommended)
+docker-compose up plotlib
+
+# OR manual CMake (if Cairo is installed)
+mkdir build && cd build
+cmake .. -DCMAKE_BUILD_TYPE=Release
+cmake --build . --target plotlib
+```
+
+The build.sh script automatically:
 - Removes existing build directory
 - Configures with CMake in Release mode
 - Builds the library and all examples
@@ -90,9 +104,7 @@ make run_all_examples          # Run everything
 ```bash
 docker build -t plotlib .
 docker run --rm -v ./output:/app/output plotlib /app/build/examples/01_first_scatter_plot
-docker-compose up plotlib      # Run all examples
-docker-compose up plotlib-dev  # Development shell
-docker-compose up plotlib-test # Tests only
+docker-compose up plotlib      # Run all examples (simplest approach)
 ```
 
 ### Testing

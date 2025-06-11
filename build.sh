@@ -1,7 +1,10 @@
 #!/bin/bash
 
-# PlotLib Build Script
+# PlotLib Build Script (Linux/macOS)
 # Convenience script for building the library and examples
+# 
+# Windows users: Use Docker instead
+#   docker-compose up plotlib
 
 set -e
 

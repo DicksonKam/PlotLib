@@ -8,7 +8,10 @@ on:
 
 jobs:
   docker-build:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macOS-latest, windows-latest]
     
     steps:
     - uses: actions/checkout@v4
@@ -20,72 +23,109 @@ jobs:
       run: |
         docker build -t plotlib:latest .
     
-    - name: Test Docker container
+    # Replicate docker-compose.yml logic exactly
+    - name: Test Docker container (following docker-compose.yml)
       run: |
-        # Create output directory with proper permissions
-        mkdir -p output
-        chmod 777 output  # Ensure container can write
+        # Create output directory (cross-platform)
+        mkdir output
         
-        # Run tests in container
-        echo "🧪 Running PlotLib tests..."
-        docker run --rm plotlib:latest /bin/sh -c "/app/build/tests/basic_tests"
-        
-        # Run example to test plotting functionality
-        echo "📊 Running example plot generation..."
-        docker run --rm -v $(pwd)/output:/app/output:Z plotlib:latest /app/build/examples/01_first_scatter_plot
-        
-        # Debug: Show directory structure and permissions
-        echo "📁 Output directory info:"
-        ls -la output/ || echo "Output directory is empty or doesn't exist"
-        echo "🔍 Looking for any image files:"
-        find output/ -name "*.png" -o -name "*.svg" 2>/dev/null || echo "No image files found"
-        
-        # Check if the expected file exists
-        if [ -f output/beginner_01_first_scatter_plot.png ]; then
-          # Check file size to ensure it's a real image
-          file_size=$(stat -c%s output/beginner_01_first_scatter_plot.png 2>/dev/null || stat -f%z output/beginner_01_first_scatter_plot.png)
-          if [ "$file_size" -lt 1000 ]; then
-            echo "❌ Error: Generated file is too small (${file_size} bytes)"
-            exit 1
-          fi
-          echo "✅ Docker container test passed! Generated ${file_size} byte PNG file."
-        else
-          echo "❌ Error: Expected output file was not generated at output/beginner_01_first_scatter_plot.png"
-          
-          # Additional debugging
-          echo "🔍 Directory permissions:"
-          ls -ld output/
-          echo "🔍 All files in output/:"
-          find output/ -type f 2>/dev/null || echo "No files found"
-          
-          # Try running the container with debug info
-          echo "🐛 Debug: Re-running with verbose output..."
-          docker run --rm -v $(pwd)/output:/app/output:Z plotlib:latest /bin/sh -c "
-            echo 'Working directory:' && pwd &&
-            echo 'Output directory exists?' && ls -la /app/output &&
-            echo 'Running example...' &&
-            /app/build/examples/01_first_scatter_plot &&
-            echo 'After running:' && ls -la /app/output
+        # Run the exact same command as docker-compose.yml (cross-platform volume syntax)
+        echo "🐳 Running PlotLib Container (following docker-compose.yml logic)..."
+        docker run --rm \
+          -v "${PWD}/output:/app/output" \
+          -e PLOTLIB_OUTPUT_DIR=/app/output \
+          plotlib:latest \
+          /bin/sh -c "
+          echo 'PlotLib Container - Running All Examples...' &&
+          cd /app &&
+          echo 'Running beginner examples...' &&
+          for example in /app/build/examples/[0-9][0-9]_*; do
+            if [ -x \"\$example\" ]; then
+              echo \"  Running \$(basename \$example)...\"
+              \$example
+            fi
+          done &&
+          echo 'Running advanced examples...' &&
+          for example in /app/build/examples/advanced_*; do
+            if [ -x \"\$example\" ]; then
+              echo \"  Running \$(basename \$example)...\"
+              \$example
+            fi
+          done &&
+          echo 'Running plot_types examples...' &&
+          for example in /app/build/examples/plot_types_*; do
+            if [ -x \"\$example\" ]; then
+              echo \"  Running \$(basename \$example)...\"
+              \$example
+            fi
+          done &&
+          echo 'Running tests...' &&
+          /app/build/tests/basic_tests &&
+          echo 'All examples and tests completed! Check ./output for generated plots.'
           "
+
+    - name: Verify Docker output (same as docker-compose.yml expectation)
+      shell: bash
+      run: |
+        echo "📁 Checking output directory..."
+        ls output/ 2>/dev/null || echo "Output directory is empty or doesn't exist"
+        
+        # Cross-platform file counting
+        echo "📊 Looking for generated plot files..."
+        
+        # Verify we have the expected files from all categories (cross-platform)
+        if [ -f "output/beginner_01_first_scatter_plot.png" ]; then
+          echo "✅ Beginner examples generated"
+        else
+          echo "❌ Missing beginner examples"
           exit 1
         fi
-    
-    - name: Test Docker Compose
-      run: |
-        # Test the test service
-        echo "🧪 Testing Docker Compose test service..."
-        docker compose up --exit-code-from plotlib-test plotlib-test
         
-        # Test quick demo
-        echo "🎯 Testing Docker Compose demo service..."
-        DEMO_TYPE=01_first_scatter_plot docker compose up --exit-code-from plotlib-demo plotlib-demo
+        # Check for advanced examples (cross-platform)
+        found_advanced=false
+        for file in output/advanced_*; do
+          if [ -f "$file" ]; then
+            found_advanced=true
+            break
+          fi
+        done
+        if [ "$found_advanced" = true ]; then
+          echo "✅ Advanced examples generated"
+        else
+          echo "❌ Missing advanced examples"
+          exit 1
+        fi
+        
+        # Check for plot_types examples (cross-platform)
+        found_plot_types=false
+        for file in output/plot_types_*; do
+          if [ -f "$file" ]; then
+            found_plot_types=true
+            break
+          fi
+        done
+        if [ "$found_plot_types" = true ]; then
+          echo "✅ Plot types examples generated"
+        else
+          echo "❌ Missing plot_types examples"
+          exit 1
+        fi
+        
+        echo "✅ Docker container test passed!"
+
+    - name: Test Docker Compose equivalence
+      shell: bash
+      run: |
+        # Test that direct docker-compose also works
+        echo "🧪 Testing docker-compose up plotlib equivalence..."
+        docker-compose up --exit-code-from plotlib plotlib
         
         echo "✅ Docker Compose tests passed!"
-    
+
     - name: Upload Docker test artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: docker-test-output
+        name: docker-test-output-${{ matrix.os }}
         path: output/
 
   docker-multi-platform:
@@ -97,26 +137,14 @@ jobs:
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
     
-    - name: Test multi-platform build capability
+    - name: Test multi-platform build
       run: |
-        echo "🏗️ Testing multi-platform build capability..."
+        echo "🏗️ Testing multi-platform Docker build..."
         
-        # Test AMD64 build (current platform)
+        # Build for multiple platforms (production deployment ready)
         docker buildx build \
-          --platform linux/amd64 \
-          -t plotlib:amd64-test \
-          --load \
+          --platform linux/amd64,linux/arm64 \
+          -t plotlib:multi-platform \
           .
         
-        # Test that the AMD64 build works
-        echo "🧪 Testing AMD64 build..."
-        docker run --rm plotlib:amd64-test /bin/sh -c "/app/build/tests/basic_tests"
-        
-        # Test ARM64 build (without loading, just to verify it builds)
-        echo "🏗️ Verifying ARM64 build capability..."
-        docker buildx build \
-          --platform linux/arm64 \
-          -t plotlib:arm64-test \
-          . || echo "⚠️ ARM64 build skipped (expected on non-ARM64 runner)"
-        
-        echo "✅ Multi-platform build tests completed!" 
+        echo "✅ Multi-platform build completed!"

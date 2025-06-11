@@ -51,6 +51,7 @@ cmake .. -DCMAKE_BUILD_TYPE=Release
 make plotlib                    # Build library only
 make beginner_examples          # Build beginner examples
 make advanced_examples          # Build advanced examples
+make plot_types_examples        # Build plot_types examples
 make basic_tests               # Build and run tests
 ```
 
@@ -63,6 +64,7 @@ make basic_tests               # Build and run tests
 cd build
 make run_beginner_examples     # Run all beginner examples
 make run_advanced_examples     # Run all advanced examples
+make run_plot_types_examples   # Run all plot_types examples
 make run_all_examples          # Run everything
 
 # Run individual examples (from project root)
@@ -71,7 +73,11 @@ make run_all_examples          # Run everything
 ./build/examples/03_first_line_plot         # Basic line plot
 ./build/examples/04_first_histogram         # Continuous histograms
 ./build/examples/05_simple_subplots         # Subplot layouts
-./build/examples/06_discrete_histograms     # NEW: Discrete categorical histograms
+./build/examples/06_discrete_histograms     # Discrete categorical histograms
+./build/examples/07_empty_plots            # Empty plot handling
+./build/examples/advanced_01_custom_styling_and_advanced_features  # Advanced styling
+./build/examples/plot_types_01_line_plot    # Comprehensive line plot API
+./build/examples/plot_types_02_scatter_plot # Comprehensive scatter plot API
 ```
 
 **Execution Rules:**

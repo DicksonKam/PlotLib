@@ -27,6 +27,13 @@ services:
           $$example
         fi
       done &&
+      echo 'Running plot_types examples...' &&
+      for example in /app/build/examples/plot_types_*; do
+        if [ -x \"$$example\" ]; then
+          echo \"  Running $$(basename $$example)...\"
+          $$example
+        fi
+      done &&
       echo 'Running tests...' &&
       /app/build/tests/basic_tests &&
       echo 'All examples and tests completed! Check ./output for generated plots.'
@@ -72,6 +79,13 @@ services:
         done
       elif [ \"$$DEMO_TYPE\" = \"advanced\" ]; then
         for example in /app/build/examples/advanced_*; do
+          if [ -x \"$$example\" ]; then
+            echo \"  Running $$(basename $$example)...\"
+            $$example
+          fi
+        done
+      elif [ \"$$DEMO_TYPE\" = \"plot_types\" ]; then
+        for example in /app/build/examples/plot_types_*; do
           if [ -x \"$$example\" ]; then
             echo \"  Running $$(basename $$example)...\"
             $$example

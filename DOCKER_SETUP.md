@@ -87,6 +87,12 @@ make beginner_examples
 # Run just beginner examples
 DEMO_TYPE=beginner docker-compose up plotlib-demo
 
+# Run just advanced examples  
+DEMO_TYPE=advanced docker-compose up plotlib-demo
+
+# Run just plot_types examples
+DEMO_TYPE=plot_types docker-compose up plotlib-demo
+
 # Run specific example
 DEMO_TYPE=01_first_scatter_plot docker-compose up plotlib-demo
 ```
@@ -100,10 +106,12 @@ After running the Docker commands, you should see:
 3. **Generated plots in output/ directory**:
    ```
    output/
-   ├── 01_first_scatter_plot.png
-   ├── 02_colors_and_multiple_series.png
-   ├── 03_temperature_line.png
-   └── ... (more plots)
+   ├── beginner_01_first_scatter_plot.png
+   ├── beginner_02_colors_and_multiple_series.png
+   ├── beginner_03_first_line_plot.png
+   ├── advanced_01_custom_styling_and_advanced_features.png
+   ├── plot_types_01_line_plot.png
+   └── ... (15+ total plots from all categories)
    ```
 
 ## Troubleshooting

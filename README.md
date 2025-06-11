@@ -298,6 +298,9 @@ make run_beginner_examples
 # Run all advanced examples
 make run_advanced_examples
 
+# Run all plot_types examples (comprehensive API demos)
+make run_plot_types_examples
+
 # Run everything
 make run_all_examples
 
@@ -310,9 +313,9 @@ make run_all_examples
 ### Example Categories
 
 - **Beginner examples** (`examples/beginner/`): Simple, well-commented code
-  - 6 progressive examples covering all basic features
+  - 7 progressive examples covering all basic features
   - Includes continuous and discrete histograms
-  - Generates 20+ example plots
+  - Generates 7+ example plots
   
 - **Advanced examples** (`examples/advanced/`): Professional techniques
   - Custom styling and RGB color control
@@ -320,6 +323,12 @@ make run_all_examples
   - Performance optimization for large datasets
   - Reference lines and plot annotations
   - Generates 25+ advanced plots
+
+- **Plot Types examples** (`examples/plot_types/`): Comprehensive API demonstrations
+  - 4 focused examples showing complete API usage
+  - Line plots, scatter plots, histograms, and comprehensive plots
+  - Professional code patterns and best practices
+  - Generates 4+ demonstration plots
 
 All generated plots are saved to the `output/` directory.
 

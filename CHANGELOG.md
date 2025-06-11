@@ -37,8 +37,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - HistogramPlot for distribution analysis
   - SubplotManager for complex dashboard layouts
 - Comprehensive example suite:
-  - 5 beginner examples with progressive complexity
+  - 7 beginner examples with progressive complexity
   - 4 advanced examples for professional use
+  - 4 plot_types examples for comprehensive API demonstrations
   - Complete API coverage in examples
 - Color system with named colors and automatic assignment
 - Cairo-based rendering engine for high-quality output

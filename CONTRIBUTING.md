@@ -106,6 +106,7 @@ When adding new plot types, follow this checklist:
 4. **Create examples**
    - Add beginner example in `examples/beginner/`
    - Add advanced example in `examples/advanced/`
+   - Add comprehensive example in `examples/plot_types/`
    - Update examples README
 
 5. **Write tests**

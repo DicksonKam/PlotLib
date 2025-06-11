@@ -166,7 +166,7 @@ Features for specialized use cases or future exploration.
 - ✅ Statistical analysis integration
 - ✅ CSV/JSON import support
 - ✅ Automatic outlier detection
-- ✅ 50+ new community examples
+- ✅ 25+ new community examples
 
 ### v2.0.0 Goals
 - ✅ 3D visualization capabilities

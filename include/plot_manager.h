@@ -67,6 +67,36 @@ enum class MarkerType {
 };
 
 /**
+ * @brief Enumeration of legend symbol types
+ */
+enum class LegendSymbolType {
+    MARKER,     ///< Draw a marker (circle, cross, etc.) for scatter/line plots
+    LINE,       ///< Draw a line segment for reference lines
+    RECTANGLE   ///< Draw a filled rectangle for histogram bars
+};
+
+/**
+ * @brief Represents a single item in the legend
+ */
+struct LegendItem {
+    std::string label;           ///< Text label for the legend entry
+    PlotStyle style;             ///< Visual styling (color, alpha, etc.)
+    LegendSymbolType symbol_type; ///< Type of symbol to draw
+    MarkerType marker_type;      ///< Marker type (only used if symbol_type == MARKER)
+    
+    /**
+     * @brief Constructor for LegendItem
+     * @param item_label Text label for the legend
+     * @param item_style Visual styling
+     * @param symbol Symbol type to draw
+     * @param marker Marker type (default: CIRCLE)
+     */
+    LegendItem(const std::string& item_label, const PlotStyle& item_style, 
+               LegendSymbolType symbol, MarkerType marker = MarkerType::CIRCLE)
+        : label(item_label), style(item_style), symbol_type(symbol), marker_type(marker) {}
+};
+
+/**
  * @brief Represents a named data series with styling information
  */
 struct DataSeries {
@@ -191,6 +221,7 @@ protected:
     virtual void draw_grid(cairo_t* cr);
     virtual void draw_reference_lines(cairo_t* cr);
     virtual void draw_legend(cairo_t* cr);
+    virtual void collect_legend_items(std::vector<LegendItem>& items);
     virtual void draw_title(cairo_t* cr);
     virtual void draw_marker(cairo_t* cr, double x, double y, MarkerType type, double size, 
                            double r, double g, double b, double alpha);

@@ -229,7 +229,7 @@ protected:
      * @brief Draw custom legend for discrete histograms
      * @param cr Cairo context
      */
-    void draw_legend(cairo_t* cr) override;
+    void collect_legend_items(std::vector<LegendItem>& items) override;
     
     /**
      * @brief Clear all histogram data

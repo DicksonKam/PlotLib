@@ -375,9 +375,7 @@ void HistogramPlot::draw_axis_labels(cairo_t* cr) {
     }
 }
 
-void HistogramPlot::draw_legend(cairo_t* cr) {
-    if (!show_legend) return;
-    
+void HistogramPlot::collect_legend_items(std::vector<LegendItem>& items) {
     // Check if we have any discrete data
     bool has_discrete = false;
     for (const auto& hist_data : histogram_series) {
@@ -388,17 +386,14 @@ void HistogramPlot::draw_legend(cairo_t* cr) {
     }
     
     if (has_discrete) {
-        // Custom legend for discrete histograms
-        std::vector<std::pair<std::string, PlotStyle>> legend_items;
-        
-        // Add discrete histogram categories
+        // Add discrete histogram categories as rectangles
         for (const auto& hist_data : histogram_series) {
             if (hist_data.is_discrete && !hist_data.categories.empty()) {
                 for (size_t i = 0; i < hist_data.categories.size(); ++i) {
                     if (i < hist_data.styles.size() && hist_data.counts[i] > 0 && 
                         hidden_legend_items.find(hist_data.categories[i]) == hidden_legend_items.end()) {
                         // Only show categories that have data and are not hidden
-                        legend_items.emplace_back(hist_data.categories[i], hist_data.styles[i]);
+                        items.emplace_back(hist_data.categories[i], hist_data.styles[i], LegendSymbolType::RECTANGLE);
                     }
                 }
             }
@@ -407,57 +402,22 @@ void HistogramPlot::draw_legend(cairo_t* cr) {
         // Add continuous histogram series if any
         for (const auto& hist_data : histogram_series) {
             if (!hist_data.is_discrete && !hist_data.name.empty() && hist_data.name != "Default") {
-                legend_items.emplace_back(hist_data.name, hist_data.style);
+                items.emplace_back(hist_data.name, hist_data.style, LegendSymbolType::RECTANGLE);
             }
         }
         
-        if (legend_items.empty()) return;
-        
-        cairo_set_source_rgb(cr, 0, 0, 0);
-        cairo_select_font_face(cr, "Arial", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
-        cairo_set_font_size(cr, 10);
-        
-        double legend_x = width - margin_right + 10;
-        double legend_y = margin_top + 20;
-        double line_height = 20;
-        
-        // Draw legend background
-        double legend_width = 120;
-        double legend_height = legend_items.size() * line_height + 10;
-        cairo_set_source_rgba(cr, 1, 1, 1, 0.9);
-        cairo_rectangle(cr, legend_x - 5, legend_y - 15, legend_width, legend_height);
-        cairo_fill(cr);
-        
-        cairo_set_source_rgba(cr, 0, 0, 0, 0.3);
-        cairo_rectangle(cr, legend_x - 5, legend_y - 15, legend_width, legend_height);
-        cairo_stroke(cr);
-        
-        // Draw legend items
-        for (size_t i = 0; i < legend_items.size(); ++i) {
-            double y_pos = legend_y + i * line_height;
-            
-            // Draw colored rectangle for histogram bars
-            cairo_set_source_rgba(cr, legend_items[i].second.r, legend_items[i].second.g, 
-                                 legend_items[i].second.b, legend_items[i].second.alpha);
-            cairo_rectangle(cr, legend_x + 2, y_pos - 4, 12, 8);
-            cairo_fill(cr);
-            
-            // Draw border
-            cairo_set_source_rgba(cr, legend_items[i].second.r * 0.7, legend_items[i].second.g * 0.7, 
-                                 legend_items[i].second.b * 0.7, legend_items[i].second.alpha);
-            cairo_rectangle(cr, legend_x + 2, y_pos - 4, 12, 8);
-            cairo_stroke(cr);
-            
-            // Draw text
-            cairo_set_source_rgb(cr, 0, 0, 0);
-            cairo_move_to(cr, legend_x + 20, y_pos + 4);
-            cairo_show_text(cr, legend_items[i].first.c_str());
+        // Add reference lines
+        for (const auto& ref_line : reference_lines) {
+            if (!ref_line.label.empty() && hidden_legend_items.find(ref_line.label) == hidden_legend_items.end()) {
+                items.emplace_back(ref_line.label, ref_line.style, LegendSymbolType::LINE);
+            }
         }
     } else {
-        // Use parent implementation for continuous data
-        PlotManager::draw_legend(cr);
+        // Use parent implementation for continuous data only
+        PlotManager::collect_legend_items(items);
     }
 }
+
 
 void HistogramPlot::clear() {
     PlotManager::clear();

@@ -137,7 +137,7 @@ protected:
      * @brief Draw legend including cluster legend entries
      * @param cr Cairo context for rendering
      */
-    void draw_legend(cairo_t* cr) override;
+    void collect_legend_items(std::vector<LegendItem>& items) override;
     
     /**
      * @brief Add cluster data series (internal method)

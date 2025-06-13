@@ -165,22 +165,9 @@ void ScatterPlot::calculate_bounds() {
     }
 }
 
-void ScatterPlot::draw_legend(cairo_t* cr) {
-    if (!show_legend) return;
-    
-    // Collect all series for legend (including clusters)
-    std::vector<std::pair<std::string, PlotStyle>> legend_items;
-    std::vector<MarkerType> legend_markers;
-    
-    // Add regular scatter series (skip if only one default series)
-    if (data_series.size() > 1 || (data_series.size() == 1 && data_series[0].name != "Default")) {
-        for (const auto& series : data_series) {
-            if (!series.name.empty() && hidden_legend_items.find(series.name) == hidden_legend_items.end()) {
-                legend_items.emplace_back(series.name, series.style);
-                legend_markers.push_back(MarkerType::CIRCLE);
-            }
-        }
-    }
+void ScatterPlot::collect_legend_items(std::vector<LegendItem>& items) {
+    // Start with base class items (data_series and reference_lines)
+    PlotManager::collect_legend_items(items);
     
     // Add cluster legend entries (independent sequence for each cluster series)
     for (const auto& series : cluster_series) {
@@ -211,8 +198,7 @@ void ScatterPlot::draw_legend(cairo_t* cr) {
                     outlier_style.b = 0.0;
                     outlier_style.alpha = 0.8;
                 }
-                legend_items.emplace_back(outlier_name, outlier_style);
-                legend_markers.push_back(MarkerType::CROSS);
+                items.emplace_back(outlier_name, outlier_style, LegendSymbolType::MARKER, MarkerType::CROSS);
             }
         }
         
@@ -241,77 +227,12 @@ void ScatterPlot::draw_legend(cairo_t* cr) {
                     cluster_style.b = color[2];
                     cluster_style.alpha = 0.8;
                 }
-                legend_items.emplace_back(cluster_name, cluster_style);
-                legend_markers.push_back(MarkerType::CIRCLE);
+                items.emplace_back(cluster_name, cluster_style, LegendSymbolType::MARKER, MarkerType::CIRCLE);
             }
         }
     }
-    
-    // Add reference lines
-    for (const auto& ref_line : reference_lines) {
-        if (!ref_line.label.empty() && hidden_legend_items.find(ref_line.label) == hidden_legend_items.end()) {
-            legend_items.emplace_back(ref_line.label, ref_line.style);
-            legend_markers.push_back(MarkerType::CIRCLE);
-        }
-    }
-    
-    // If no legend items, return early
-    if (legend_items.empty()) return;
-    
-    // Legend positioning and sizing (copied from PlotManager logic)
-    const double legend_padding = 10;
-    const double legend_item_height = 20;
-    const double legend_marker_size = 8;
-    const double legend_text_offset = 15;
-    
-    double legend_x = width - margin_right + 10;
-    double legend_y = margin_top + 20;
-    double legend_width = margin_right - 20;
-    double legend_height = legend_items.size() * legend_item_height + 2 * legend_padding;
-    
-    // Draw legend background
-    cairo_set_source_rgba(cr, 1, 1, 1, 0.9);
-    cairo_rectangle(cr, legend_x, legend_y, legend_width, legend_height);
-    cairo_fill(cr);
-    
-    cairo_set_source_rgb(cr, 0, 0, 0);
-    cairo_rectangle(cr, legend_x, legend_y, legend_width, legend_height);
-    cairo_stroke(cr);
-    
-    // Draw legend items
-    cairo_set_font_size(cr, 12);
-    for (size_t i = 0; i < legend_items.size(); ++i) {
-        double item_y = legend_y + legend_padding + i * legend_item_height;
-        
-        // Draw marker
-        double marker_x = legend_x + legend_padding;
-        double marker_y = item_y + legend_item_height / 2;
-        
-        auto& style = legend_items[i].second;
-        cairo_set_source_rgba(cr, style.r, style.g, style.b, style.alpha);
-        
-        // Draw the appropriate marker type
-        MarkerType marker_type = legend_markers[i];
-        if (marker_type == MarkerType::CROSS) {
-            // Draw cross for outliers
-            cairo_set_line_width(cr, 2);
-            cairo_move_to(cr, marker_x - legend_marker_size/2, marker_y - legend_marker_size/2);
-            cairo_line_to(cr, marker_x + legend_marker_size/2, marker_y + legend_marker_size/2);
-            cairo_move_to(cr, marker_x - legend_marker_size/2, marker_y + legend_marker_size/2);
-            cairo_line_to(cr, marker_x + legend_marker_size/2, marker_y - legend_marker_size/2);
-            cairo_stroke(cr);
-        } else {
-            // Draw circle for clusters and regular series
-            cairo_arc(cr, marker_x, marker_y, legend_marker_size/2, 0, 2 * M_PI);
-            cairo_fill(cr);
-        }
-        
-        // Draw text
-        cairo_set_source_rgb(cr, 0, 0, 0);
-        cairo_move_to(cr, legend_x + legend_padding + legend_text_offset, item_y + legend_item_height / 2 + 3);
-        cairo_show_text(cr, legend_items[i].first.c_str());
-    }
 }
+
 
 void ScatterPlot::add_cluster_data(const std::vector<double>& x_values, const std::vector<double>& y_values, 
                                   const std::vector<int>& cluster_labels, 

@@ -338,31 +338,13 @@ void PlotManager::draw_marker(cairo_t* cr, double x, double y, MarkerType type, 
 void PlotManager::draw_legend(cairo_t* cr) {
     if (!show_legend) return;
     
-    // Collect all series for legend
-    std::vector<std::pair<std::string, PlotStyle>> legend_items;
-    std::vector<MarkerType> legend_markers;
-    
-    // Add regular series (skip if only one default series)
-    if (data_series.size() > 1 || (data_series.size() == 1 && data_series[0].name != "Default")) {
-        for (const auto& series : data_series) {
-            if (!series.name.empty() && hidden_legend_items.find(series.name) == hidden_legend_items.end()) {
-                legend_items.emplace_back(series.name, series.style);
-                legend_markers.push_back(MarkerType::CIRCLE);
-            }
-        }
-    }
-    
-    
-    // Add reference lines
-    for (const auto& ref_line : reference_lines) {
-        if (!ref_line.label.empty() && hidden_legend_items.find(ref_line.label) == hidden_legend_items.end()) {
-            legend_items.emplace_back(ref_line.label, ref_line.style);
-            legend_markers.push_back(MarkerType::CIRCLE); // Will be overridden for line drawing
-        }
-    }
+    // Collect all legend items from derived classes
+    std::vector<LegendItem> legend_items;
+    collect_legend_items(legend_items);
     
     if (legend_items.empty()) return;
     
+    // Set up font and colors
     cairo_set_source_rgb(cr, 0, 0, 0);
     cairo_select_font_face(cr, "Arial", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
     cairo_set_font_size(cr, 10);
@@ -383,47 +365,76 @@ void PlotManager::draw_legend(cairo_t* cr) {
     cairo_stroke(cr);
     
     // Draw legend items
-    size_t ref_line_offset = data_series.size();
-    if (data_series.size() <= 1 && (data_series.empty() || data_series[0].name == "Default")) {
-        ref_line_offset = 0;
-    }
-    
-    // No cluster series in PlotManager anymore
-    
     for (size_t i = 0; i < legend_items.size(); ++i) {
         double y_pos = legend_y + i * line_height;
+        const auto& item = legend_items[i];
         
-        // Check if this is a reference line (appears after data series and cluster series)
-        bool is_reference_line = i >= ref_line_offset;
-        
-        if (is_reference_line) {
-            // Draw dotted line for reference lines
-            cairo_set_source_rgba(cr, legend_items[i].second.r, legend_items[i].second.g, 
-                                 legend_items[i].second.b, legend_items[i].second.alpha);
-            cairo_set_line_width(cr, legend_items[i].second.line_width);
-            
-            // Set dotted line style
-            double dashes[] = {4.0, 4.0};
-            cairo_set_dash(cr, dashes, 2, 0);
-            
-            cairo_move_to(cr, legend_x + 2, y_pos);
-            cairo_line_to(cr, legend_x + 14, y_pos);
-            cairo_stroke(cr);
-            
-            // Reset dash pattern
-            cairo_set_dash(cr, nullptr, 0, 0);
-        } else {
-            // Draw marker for regular data series and clusters
-            draw_marker(cr, legend_x + 8, y_pos, legend_markers[i], 
-                       legend_items[i].second.point_size + 1,
-                       legend_items[i].second.r, legend_items[i].second.g, legend_items[i].second.b,
-                       legend_items[i].second.alpha);
+        // Draw the appropriate symbol based on type
+        switch (item.symbol_type) {
+            case LegendSymbolType::LINE: {
+                // Draw dotted line for reference lines
+                cairo_set_source_rgba(cr, item.style.r, item.style.g, 
+                                     item.style.b, item.style.alpha);
+                cairo_set_line_width(cr, item.style.line_width);
+                
+                // Set dotted line style
+                double dashes[] = {4.0, 4.0};
+                cairo_set_dash(cr, dashes, 2, 0);
+                
+                cairo_move_to(cr, legend_x + 2, y_pos);
+                cairo_line_to(cr, legend_x + 14, y_pos);
+                cairo_stroke(cr);
+                
+                // Reset dash pattern
+                cairo_set_dash(cr, nullptr, 0, 0);
+                break;
+            }
+                
+            case LegendSymbolType::MARKER:
+                // Draw marker for scatter/line plots
+                draw_marker(cr, legend_x + 8, y_pos, item.marker_type, 
+                           item.style.point_size + 1,
+                           item.style.r, item.style.g, item.style.b,
+                           item.style.alpha);
+                break;
+                
+            case LegendSymbolType::RECTANGLE:
+                // Draw filled rectangle for histogram bars
+                cairo_set_source_rgba(cr, item.style.r, item.style.g, 
+                                     item.style.b, item.style.alpha);
+                cairo_rectangle(cr, legend_x + 2, y_pos - 4, 12, 8);
+                cairo_fill(cr);
+                
+                // Draw border
+                cairo_set_source_rgba(cr, item.style.r * 0.7, item.style.g * 0.7, 
+                                     item.style.b * 0.7, item.style.alpha);
+                cairo_rectangle(cr, legend_x + 2, y_pos - 4, 12, 8);
+                cairo_stroke(cr);
+                break;
         }
         
-        // Draw text
+        // Draw text label
         cairo_set_source_rgb(cr, 0, 0, 0);
         cairo_move_to(cr, legend_x + 20, y_pos + 4);
-        cairo_show_text(cr, legend_items[i].first.c_str());
+        cairo_show_text(cr, item.label.c_str());
+    }
+}
+
+void PlotManager::collect_legend_items(std::vector<LegendItem>& items) {
+    // Add regular data series (skip if only one default series)
+    if (data_series.size() > 1 || (data_series.size() == 1 && data_series[0].name != "Default")) {
+        for (const auto& series : data_series) {
+            if (!series.name.empty() && hidden_legend_items.find(series.name) == hidden_legend_items.end()) {
+                items.emplace_back(series.name, series.style, LegendSymbolType::MARKER, MarkerType::CIRCLE);
+            }
+        }
+    }
+    
+    // Add reference lines
+    for (const auto& ref_line : reference_lines) {
+        if (!ref_line.label.empty() && hidden_legend_items.find(ref_line.label) == hidden_legend_items.end()) {
+            items.emplace_back(ref_line.label, ref_line.style, LegendSymbolType::LINE);
+        }
     }
 }
 

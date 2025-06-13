@@ -12,7 +12,7 @@
 namespace plotlib {
 
 // Static member initialization
-std::vector<std::string> PlotManager::auto_colors = {"blue", "red", "green", "orange", "purple", "cyan", "magenta", "yellow"};
+std::vector<std::string> PlotManager::auto_colors = {"blue", "green", "orange", "purple", "cyan", "magenta", "yellow", "red"};
 
 PlotManager::PlotManager(int width, int height) : width(width), height(height) {
 }

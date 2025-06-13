@@ -147,7 +147,7 @@ public:
      * @brief Add continuous histogram data with custom color and bin count
      * @param values Raw data values for histogram
      * @param name Series name for legend
-     * @param color_name Color name ("red", "blue", "green", "orange", "purple", "cyan", "magenta", "yellow")
+     * @param color_name Color name {"blue", "green", "orange", "purple", "cyan", "magenta", "yellow", "red"}
      * @param bin_count Number of bins (0 for automatic)
      */
     void add_histogram(const std::vector<double>& values, const std::string& name, 

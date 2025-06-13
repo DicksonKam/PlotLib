@@ -9,32 +9,10 @@ namespace plotlib {
 
 ScatterPlot::ScatterPlot(int width, int height) : PlotManager(width, height) {
     // Constructor delegates to PlotManager
-    initialize_cluster_colors();
 }
 
 void ScatterPlot::set_default_marker_type(MarkerType marker_type) {
     default_marker_type = marker_type;
-}
-
-void ScatterPlot::initialize_cluster_colors() {
-    // Define a nice color palette for clusters (excluding red which is reserved for outliers)
-    cluster_colors = {
-        {0.0, 0.4, 0.8},   // Blue
-        {0.0, 0.7, 0.3},   // Green
-        {0.6, 0.2, 0.8},   // Purple
-        {1.0, 0.5, 0.0},   // Orange
-        {0.8, 0.8, 0.0},   // Yellow
-        {0.0, 0.8, 0.8},   // Cyan
-        {0.8, 0.0, 0.8},   // Magenta
-        {0.5, 0.3, 0.1},   // Brown
-        {0.7, 0.7, 0.7},   // Gray
-        {0.0, 0.5, 0.5},   // Teal
-        {0.5, 0.0, 0.5},   // Dark Purple
-        {0.0, 0.3, 0.6},   // Dark Blue
-        {0.3, 0.5, 0.0},   // Olive
-        {0.6, 0.3, 0.0},   // Dark Orange
-        {0.4, 0.0, 0.4}    // Dark Magenta
-    };
 }
 
 std::vector<double> ScatterPlot::get_cluster_color(int cluster_label) {
@@ -42,9 +20,10 @@ std::vector<double> ScatterPlot::get_cluster_color(int cluster_label) {
         return {1.0, 0.0, 0.0}; // Red for outliers
     }
     
-    // Use modulo to cycle through colors if we have more clusters than colors
-    int color_index = cluster_label % cluster_colors.size();
-    return cluster_colors[color_index];
+    // Use auto_colors from PlotManager for consistency
+    std::string color_name = get_auto_color(cluster_label);
+    PlotStyle style = color_to_style(color_name, 3.0, 2.0);
+    return {style.r, style.g, style.b};
 }
 
 void ScatterPlot::draw_data(cairo_t* cr) {

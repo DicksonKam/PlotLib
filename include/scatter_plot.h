@@ -87,12 +87,6 @@ private:
     
     // Cluster-related data and methods
     std::vector<ClusterSeries> cluster_series; ///< Collection of cluster-based series
-    std::vector<std::vector<double>> cluster_colors; ///< RGB colors for cluster visualization
-    
-    /**
-     * @brief Initialize cluster color palette
-     */
-    void initialize_cluster_colors();
     
     /**
      * @brief Get color for a specific cluster label
@@ -179,7 +173,7 @@ public:
      * @param x_values Vector of X coordinates
      * @param y_values Vector of Y coordinates
      * @param name Series name for legend
-     * @param color_name Color name ("red", "blue", "green", "orange", "purple", "cyan", "magenta", "yellow")
+     * @param color_name Color name {"blue", "green", "orange", "purple", "cyan", "magenta", "yellow", "red"}
      */
     void add_scatter(const std::vector<double>& x_values, const std::vector<double>& y_values,
                      const std::string& name, const std::string& color_name);

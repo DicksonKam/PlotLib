@@ -353,7 +353,7 @@ public:
      * @brief Add a vertical reference line
      * @param x_value X coordinate where the vertical line should be drawn
      * @param label Label for the legend
-     * @param color_name Color name ("red", "blue", "green", etc.)
+     * @param color_name Color name {"blue", "green", "orange", "purple", "cyan", "magenta", "yellow", "red"}
      */
     virtual void add_vertical_line(double x_value, const std::string& label, const std::string& color_name);
     
@@ -361,7 +361,7 @@ public:
      * @brief Add a horizontal reference line
      * @param y_value Y coordinate where the horizontal line should be drawn
      * @param label Label for the legend
-     * @param color_name Color name ("red", "blue", "green", etc.)
+     * @param color_name Color name {"blue", "green", "orange", "purple", "cyan", "magenta", "yellow", "red"}
      */
     virtual void add_horizontal_line(double y_value, const std::string& label, const std::string& color_name);
     

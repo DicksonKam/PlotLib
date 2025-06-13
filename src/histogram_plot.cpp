@@ -141,10 +141,10 @@ void HistogramPlot::calculate_bounds() {
         double series_min_x, series_max_x;
         
         if (hist_data.is_discrete) {
-            // For discrete data, X bounds are based on category count
+            // For discrete data, X bounds are based on category indices
             has_discrete = true;
             series_min_x = 0.0;
-            series_max_x = static_cast<double>(hist_data.counts.size());
+            series_max_x = static_cast<double>(hist_data.counts.size() - 1);  // Use last index, not count
             discrete_max_x = std::max(discrete_max_x, series_max_x);
         } else {
             // For continuous data, X bounds from bin edges

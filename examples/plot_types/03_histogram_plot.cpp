@@ -68,12 +68,12 @@ int main() {
     // All vertical line overloads (allowed for continuous)
     continuous_plot.add_vertical_line(100.0);  // auto-label, auto-color
     continuous_plot.add_vertical_line(120.0, "Upper Threshold");  // auto-color
-    continuous_plot.add_vertical_line(80.0, "Lower Threshold", "orange");  // full spec
+    continuous_plot.add_vertical_line(80.0, "Lower Threshold");  // full spec
     
     // All horizontal line overloads
     continuous_plot.add_horizontal_line(10.0);  // auto-label, auto-color
     continuous_plot.add_horizontal_line(20.0, "High Frequency");  // auto-color
-    continuous_plot.add_horizontal_line(5.0, "Low Frequency", "green");  // full spec
+    continuous_plot.add_horizontal_line(5.0, "Low Frequency");  // full spec
     
     // =====================================================================
     // RIGHT SUBPLOT: DISCRETE HISTOGRAM DEMONSTRATION
@@ -110,7 +110,7 @@ int main() {
     // Horizontal lines (allowed for discrete)
     discrete_plot.add_horizontal_line(15.0);  // auto-label, auto-color
     discrete_plot.add_horizontal_line(10.0, "Target Count");  // auto-color
-    discrete_plot.add_horizontal_line(20.0, "High Count", "red");  // full spec
+    discrete_plot.add_horizontal_line(20.0, "High Count");  // full spec
     
     // Test vertical line restriction (should demonstrate error handling)
     std::cout << "   Testing vertical line restriction for discrete histograms..." << std::endl;
@@ -147,7 +147,7 @@ int main() {
         std::cout << "      • Unified subplot management and shared title" << std::endl;
         std::cout << "      • Complete API coverage in single image" << std::endl;
         std::cout << "   ⚙️ All HistogramPlot-specific methods tested" << std::endl;
-        std::cout << "   🎨 Auto-color conflict avoidance for reference lines" << std::endl;
+        std::cout << "   🎨 Auto-color black for reference lines" << std::endl;
         std::cout << "   🏷️ Auto-naming for both histograms and reference lines" << std::endl;
         std::cout << "   🛡️ Type validation and error handling" << std::endl;
     } else {

@@ -107,8 +107,9 @@ int main() {
     right_plot.add_clusters(extra_cluster_x, extra_cluster_y, extra_cluster_labels, extra_names, extra_colors);
     
     // Add some reference lines to right plot for completeness
-    right_plot.add_vertical_line(3.0, "Mid Line", "gray");
-    right_plot.add_horizontal_line(2.0, "Baseline", "gray");
+    right_plot.add_vertical_line(3.0, "Mid Line");
+    right_plot.add_vertical_line(3.5, "Mid Line2");
+    right_plot.add_horizontal_line(3.5, "Baseline4");
     
     // =====================================================================
     // SAVE AND REPORT

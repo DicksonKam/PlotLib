@@ -224,7 +224,7 @@ int main() {
         std::cout << "   📏 REFERENCE LINES:" << std::endl;
         std::cout << "      • All overloads (1, 2, 3 parameters)" << std::endl;
         std::cout << "      • Auto-naming: 'Ref Line 1', 'Ref Line 2'..." << std::endl;
-        std::cout << "      • Auto-color conflict avoidance" << std::endl;
+        std::cout << "      • Auto-color black" << std::endl;
         std::cout << "   🎛️ LEGEND MANAGEMENT:" << std::endl;
         std::cout << "      • Auto-legends for all plot types" << std::endl;
         std::cout << "      • Legend hiding functionality" << std::endl;
@@ -234,7 +234,7 @@ int main() {
         std::cout << "      • Unified styling" << std::endl;
         std::cout << "   🎨 AUTO-FEATURES:" << std::endl;
         std::cout << "      • Auto-naming for all components" << std::endl;
-        std::cout << "      • Auto-coloring with conflict avoidance" << std::endl;
+        std::cout << "      • Auto-coloring with black" << std::endl;
         std::cout << "      • Auto-binning for histograms" << std::endl;
     } else {
         std::cout << "❌ Failed to save comprehensive demonstration" << std::endl;

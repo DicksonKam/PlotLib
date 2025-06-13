@@ -361,6 +361,7 @@ void PlotManager::draw_legend(cairo_t* cr) {
     cairo_fill(cr);
     
     cairo_set_source_rgba(cr, 0, 0, 0, 0.3);
+    cairo_set_line_width(cr, 1.0);
     cairo_rectangle(cr, legend_x - 5, legend_y - 15, legend_width, legend_height);
     cairo_stroke(cr);
     
@@ -697,24 +698,8 @@ std::string PlotManager::get_auto_color(size_t series_index) {
 }
 
 std::string PlotManager::get_reference_line_auto_color() const {
-    // Reference line colors to use when no color specified - avoid data colors
-    static const std::vector<std::string> ref_colors = {"black", "gray", "darkred", "darkblue", "darkgreen"};
-    
-    // Get set of colors used by data series
-    std::set<std::string> used_colors;
-    for (size_t i = 0; i < data_series.size(); ++i) {
-        used_colors.insert(get_auto_color(i));
-    }
-    
-    // Find first reference color not used by data series
-    for (const auto& color : ref_colors) {
-        if (used_colors.find(color) == used_colors.end()) {
-            return color;
-        }
-    }
-    
-    // Fallback: cycle through reference colors if all are used
-    return ref_colors[reference_lines.size() % ref_colors.size()];
+    // Always return black for reference lines for simplicity
+    return "black";
 }
 
 // SubplotManager implementation

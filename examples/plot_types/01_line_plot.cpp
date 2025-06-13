@@ -56,14 +56,11 @@ int main() {
     
     std::cout << "2. Testing all add_vertical_line() overloads..." << std::endl;
     
-    // Overload 1: value only (auto-label, auto-color avoiding data colors)
-    plot.add_vertical_line(M_PI);  // "Ref Line 1", auto-color
+    // Overload 1: value only (auto-label, auto-color black)
+    plot.add_vertical_line(M_PI);  // "Ref Line 1", black
     
-    // Overload 2: value + label (auto-color avoiding data colors)
-    plot.add_vertical_line(2 * M_PI, "2π");  // auto-color
-    
-    // Overload 3: value + label + color (full specification)
-    plot.add_vertical_line(M_PI / 2, "π/2", "purple");  // explicit purple
+    // Overload 2: value + label (auto-color black)
+    plot.add_vertical_line(2 * M_PI, "2π");  // black
     
     // =====================================================================
     // DEMONSTRATE ALL add_horizontal_line() OVERLOADS
@@ -71,14 +68,9 @@ int main() {
     
     std::cout << "3. Testing all add_horizontal_line() overloads..." << std::endl;
     
-    // Overload 1: value only (auto-label, auto-color avoiding data colors)
-    plot.add_horizontal_line(0.0);  // "Ref Line 4", auto-color
+    // Overload 1: value only (auto-label, auto-color black)
+    plot.add_horizontal_line(0.0);  // "Ref Line 3", black
     
-    // Overload 2: value + label (auto-color avoiding data colors)
-    plot.add_horizontal_line(0.5, "Upper Threshold");  // auto-color
-    
-    // Overload 3: value + label + color (full specification)
-    plot.add_horizontal_line(-0.5, "Lower Threshold", "orange");  // explicit orange
     
     // =====================================================================
     // DEMONSTRATE OTHER PUBLIC FUNCTIONALITY
@@ -113,11 +105,11 @@ int main() {
         std::cout << "      • Line 1: data only (auto-name, auto-color)" << std::endl;
         std::cout << "      • sin(x): data + name (auto-color)" << std::endl;
         std::cout << "      • cos(x): data + name + color" << std::endl;
-        std::cout << "   📏 6 reference lines with different overloads:" << std::endl;
-        std::cout << "      • 3 vertical lines (auto, auto+label, full)" << std::endl;
-        std::cout << "      • 3 horizontal lines (auto, auto+label, full)" << std::endl;
+        std::cout << "   📏 3 reference lines with different overloads:" << std::endl;
+        std::cout << "      • 2 vertical lines (auto, auto+label)" << std::endl;
+        std::cout << "      • 1 horizontal line (auto)" << std::endl;
         std::cout << "   ⚙️ All LinePlot-specific configuration methods" << std::endl;
-        std::cout << "   🎨 Auto-color conflict avoidance for reference lines" << std::endl;
+        std::cout << "   🎨 Auto-color black for reference lines" << std::endl;
         std::cout << "   🏷️ Auto-naming for both data series and reference lines" << std::endl;
     } else {
         std::cout << "❌ Failed to save plot" << std::endl;
